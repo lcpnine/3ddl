@@ -1,0 +1,20 @@
+name: deepsdf
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pytorch>=2.0
+  - torchvision
+  - pytorch-cuda=12.1
+  - trimesh
+  - scikit-image
+  - matplotlib
+  - pyyaml
+  - scipy
+  - numpy
+  - tqdm
+  - pip:
+    - mesh-to-sdf

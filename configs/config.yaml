@@ -1,0 +1,65 @@
+# Semi-Supervised DeepSDF Configuration
+# All hyperparameter defaults from Project Plan v6 (Part 3.4, 3.5)
+# Override per-experiment via --config_override flag
+
+# --- Data ---
+data_dir: "data/processed"
+gt_mesh_dir: "data/processed/gt_meshes"
+supervision_ratio: 1.0        # 1.0, 0.5, 0.1, 0.05
+num_shapes: -1                 # -1 = use all available shapes
+train_split: 0.75              # fraction of shapes for training
+val_split: 0.25                # fraction for validation (no separate test for dev)
+
+# --- Model ---
+latent_dim: 256
+hidden_dim: 512
+num_layers: 8
+skip_layer: 4                  # skip connection at this layer (0-indexed)
+
+# --- Positional Encoding ---
+use_pe: false
+pe_levels: 6                   # L: each coord 3 -> 2L dims, total 3 -> 6L dims
+
+# --- Loss Weights ---
+lambda_eik: 0.1                # Eikonal loss weight (search range: 0.01, 0.05, 0.1, 0.5)
+lambda_z: 0.0001               # Latent code regularization (1e-4)
+lambda_2nd: 0.0                # Second-order divergence loss (0 = disabled)
+use_eikonal: true              # Enable Eikonal regularization
+
+# --- Eikonal Warmup (ratio-dependent, auto-set if warmup_epochs=-1) ---
+warmup_epochs: -1              # -1 = auto from supervision_ratio
+                               # 100%/50% -> 100, 10% -> 150, 5% -> 200
+
+# --- Training ---
+epochs: 1000
+batch_size: 16384              # points per shape per batch (reduce to 8192 for L_2nd)
+lr: 0.0005                     # 5e-4 (reduce to 1e-4 if diverges)
+lr_scheduler: "step"           # "step" or "cosine"
+lr_step_size: 500
+lr_gamma: 0.5
+weight_decay: 0.0
+grad_clip_max_norm: 1.0        # global gradient clipping
+
+# --- Checkpointing ---
+checkpoint_every: 100          # save latest checkpoint every N epochs
+exp_dir: "experiments"         # base experiment directory
+
+# --- Evaluation ---
+voxel_resolutions:             # marching cubes + IoU resolutions
+  - 128
+  - 256
+mc_resolution: 256             # marching cubes extraction resolution
+n_eval_points: 30000           # points for CD and Normal Consistency
+eval_threshold: 0.0            # isosurface threshold for marching cubes
+
+# --- Reproducibility ---
+seed: 42
+seeds: [42, 123, 456]         # for multi-seed experiments
+
+# --- Divergence Detection ---
+divergence_check_epoch: 500
+divergence_baseline_epoch: 10
+divergence_ratio_threshold: 0.5  # L_sdf(500) must be < 0.5 * L_sdf(10)
+
+# --- Logging ---
+log_every: 10                  # print training stats every N epochs
