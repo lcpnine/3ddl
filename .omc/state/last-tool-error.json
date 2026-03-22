@@ -1,0 +1,7 @@
+{
+  "tool_name": "Read",
+  "tool_input_preview": "{\"file_path\":\"/Users/lcpnine/.claude/settings.local.json\"}",
+  "error": "File does not exist. Note: your current working directory is /Users/lcpnine/3ddl.",
+  "timestamp": "2026-03-22T10:10:19.198Z",
+  "retry_count": 3
+}

@@ -1,0 +1,19 @@
+{
+  "env": {
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "70"
+  },
+  "hooks": {
+    "PreCompact": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/lcpnine/3ddl/.claude/hooks/backup-before-compact.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}
