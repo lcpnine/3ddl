@@ -30,11 +30,18 @@ Run experiment $ARGUMENTS[0] with seed $ARGUMENTS[1].
    **Expected CD range**: [based on prior experiments if available]
    ```
 
-4. **SLURM submission**:
+4. **Sync config to TC2**:
    ```bash
-   TRAIN_JOB=$(sbatch --parsable job_train.sh --config configs/$ARGUMENTS[0]_seed$ARGUMENTS[1].yaml)
-   sbatch --dependency=afterok:$TRAIN_JOB eval_job.sh --exp_dir experiments/$ARGUMENTS[0]/seed$ARGUMENTS[1]
-   echo "Train job: $TRAIN_JOB submitted"
+   scp configs/$ARGUMENTS[0]_seed$ARGUMENTS[1].yaml tc2:/home/msai/yutaek001/3ddl/configs/
    ```
 
-5. **Confirm**: Print job ID and expected wall time to console.
+5. **SLURM submission via SSH** (all sbatch commands run on TC2, not locally):
+   ```bash
+   TRAIN_JOB=$(ssh tc2 'cd ~/3ddl && sbatch --parsable job_train.sh --config configs/$ARGUMENTS[0]_seed$ARGUMENTS[1].yaml')
+   ssh tc2 "cd ~/3ddl && sbatch --dependency=afterok:$TRAIN_JOB eval_job.sh --exp_dir experiments/$ARGUMENTS[0]/seed$ARGUMENTS[1]"
+   echo "Train job: $TRAIN_JOB submitted"
+   ```
+   Note: TC2 limits — partition=MGPU-TC2, qos=normal, max 2 concurrent jobs, 1 GPU, 30GB mem, 6hr wall time.
+   Job scripts must include: `module load anaconda && eval "$(conda shell.bash hook)" && conda activate yt3dl`
+
+6. **Confirm**: Print job ID. Max wall time is 6 hours — flag if experiment is expected to exceed this.

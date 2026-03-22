@@ -19,6 +19,15 @@
 - Gradient clip: max_norm=1.0
 - Batch size: 16384 (reduce to 8192 for EXP-08 only)
 
+## TC2 GPU Cluster
+- **SSH**: `ssh yutaek001@10.96.189.12` (requires NTU VPN off-campus)
+- **Home**: `/home/msai/yutaek001`
+- **Conda**: `module load anaconda && conda activate yt3dl`
+- **CUDA**: `module load cuda/12.8.0`
+- **Partition**: `MGPU-TC2`, QoS: `normal`
+- **Limits**: max 2 concurrent jobs, 1 GPU, 10 CPU, 30GB mem, 6hr wall time
+- **Disk quota**: 100GB — run /disk-check regularly
+
 ## Compact Instructions
 When compacting, always preserve:
 - Current experiment ID and stage (EXP-XX, Stage N)
