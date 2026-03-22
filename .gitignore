@@ -55,6 +55,9 @@ env/
 Thumbs.db
 desktop.ini
 
+# ── OMC (oh-my-claudecode plugin state) ──
+.omc/
+
 # ── IDE ──
 .vscode/
 .idea/
