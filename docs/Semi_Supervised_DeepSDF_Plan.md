@@ -426,7 +426,7 @@ After running initial experiments, check these patterns before proceeding:
 module load anaconda
 module load cuda/12.8.0
 eval "$(conda shell.bash hook)"
-conda activate deepsdf
+conda activate yt3dl
 
 python train.py --config configs/exp01_seed42.yaml
 ```
@@ -448,7 +448,7 @@ python train.py --config configs/exp01_seed42.yaml
 
 module load anaconda
 eval "$(conda shell.bash hook)"
-conda activate deepsdf
+conda activate yt3dl
 
 python evaluate.py --exp_dir experiments/EXP-01/seed42 \
     --output experiments/EXP-01/seed42/results.json \
@@ -485,7 +485,7 @@ Setup on TC2 via conda:
 ```bash
 module load anaconda
 conda create -n deepsdf python=3.10
-conda activate deepsdf
+conda activate yt3dl
 conda install pytorch torchvision pytorch-cuda=12.1 -c pytorch -c nvidia
 conda install -c conda-forge trimesh matplotlib scikit-image pyyaml
 pip install mesh-to-sdf  # only if not available via conda

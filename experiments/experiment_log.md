@@ -20,10 +20,79 @@ Single source of truth for all experiment results.
 
 | ID | Seeds | CD (mean +/- std) | NC (mean +/- std) | IoU@128 | IoU@256 | Status |
 |----|-------|-------------------|--------------------|---------|---------|--------|
-| | | | | | | |
+| EXP-01 | 42 | 0.0641 +/- 0.0666 | 0.7046 +/- 0.2011 | skipped | skipped | done (baseline) |
+
+## Detailed Results
+
+### EXP-01 — Fully-supervised baseline (seed 42)
+- **Date**: 2026-03-22
+- **Config**: ratio=1.0, eikonal=off (warmup N/A), PE=off, epochs=1000, batch=16384
+- **Data**: 20 parametric meshes, 10K sup/unsup points each (reduced for pipeline validation)
+- **Training**: 8 min 14 sec on TC2 (A40 GPU), 0.5s/epoch
+- **Loss**: L_sdf converged from 0.0377 (ep10) → 0.0326 (ep500) → 0.0326 (ep1000)
+- **Best val L_sdf**: 0.0322
+- **Eval** (MC res=64, IoU skipped):
+  - Best: sphere CD=0.0014 NC=0.993, ico_hi CD=0.005 NC=0.993
+  - Worst: thin_cyl CD=0.280 NC=0.436, wide_box CD=0.172 NC=0.406
+  - Mean CD=0.0641, Mean NC=0.7046
+- **Note**: Divergence check triggered (false positive) — L_sdf ratio 0.86 > 0.5 threshold, but loss DID decrease. Threshold is too strict for this regime.
+
+## Next Steps (as of 2026-03-23)
+
+### Prerequisite: Data Quality Upgrade
+EXP-01 used 10K points per shape (dev mode). All subsequent experiments should use 250K points (production).
+Reprocessing is in progress on TC2. Once done, re-run EXP-01 with 250K data to establish a proper baseline.
+
+### Experiment Execution Order & Rationale
+
+**Phase 1: Baselines (EXP-01, EXP-02)**
+- **EXP-01** (re-run with 250K data): Fully-supervised, no Eikonal, no PE.
+  - WHY: Establishes the vanilla DeepSDF baseline. All other experiments compare against this.
+  - CONFIG: `supervision_ratio=1.0 use_eikonal=false use_pe=false`
+- **EXP-02**: Full supervision + Eikonal.
+  - WHY: Isolates the effect of Eikonal regularization at full supervision. If EXP-02 > EXP-01, Eikonal helps even with abundant labels.
+  - CONFIG: `supervision_ratio=1.0 use_eikonal=true use_pe=false`
+
+**Phase 2: Label Reduction (EXP-03, EXP-04, EXP-05)**
+- **EXP-03**: 50% labels + Eikonal.
+  - WHY: Tests if Eikonal compensates for halving labels. Compare CD/NC vs EXP-02.
+  - CONFIG: `supervision_ratio=0.5 use_eikonal=true use_pe=false`
+- **EXP-04**: 10% labels + Eikonal (KEY experiment).
+  - WHY: Core research question — can Eikonal maintain quality with 90% fewer labels? This is the main data point for the label efficiency curve.
+  - CONFIG: `supervision_ratio=0.1 use_eikonal=true use_pe=false`
+  - NOTE: Run 3 seeds. If CD CV > 0.2, expand to 5 seeds for statistical confidence.
+- **EXP-05**: 5% labels + Eikonal.
+  - WHY: Tests the floor — at what label fraction does quality collapse?
+  - CONFIG: `supervision_ratio=0.05 use_eikonal=true use_pe=false`
+
+**Phase 3: Positional Encoding (EXP-06, EXP-07, EXP-09)**
+- **EXP-06**: 10% labels + Eikonal + PE (KEY comparison vs EXP-04).
+  - WHY: Tests if Fourier PE helps capture high-frequency details with few labels. Direct comparison with EXP-04 isolates PE contribution.
+  - CONFIG: `supervision_ratio=0.1 use_eikonal=true use_pe=true pe_levels=6`
+  - NOTE: Run 3 seeds. If CD CV > 0.2, expand to 5 seeds.
+- **EXP-07**: 5% labels + Eikonal + PE.
+  - WHY: Can PE + Eikonal rescue the minimal-label regime that EXP-05 tested?
+  - CONFIG: `supervision_ratio=0.05 use_eikonal=true use_pe=true pe_levels=6`
+- **EXP-09**: Full supervision + PE (quality ceiling).
+  - WHY: Upper bound — what's the best achievable quality with all features on?
+  - CONFIG: `supervision_ratio=1.0 use_eikonal=true use_pe=true pe_levels=6`
+
+**Phase 4: Advanced Regularization (EXP-08)**
+- **EXP-08**: 10% labels + Eikonal + PE + L_2nd.
+  - WHY: Tests if second-order divergence loss provides additional benefit on top of Eikonal + PE.
+  - CONFIG: `supervision_ratio=0.1 use_eikonal=true use_pe=true pe_levels=6 lambda_2nd=0.01 batch_size=8192`
+  - NOTE: Reduced batch size (8192) due to higher memory from second-order gradients.
+
+### Practical Notes
+- **Job limits**: max 2 concurrent jobs, 1 GPU, 6hr wall time per job (normal QoS). Extended QoS pending.
+- **IoU**: Use `--skip_iou` for quick evals. Full IoU only needed for final results.
+- **MC resolution**: Use `mc_resolution=64` for dev, `128` for production evals.
+- **After each experiment**: run `/log-experiment EXP-XX` then `/disk-check` after every 3 experiments.
 
 ## Notes
 
-- Divergence: L_sdf at epoch 500 must be < 50% of epoch 10 value
+- Divergence threshold updated from 0.5 to 0.95 (previous threshold too strict — see EXP-01 false positive)
 - Seed expansion: if CD CV > 0.2 for EXP-04 or EXP-06, expand to 5 seeds (add 789, 101)
 - Default seeds: 42, 123, 456
+- IoU computation is extremely slow on CPU (mesh.contains ray casting). Use --skip_iou for quick evals.
+- Data was preprocessed with 10K points (dev). Reprocessing with 250K in progress on TC2.

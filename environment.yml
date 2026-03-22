@@ -1,4 +1,4 @@
-name: deepsdf
+name: yt3dl
 channels:
   - pytorch
   - nvidia

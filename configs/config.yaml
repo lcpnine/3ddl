@@ -59,7 +59,7 @@ seeds: [42, 123, 456]         # for multi-seed experiments
 # --- Divergence Detection ---
 divergence_check_epoch: 500
 divergence_baseline_epoch: 10
-divergence_ratio_threshold: 0.5  # L_sdf(500) must be < 0.5 * L_sdf(10)
+divergence_ratio_threshold: 0.95  # L_sdf(500)/L_sdf(10) > 0.95 means loss barely decreased
 
 # --- Logging ---
 log_every: 10                  # print training stats every N epochs

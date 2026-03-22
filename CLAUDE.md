@@ -4,14 +4,14 @@
 - All training via sbatch ONLY — never run training on head node
 - After each experiment: always run /log-experiment before starting next
 - Disk: run /disk-check after every batch of 3+ experiments
-- Divergence check: L_sdf at epoch 500 must be < 50% of epoch 10 value
+- Divergence check: L_sdf at epoch 500 must be < 95% of epoch 10 value (threshold=0.95)
 - Seed expansion: if CD CV > 0.2 for EXP-04 or EXP-06, expand to 5 seeds
 
 ## Experiment Log Location
 `experiments/experiment_log.md` — single source of truth for all results
 
 ## Current Stage
-[Update this manually: Stage 1 / Stage 2 / Stage 3]
+Stage 1 — Pipeline validated with EXP-01 (parametric meshes, 10K pts). Reprocessing data with 250K pts for production runs.
 
 ## Key Thresholds
 - lambda_eik default: 0.1

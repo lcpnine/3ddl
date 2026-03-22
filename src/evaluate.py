@@ -247,6 +247,7 @@ def evaluate_experiment(
     data_dir: str,
     output_path: str = None,
     voxel_resolutions: list = None,
+    skip_iou: bool = False,
 ):
     """Full evaluation pipeline for one experiment run.
 
@@ -335,18 +336,20 @@ def evaluate_experiment(
         result["chamfer_distance"] = cd
 
         # IoU at each resolution
-        for res in voxel_resolutions:
-            iou = compute_iou(pred_mesh, gt_mesh, resolution=res)
-            result[f"iou_{res}"] = iou
+        if not skip_iou:
+            for res in voxel_resolutions:
+                iou = compute_iou(pred_mesh, gt_mesh, resolution=res)
+                result[f"iou_{res}"] = iou
 
         # Normal Consistency
         nc = normal_consistency(pred_mesh, gt_mesh, n_points=n_eval_points)
         result["normal_consistency"] = nc
 
         elapsed = time.time() - t0
-        print(f"CD={cd:.6f}  NC={nc:.4f}  "
-              + "  ".join(f"IoU@{r}={result[f'iou_{r}']:.4f}" for r in voxel_resolutions)
-              + f"  [{elapsed:.1f}s]")
+        iou_str = ""
+        if not skip_iou:
+            iou_str = "  " + "  ".join(f"IoU@{r}={result[f'iou_{r}']:.4f}" for r in voxel_resolutions)
+        print(f"CD={cd:.6f}  NC={nc:.4f}{iou_str}  [{elapsed:.1f}s]")
 
         # Save reconstructed mesh
         recon_dir = os.path.join(exp_dir, "reconstructions")
@@ -414,6 +417,8 @@ def main():
                         help="Output JSON path (default: exp_dir/results.json)")
     parser.add_argument("--voxel_res", type=int, nargs="+", default=[128, 256],
                         help="IoU voxel resolutions")
+    parser.add_argument("--skip_iou", action="store_true",
+                        help="Skip IoU computation (slow on CPU)")
     args = parser.parse_args()
 
     evaluate_experiment(
@@ -421,6 +426,7 @@ def main():
         data_dir=args.data_dir,
         output_path=args.output,
         voxel_resolutions=args.voxel_res,
+        skip_iou=args.skip_iou,
     )
 
 

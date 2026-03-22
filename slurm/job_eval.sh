@@ -15,7 +15,7 @@
 #SBATCH --mem=20G
 #SBATCH --cpus-per-task=8
 #SBATCH --time=02:00:00
-#SBATCH --job-name=deepsdf_eval
+#SBATCH --job-name=yt3dl_eval
 #SBATCH --output=/home/msai/yutaek001/3ddl/logs/output_%x_%j.out
 #SBATCH --error=/home/msai/yutaek001/3ddl/logs/error_%x_%j.err
 
@@ -43,12 +43,16 @@ echo "============================================"
 # --- Run Evaluation ---
 cd $HOME/3ddl
 export PYTHONPATH=src:$PYTHONPATH
+export PYTHONUNBUFFERED=1
+
+SKIP_IOU="${SKIP_IOU:-}"
 
 python src/evaluate.py \
     --exp_dir "$EXP_DIR" \
     --data_dir "$DATA_DIR" \
     --output "$EXP_DIR/results.json" \
-    --voxel_res $VOXEL_RES
+    --voxel_res $VOXEL_RES \
+    ${SKIP_IOU:+--skip_iou}
 
 EXIT_CODE=$?
 echo "============================================"

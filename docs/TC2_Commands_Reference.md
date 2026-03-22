@@ -236,7 +236,7 @@ conda env create -f environment.yml
 ```bash
 module load anaconda
 eval "$(conda shell.bash hook)"
-conda activate deepsdf
+conda activate yt3dl
 ```
 
 ### Install additional packages
@@ -247,7 +247,7 @@ pip install <package>                     # only if not in conda
 
 ### Check environment size
 ```bash
-ssh tc2 "du -sh ~/.conda/envs/deepsdf/"
+ssh tc2 "du -sh ~/.conda/envs/yt3dl/"
 ```
 
 ---
