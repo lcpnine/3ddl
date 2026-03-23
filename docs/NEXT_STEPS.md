@@ -1,38 +1,39 @@
 # Next Steps — Semi-Supervised DeepSDF Project
 
-**Status as of 2026-03-23**: Pipeline validated with EXP-01 on parametric meshes (10K points). Reprocessing with 250K points in progress on TC2 (SLURM job 14848).
+**Status as of 2026-03-23**: Pipeline validated with EXP-01 on parametric meshes (10K points). ShapeNet access granted. Next: watertight scan, ShapeNet preprocessing, and proper baseline run.
 
 ---
 
 ## Immediate Actions (before running more experiments)
 
-### 1. Wait for 250K data preprocessing to complete
+### 1. Watertight mesh scan on ShapeNet categories
+Run `trimesh.is_watertight` on target categories (chair `04256520`, airplane `02691156`, table `04379243`). Log counts to determine usable meshes per category. Target: 100 shapes/category (60 train / 20 val / 20 test).
+
+### 2. Preprocess ShapeNet data (250K points)
 ```bash
-ssh tc2 "sacct -j 14848 --format=State,Elapsed | tail -1"
-ssh tc2 "tail -5 ~/3ddl/logs/output_preprocess_14848.out"
+python scripts/preprocess.py --mesh_dir /path/to/ShapeNetCore/<category_id> --output_dir data/processed --n_sup 250000 --n_unsup 250000
 ```
-Verify completion:
+Upload processed data to TC2:
 ```bash
-ssh tc2 "ls -lh ~/3ddl/data/processed/ratio_1p00/ | head -5"
-# Files should be ~4MB+ each (vs. ~200KB with 10K points)
+scp -r data/processed/ tc2:~/3ddl/data/processed/
 ```
 
-### 2. Re-upload updated scripts to TC2
+### 3. Re-upload updated scripts to TC2
 Several local files were updated (env names, PYTHONPATH, etc.) after the first upload:
 ```bash
 scp -r src/ scripts/ configs/ slurm/ tc2:~/3ddl/
 ```
 
-### 3. Send QoS extension email
+### 4. Send QoS extension email
 Send the drafted email to `ccdsgpu-tc@ntu.edu.sg` requesting Extended QoS (24hr wall time). Fill in your name and student ID. Reference Job ID 14823 as evidence.
 
-### 4. Re-run EXP-01 with 250K data (proper baseline)
+### 5. Re-run EXP-01 with ShapeNet data (proper baseline)
 ```bash
 ssh tc2 "cd ~/3ddl && ./slurm/submit.sh EXP-01 42"
 ```
-This establishes the true baseline with production-quality data. Compare against the 10K results:
-- 10K data: CD=0.064, NC=0.705
-- 250K data: expected improvement (better surface coverage)
+This establishes the true baseline with production-quality ShapeNet data. Compare against the parametric mesh results:
+- Parametric (10K pts): CD=0.064, NC=0.705
+- ShapeNet (250K pts): expected significant improvement (real geometry + better surface coverage)
 
 ---
 
@@ -96,7 +97,7 @@ Run experiments in this order. Each experiment needs 3 seeds (42, 123, 456) for 
 
 | Issue | Workaround |
 |-------|-----------|
-| Thingi10K API down | Using parametric meshes; swap to ShapeNet when available |
+| ~~Thingi10K API down~~ | Resolved: ShapeNet access granted (2026-03-23). Run watertight scan + preprocess ShapeNet data. |
 | IoU extremely slow on CPU | Use `--skip_iou` flag or `SKIP_IOU=1` env var; compute IoU only for final results |
 | MC resolution 256 slow on CPU | Use `mc_resolution: 64` for dev, `128` for production |
 | Python output buffered in SLURM | Fixed: `PYTHONUNBUFFERED=1` in all job scripts |

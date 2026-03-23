@@ -180,9 +180,9 @@ ShapeNet contains many non-manifold and self-intersecting meshes. The mesh-to-sd
 **Fallback SDF sampling (if mesh-to-sdf fails on repaired meshes):**
 Use `trimesh.sample.sample_surface()` to get surface points + normals, then compute near-surface SDF using multi-scale offsets (see Key Parameters below). This avoids mesh-to-sdf's strict watertight requirement.
 
-### Data Fallback Strategy (ShapeNet Pending)
+### Data Source: ShapeNet
 
-While awaiting ShapeNet approval, use Thingi10K meshes for code development and pipeline validation. Thingi10K is publicly available and contains diverse 3D meshes suitable for SDF sampling. The pipeline should be designed so that swapping the data source requires only changing the input mesh directory path. Once ShapeNet is approved, re-run preprocessing on ShapeNet meshes and proceed with experiments. All code development and debugging (model, loss, training loop, evaluation) can be completed on Thingi10K.
+ShapeNet access granted (2026-03-23). Pipeline was validated on parametric meshes; all production experiments use ShapeNet meshes. The preprocessing pipeline (`scripts/preprocess.py`) requires only changing `--mesh_dir` to point at ShapeNet category directories. Before preprocessing, run the watertight mesh scan (Step 0 above) to determine usable mesh counts per category.
 
 ### Pipeline
 

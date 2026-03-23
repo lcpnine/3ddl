@@ -11,7 +11,7 @@
 `experiments/experiment_log.md` — single source of truth for all results
 
 ## Current Stage
-Stage 1 — Pipeline validated with EXP-01 (parametric meshes, 10K pts). Reprocessing data with 250K pts for production runs.
+Stage 1 — Pipeline validated with EXP-01 (parametric meshes, 10K pts). ShapeNet access granted. Next: watertight mesh scan on target categories, then preprocess ShapeNet data (250K pts) and re-run EXP-01 as proper baseline.
 
 ## Key Thresholds
 - lambda_eik default: 0.1

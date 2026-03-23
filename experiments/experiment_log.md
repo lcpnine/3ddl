@@ -39,9 +39,9 @@ Single source of truth for all experiment results.
 
 ## Next Steps (as of 2026-03-23)
 
-### Prerequisite: Data Quality Upgrade
-EXP-01 used 10K points per shape (dev mode). All subsequent experiments should use 250K points (production).
-Reprocessing is in progress on TC2. Once done, re-run EXP-01 with 250K data to establish a proper baseline.
+### Prerequisite: Data Source Upgrade
+EXP-01 used parametric meshes with 10K points (pipeline validation only). All production experiments use **ShapeNet meshes** with 250K points.
+Steps: (1) watertight mesh scan on target categories, (2) preprocess ShapeNet data with 250K pts, (3) re-run EXP-01 as proper baseline.
 
 ### Experiment Execution Order & Rationale
 
