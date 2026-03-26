@@ -277,6 +277,9 @@ def train(config: dict):
         # Current Eikonal weight with warmup
         eik_weight = compute_eikonal_weight(epoch, warmup_epochs, lambda_eik) if use_eikonal else 0.0
 
+        # Accumulate gradients across all shapes, step once per epoch
+        optimizer.zero_grad()
+
         # Iterate over all training shapes
         for shape_idx in range(n_train):
             shape_data = train_dataset[shape_idx]
@@ -327,30 +330,28 @@ def train(config: dict):
             # L_z (regularize the latent code used in this batch)
             loss_z = latent_reg_loss(z)
 
-            # Total loss
+            # Total loss (divided by n_train for gradient averaging)
             loss_total = loss_sdf + eik_weight * loss_eik + lambda_z * loss_z
             if use_2nd:
                 loss_total = loss_total + lambda_2nd * loss_2nd
 
-            # Backward
-            optimizer.zero_grad()
-            loss_total.backward()
+            # Backward — accumulate gradients (divided by n_train for averaging)
+            (loss_total / n_train).backward()
 
-            # Gradient clipping
-            torch.nn.utils.clip_grad_norm_(
-                list(model.parameters()) + list(latent_codes.parameters()),
-                max_norm=grad_clip,
-            )
-
-            optimizer.step()
-
-            # Accumulate losses
+            # Accumulate losses (unscaled for logging)
             epoch_losses["L_total"] += loss_total.item()
             epoch_losses["L_sdf"] += loss_sdf.item()
             epoch_losses["L_eik"] += loss_eik.item()
             epoch_losses["L_z"] += loss_z.item()
             epoch_losses["L_2nd"] += loss_2nd.item()
             epoch_grad_norms.append(mean_grad_norm)
+
+        # Gradient clipping and optimizer step (once per epoch)
+        torch.nn.utils.clip_grad_norm_(
+            list(model.parameters()) + list(latent_codes.parameters()),
+            max_norm=grad_clip,
+        )
+        optimizer.step()
 
         # Average over shapes
         for key in epoch_losses:

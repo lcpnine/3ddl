@@ -120,8 +120,8 @@ class DeepSDF(nn.Module):
         """
         for i, layer in enumerate(self.layers):
             if i == self.num_layers - 1:
-                # Last layer: small weights, positive bias -> initial SDF ~ sphere
-                nn.init.normal_(layer.weight, mean=0.0, std=0.0001)
+                # Last layer: moderate weights, positive bias -> initial SDF ~ sphere
+                nn.init.normal_(layer.weight, mean=0.0, std=1.0 / math.sqrt(self.hidden_dim))
                 nn.init.constant_(layer.bias, 0.1)
             else:
                 # Xavier init for interior layers

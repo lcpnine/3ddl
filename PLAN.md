@@ -3,7 +3,16 @@
 **Created**: 2026-03-26
 **QoS Deadline**: 2026-04-02 (q_m1x16 expires)
 **Epochs**: 3000 per experiment (~5.7hr/job at 6.9s/epoch)
-**Concurrency**: 2 jobs max on TC2
+**Concurrency**: 2 jobs max on TC2 (includes pending jobs — submit.sh uses both slots per experiment)
+
+**Strategy**: Submit training jobs directly via sbatch (not submit.sh) to run 2 trains concurrently. Run evals separately after training completes. Train-only command:
+```
+OVERRIDES="exp_name=EXP-XX seed=42 <overrides>" sbatch --job-name=EXP-XX_s42_train slurm/job_train.sh
+```
+Eval command (after training):
+```
+EXP_DIR=experiments/EXP-XX/seed42 sbatch --job-name=EXP-XX_s42_eval slurm/job_eval.sh
+```
 
 ---
 
@@ -14,16 +23,34 @@
 - [x] **0.3** Update `configs/config.yaml`: data_dir → `data/processed_shapenet`, gt_mesh_dir → `data/processed_shapenet/gt_meshes`, epochs → `3000`
 - [x] **0.4** Update `slurm/submit.sh`: pass `DATA_DIR="data/processed_shapenet"` to eval job
 - [x] **0.5** Update `src/evaluate.py`: argparse default data_dir → `data/processed_shapenet`
-- [ ] **0.6** Commit changes locally
-- [ ] **0.7** Sync updated files to TC2 via scp
-- [ ] **0.8** Verify on TC2: grep QoS, grep data paths, check data exists
-- [ ] **0.9** Delete QoS demo artifacts on TC2 (~1.6GB): `processed_qos_demo/`, `raw_qos_demo/`, `QOS-DEMO/`, `QOS-DEMO-SHAPENET/`
+- [x] **0.6** Commit changes locally (5692e88)
+- [x] **0.7** Sync updated files to TC2 via scp
+- [x] **0.8** Verify on TC2: QoS=q_m1x16, data_dir=processed_shapenet, epochs=3000, gt_meshes exist
+- [x] **0.9** Delete QoS demo artifacts on TC2 (~1.6GB reclaimed)
 
-## Step 1: Phase 1 — Baselines (2 jobs concurrent)
+## Step 0.10: Fix Model Collapse (CRITICAL)
 
-- [ ] **1.1** Submit EXP-01 seed 42: `./slurm/submit.sh EXP-01 42 "supervision_ratio=1.0 use_eikonal=false use_pe=false"`
-- [ ] **1.2** Submit EXP-02 seed 42: `./slurm/submit.sh EXP-02 42 "supervision_ratio=1.0 use_eikonal=true use_pe=false"`
-- [ ] **1.3** Monitor: check logs after ~30 min for first 10 epochs, verify data loaded correctly
+**Diagnosis**: Both EXP-01 and EXP-02 collapsed to constant output (-0.00008 everywhere). Two root causes:
+
+1. **`src/model.py:124`** — Last layer weight init `std=0.0001` too small → output ignores input, gradients starved
+   - Fix: change to `std=1/sqrt(hidden_dim)` which is ~0.044 for hidden_dim=512
+
+2. **`src/train.py:336-345`** — optimizer.zero_grad()/step() inside per-shape loop → 225 conflicting weight updates per epoch
+   - Fix: accumulate gradients across all shapes, step once per epoch
+
+- [ ] **0.10a** Fix model.py last layer init: `std=0.0001` → `std=1.0/math.sqrt(hidden_dim)`
+- [ ] **0.10b** Fix train.py: move zero_grad before shape loop, move step/clip after shape loop, average losses
+- [ ] **0.10c** Commit, sync to TC2
+- [ ] **0.10d** Cancel EXP-02 if still running, clean experiment dirs, resubmit EXP-01 + EXP-02
+
+## Step 1: Phase 1 — Baselines (1 GPU at a time, QoS limit)
+
+**Note**: QoS allows 1 GPU, 10 CPUs, 2 submitted jobs. Only 1 job runs at a time (train=4CPU+1GPU, eval=8CPU — can't overlap due to CPU limit). Keep 2 jobs queued so they chain automatically.
+**Actual epoch time**: ~2-6s/epoch (varies), 3000ep ≈ 4hr. Eval ≈ 2hr. Total per experiment ≈ 6hr.
+
+- [x] **1.1** Submit EXP-01 seed 42 train (job 15347, running on TC2N01)
+- [x] **1.2** Submit EXP-02 seed 42 train (job 15348, pending — auto-starts after EXP-01)
+- [x] **1.3** Verified: 225 train shapes, L_sdf=0.0325 at ep10, 2.1s/epoch
 - [ ] **1.4** When EXP-01 completes: run `/log-experiment EXP-01`
 - [ ] **1.5** When EXP-02 completes: run `/log-experiment EXP-02`
 
