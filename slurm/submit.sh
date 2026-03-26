@@ -44,6 +44,7 @@ echo "Training job submitted: $TRAIN_JOB"
 # Submit evaluation job (chained after training)
 EVAL_JOB=$(
     EXP_DIR="$EXP_DIR" \
+    DATA_DIR="data/processed_shapenet" \
     sbatch --parsable \
         --dependency=afterok:${TRAIN_JOB} \
         --job-name="${EXP_ID}_s${SEED}_eval" \

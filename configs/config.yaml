@@ -3,8 +3,8 @@
 # Override per-experiment via --config_override flag
 
 # --- Data ---
-data_dir: "data/processed"
-gt_mesh_dir: "data/processed/gt_meshes"
+data_dir: "data/processed_shapenet"
+gt_mesh_dir: "data/processed_shapenet/gt_meshes"
 supervision_ratio: 1.0        # 1.0, 0.5, 0.1, 0.05
 num_shapes: -1                 # -1 = use all available shapes
 train_split: 0.75              # fraction of shapes for training
@@ -31,7 +31,7 @@ warmup_epochs: -1              # -1 = auto from supervision_ratio
                                # 100%/50% -> 100, 10% -> 150, 5% -> 200
 
 # --- Training ---
-epochs: 1000
+epochs: 3000
 batch_size: 16384              # points per shape per batch (reduce to 8192 for L_2nd)
 lr: 0.0005                     # 5e-4 (reduce to 1e-4 if diverges)
 lr_scheduler: "step"           # "step" or "cosine"

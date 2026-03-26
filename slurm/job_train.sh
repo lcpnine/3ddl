@@ -8,12 +8,12 @@
 #   EXP_ID=EXP-01 SEED=42 sbatch slurm/job_train.sh
 #===============================================================
 #SBATCH --partition=MGPU-TC2
-#SBATCH --qos=normal
+#SBATCH --qos=q_m1x16
 #SBATCH --nodes=1
 #SBATCH --gres=gpu:1
 #SBATCH --mem=25G
 #SBATCH --cpus-per-task=4
-#SBATCH --time=06:00:00
+#SBATCH --time=16:00:00
 #SBATCH --job-name=yt3dl_train
 #SBATCH --output=/home/msai/yutaek001/3ddl/logs/output_%x_%j.out
 #SBATCH --error=/home/msai/yutaek001/3ddl/logs/error_%x_%j.err

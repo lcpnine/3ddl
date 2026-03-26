@@ -411,7 +411,7 @@ def main():
     parser = argparse.ArgumentParser(description="Evaluate DeepSDF experiment")
     parser.add_argument("--exp_dir", type=str, required=True,
                         help="Experiment directory (e.g., experiments/EXP-01/seed42)")
-    parser.add_argument("--data_dir", type=str, default="data/processed",
+    parser.add_argument("--data_dir", type=str, default="data/processed_shapenet",
                         help="Preprocessed data directory")
     parser.add_argument("--output", type=str, default=None,
                         help="Output JSON path (default: exp_dir/results.json)")

@@ -10,7 +10,7 @@
 #   EXP_DIR=experiments/EXP-01/seed42 sbatch slurm/job_eval.sh
 #===============================================================
 #SBATCH --partition=MGPU-TC2
-#SBATCH --qos=normal
+#SBATCH --qos=q_m1x16
 #SBATCH --nodes=1
 #SBATCH --mem=20G
 #SBATCH --cpus-per-task=8
@@ -26,7 +26,7 @@ conda activate yt3dl
 
 # --- Config ---
 EXP_DIR="${EXP_DIR:-experiments/debug/seed42}"
-DATA_DIR="${DATA_DIR:-data/processed}"
+DATA_DIR="${DATA_DIR:-data/processed_shapenet}"
 VOXEL_RES="${VOXEL_RES:-128 256}"
 
 echo "============================================"
