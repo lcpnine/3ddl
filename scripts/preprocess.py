@@ -132,11 +132,13 @@ def sample_unsupervised_points(n_points: int):
     """
     # Rejection sampling for uniform distribution in unit sphere
     points = []
-    while len(points) < n_points:
+    total = 0
+    while total < n_points:
         batch = np.random.uniform(-1, 1, size=(n_points * 2, 3))
         norms = np.linalg.norm(batch, axis=1)
         inside = batch[norms <= 1.0]
         points.append(inside)
+        total += len(inside)
     points = np.concatenate(points, axis=0)[:n_points]
     return points.astype(np.float32)
 
