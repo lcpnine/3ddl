@@ -21,6 +21,7 @@ Single source of truth for all experiment results.
 | ID | Seeds | CD (mean +/- std) | NC (mean +/- std) | IoU@128 | IoU@256 | Status |
 |----|-------|-------------------|--------------------|---------|---------|--------|
 | EXP-01 | 42 | 0.0593 +/- 0.0464 | 0.5522 +/- 0.1057 | skipped | skipped | done (ShapeNet baseline) |
+| EXP-02 | 42 | 0.0543 +/- 0.0416 | 0.5920 +/- 0.1321 | skipped | skipped | done (261/300 shapes, 39 failures) |
 
 ## Detailed Results
 
@@ -33,6 +34,17 @@ Single source of truth for all experiment results.
   - **CD**: mean=0.0593, std=0.0464, min=0.0116, max=0.3321
   - **NC**: mean=0.5522, std=0.1057, min=0.2787, max=0.8538
 - **Note**: Previous parametric mesh EXP-01 (2026-03-22) used 20 shapes/10K pts — archived. This is the production baseline.
+
+### EXP-02 — Full supervision + Eikonal (seed 42)
+- **Date**: 2026-03-27
+- **Config**: ratio=1.0, eikonal=on, PE=off, epochs=3000, batch=16384
+- **Data**: 300 ShapeNet shapes (airplane/chair/table), 250K sup/unsup points each
+- **Training**: ~4hr on TC2 (A40 GPU), L_sdf=0.0350 final, L_eik=0.416, L_z=0.00212
+- **Eval** (MC res=128, IoU skipped, 261/300 shapes, 39 failures):
+  - **CD**: mean=0.0543, std=0.0416, min=0.0129, max=0.2212
+  - **NC**: mean=0.5920, std=0.1321, min=0.2422, max=0.9003
+- **vs EXP-01**: CD improved 8.4% (0.0593→0.0543), NC improved 7.2% (0.5522→0.5920). Eikonal helps even at full supervision.
+- **Note**: 39 shape failures (13%) — divergence flag triggered but aggregate metrics are reasonable. Max CD reduced from 0.3321→0.2212.
 
 ## Next Steps (as of 2026-03-23)
 

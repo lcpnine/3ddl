@@ -52,7 +52,7 @@ EXP_DIR=experiments/EXP-XX/seed42 sbatch --job-name=EXP-XX_s42_eval slurm/job_ev
 - [x] **1.2** Submit EXP-02 seed 42 train (job 15348, pending — auto-starts after EXP-01)
 - [x] **1.3** Verified: 225 train shapes, L_sdf=0.0325 at ep10, 2.1s/epoch
 - [x] **1.4** EXP-01 done: CD=0.0593, NC=0.5522 (300/300 shapes, 0 failures). Logged.
-- [ ] **1.5** When EXP-02 completes: run `/log-experiment EXP-02`
+- [x] **1.5** EXP-02 done: CD=0.0543, NC=0.5920 (261/300 shapes, 39 failures). Eikonal improves CD 8.4%, NC 7.2% vs baseline.
 
 ## Step 2: Phase 2 — Label Reduction (2 at a time)
 
