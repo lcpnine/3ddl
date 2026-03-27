@@ -248,6 +248,7 @@ def evaluate_experiment(
     output_path: str = None,
     voxel_resolutions: list = None,
     skip_iou: bool = False,
+    mc_resolution_override: int = None,
 ):
     """Full evaluation pipeline for one experiment run.
 
@@ -269,7 +270,7 @@ def evaluate_experiment(
     model, latent_codes, config = load_model_and_config(exp_dir, device)
 
     n_eval_points = config.get("n_eval_points", 30000)
-    mc_resolution = config.get("mc_resolution", 256)
+    mc_resolution = mc_resolution_override or config.get("mc_resolution", 256)
 
     # Check divergence
     diverged = check_divergence(exp_dir, config)
@@ -419,6 +420,8 @@ def main():
                         help="IoU voxel resolutions")
     parser.add_argument("--skip_iou", action="store_true",
                         help="Skip IoU computation (slow on CPU)")
+    parser.add_argument("--mc_resolution", type=int, default=None,
+                        help="Override marching cubes resolution (default: from config)")
     args = parser.parse_args()
 
     evaluate_experiment(
@@ -427,6 +430,7 @@ def main():
         output_path=args.output,
         voxel_resolutions=args.voxel_res,
         skip_iou=args.skip_iou,
+        mc_resolution_override=args.mc_resolution,
     )
 
 

@@ -38,10 +38,10 @@ EXP_DIR=experiments/EXP-XX/seed42 sbatch --job-name=EXP-XX_s42_eval slurm/job_ev
 2. **`src/train.py:336-345`** — optimizer.zero_grad()/step() inside per-shape loop → 225 conflicting weight updates per epoch
    - Fix: accumulate gradients across all shapes, step once per epoch
 
-- [ ] **0.10a** Fix model.py last layer init: `std=0.0001` → `std=1.0/math.sqrt(hidden_dim)`
-- [ ] **0.10b** Fix train.py: move zero_grad before shape loop, move step/clip after shape loop, average losses
-- [ ] **0.10c** Commit, sync to TC2
-- [ ] **0.10d** Cancel EXP-02 if still running, clean experiment dirs, resubmit EXP-01 + EXP-02
+- [x] **0.10a** Fix model.py last layer init: `std=0.0001` → `std=1.0/math.sqrt(hidden_dim)`
+- [x] **0.10b** Fix train.py: move zero_grad before shape loop, move step/clip after shape loop, average losses
+- [x] **0.10c** Commit (cb2ee58), sync to TC2
+- [x] **0.10d** Cleaned experiment dirs, resubmitted EXP-01 (15491) + EXP-02 (15492). Early results: L_sdf 0.096→0.054 in 2 epochs (model is learning!)
 
 ## Step 1: Phase 1 — Baselines (1 GPU at a time, QoS limit)
 
