@@ -51,7 +51,7 @@ EXP_DIR=experiments/EXP-XX/seed42 sbatch --job-name=EXP-XX_s42_eval slurm/job_ev
 - [x] **1.1** Submit EXP-01 seed 42 train (job 15347, running on TC2N01)
 - [x] **1.2** Submit EXP-02 seed 42 train (job 15348, pending — auto-starts after EXP-01)
 - [x] **1.3** Verified: 225 train shapes, L_sdf=0.0325 at ep10, 2.1s/epoch
-- [ ] **1.4** When EXP-01 completes: run `/log-experiment EXP-01`
+- [x] **1.4** EXP-01 done: CD=0.0593, NC=0.5522 (300/300 shapes, 0 failures). Logged.
 - [ ] **1.5** When EXP-02 completes: run `/log-experiment EXP-02`
 
 ## Step 2: Phase 2 — Label Reduction (2 at a time)

@@ -20,22 +20,19 @@ Single source of truth for all experiment results.
 
 | ID | Seeds | CD (mean +/- std) | NC (mean +/- std) | IoU@128 | IoU@256 | Status |
 |----|-------|-------------------|--------------------|---------|---------|--------|
-| EXP-01 | 42 | 0.0641 +/- 0.0666 | 0.7046 +/- 0.2011 | skipped | skipped | done (baseline) |
+| EXP-01 | 42 | 0.0593 +/- 0.0464 | 0.5522 +/- 0.1057 | skipped | skipped | done (ShapeNet baseline) |
 
 ## Detailed Results
 
-### EXP-01 — Fully-supervised baseline (seed 42)
-- **Date**: 2026-03-22
-- **Config**: ratio=1.0, eikonal=off (warmup N/A), PE=off, epochs=1000, batch=16384
-- **Data**: 20 parametric meshes, 10K sup/unsup points each (reduced for pipeline validation)
-- **Training**: 8 min 14 sec on TC2 (A40 GPU), 0.5s/epoch
-- **Loss**: L_sdf converged from 0.0377 (ep10) → 0.0326 (ep500) → 0.0326 (ep1000)
-- **Best val L_sdf**: 0.0322
-- **Eval** (MC res=64, IoU skipped):
-  - Best: sphere CD=0.0014 NC=0.993, ico_hi CD=0.005 NC=0.993
-  - Worst: thin_cyl CD=0.280 NC=0.436, wide_box CD=0.172 NC=0.406
-  - Mean CD=0.0641, Mean NC=0.7046
-- **Note**: Divergence check triggered (false positive) — L_sdf ratio 0.86 > 0.5 threshold, but loss DID decrease. Threshold is too strict for this regime.
+### EXP-01 — Fully-supervised baseline (seed 42) [ShapeNet re-run]
+- **Date**: 2026-03-27
+- **Config**: ratio=1.0, eikonal=off, PE=off, epochs=3000, batch=16384
+- **Data**: 300 ShapeNet shapes (airplane/chair/table), 250K sup/unsup points each
+- **Training**: ~4hr on TC2 (A40 GPU), L_sdf=0.0319 final, L_z=0.00024
+- **Eval** (MC res=128, IoU skipped, 300/300 shapes, 0 failures):
+  - **CD**: mean=0.0593, std=0.0464, min=0.0116, max=0.3321
+  - **NC**: mean=0.5522, std=0.1057, min=0.2787, max=0.8538
+- **Note**: Previous parametric mesh EXP-01 (2026-03-22) used 20 shapes/10K pts — archived. This is the production baseline.
 
 ## Next Steps (as of 2026-03-23)
 
