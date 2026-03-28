@@ -59,7 +59,7 @@ EXP_DIR=experiments/EXP-XX/seed42 sbatch --job-name=EXP-XX_s42_eval slurm/job_ev
 - [x] **2.1** Submit EXP-03 seed 42 (job 15572, completed on TC2N01)
 - [x] **2.2** Submit EXP-04 seed 42 (job 15573, training complete; eval job 15662 submitted)
 - [x] **2.3** EXP-03 done: CD=0.0534, NC=0.5924 (259/300 shapes). 50% labels matches full supervision with Eikonal.
-- [ ] **2.4** When EXP-04 completes: run `/log-experiment EXP-04`
+- [x] **2.4** EXP-04 done: CD=0.0609, NC=0.5805 (263/300 shapes). 10% labels ≈ baseline CD, retains NC gain from Eikonal.
 - [ ] **2.5** Submit EXP-05 seed 42: `./slurm/submit.sh EXP-05 42 "supervision_ratio=0.05 use_eikonal=true use_pe=false"`
 - [ ] **2.6** When EXP-05 completes: run `/log-experiment EXP-05`
 
