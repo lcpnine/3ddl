@@ -22,6 +22,7 @@ Single source of truth for all experiment results.
 |----|-------|-------------------|--------------------|---------|---------|--------|
 | EXP-01 | 42 | 0.0593 +/- 0.0464 | 0.5522 +/- 0.1057 | skipped | skipped | done (ShapeNet baseline) |
 | EXP-02 | 42 | 0.0543 +/- 0.0416 | 0.5920 +/- 0.1321 | skipped | skipped | done (261/300 shapes, 39 failures) |
+| EXP-03 | 42 | 0.0534 +/- 0.0400 | 0.5924 +/- 0.1334 | skipped | skipped | done (259/300 shapes, 41 failures) |
 
 ## Detailed Results
 
@@ -45,6 +46,18 @@ Single source of truth for all experiment results.
   - **NC**: mean=0.5920, std=0.1321, min=0.2422, max=0.9003
 - **vs EXP-01**: CD improved 8.4% (0.0593→0.0543), NC improved 7.2% (0.5522→0.5920). Eikonal helps even at full supervision.
 - **Note**: 39 shape failures (13%) — divergence flag triggered but aggregate metrics are reasonable. Max CD reduced from 0.3321→0.2212.
+
+### EXP-03 — 50% labels + Eikonal (seed 42)
+- **Date**: 2026-03-28
+- **Config**: ratio=0.5, eikonal=on, PE=off, epochs=3000, batch=16384
+- **Data**: 300 ShapeNet shapes (airplane/chair/table), 250K sup/unsup points each
+- **Training**: ~5.7hr on TC2 (A40 GPU), L_sdf=0.0603 final, L_eik=0.172, L_z=0.00203
+- **Eval** (MC res=128, IoU skipped, 259/300 shapes, 41 failures):
+  - **CD**: mean=0.0534, std=0.0400, min=0.0131, max=0.2326
+  - **NC**: mean=0.5924, std=0.1334, min=0.2194, max=0.9003
+- **vs EXP-02** (100% labels): CD improved 1.7% (0.0543→0.0534), NC comparable (0.5920→0.5924). Halving labels has virtually no effect with Eikonal.
+- **vs EXP-01** (baseline): CD improved 9.9% (0.0593→0.0534), NC improved 7.3% (0.5522→0.5924).
+- **Note**: Divergence flag triggered, 41 failures (13.7%) — similar failure rate to EXP-02. Metrics are strong; 50% labels + Eikonal matches full supervision.
 
 ## Next Steps (as of 2026-03-23)
 
