@@ -12,6 +12,7 @@ Usage:
 """
 
 import argparse
+import gc
 import json
 import os
 import sys
@@ -332,32 +333,38 @@ def evaluate_experiment(
         # Compute metrics
         result = {"shape": shape_name, "status": "ok"}
 
-        # Chamfer Distance
-        cd = chamfer_distance(pred_mesh, gt_mesh, n_points=n_eval_points)
-        result["chamfer_distance"] = cd
+        try:
+            # Chamfer Distance
+            cd = chamfer_distance(pred_mesh, gt_mesh, n_points=n_eval_points)
+            result["chamfer_distance"] = cd
 
-        # IoU at each resolution
-        if not skip_iou:
-            for res in voxel_resolutions:
-                iou = compute_iou(pred_mesh, gt_mesh, resolution=res)
-                result[f"iou_{res}"] = iou
+            # IoU at each resolution
+            if not skip_iou:
+                for res in voxel_resolutions:
+                    iou = compute_iou(pred_mesh, gt_mesh, resolution=res)
+                    result[f"iou_{res}"] = iou
 
-        # Normal Consistency
-        nc = normal_consistency(pred_mesh, gt_mesh, n_points=n_eval_points)
-        result["normal_consistency"] = nc
+            # Normal Consistency
+            nc = normal_consistency(pred_mesh, gt_mesh, n_points=n_eval_points)
+            result["normal_consistency"] = nc
 
-        elapsed = time.time() - t0
-        iou_str = ""
-        if not skip_iou:
-            iou_str = "  " + "  ".join(f"IoU@{r}={result[f'iou_{r}']:.4f}" for r in voxel_resolutions)
-        print(f"CD={cd:.6f}  NC={nc:.4f}{iou_str}  [{elapsed:.1f}s]")
+            elapsed = time.time() - t0
+            iou_str = ""
+            if not skip_iou:
+                iou_str = "  " + "  ".join(f"IoU@{r}={result[f'iou_{r}']:.4f}" for r in voxel_resolutions)
+            print(f"CD={cd:.6f}  NC={nc:.4f}{iou_str}  [{elapsed:.1f}s]")
 
-        # Save reconstructed mesh
-        recon_dir = os.path.join(exp_dir, "reconstructions")
-        os.makedirs(recon_dir, exist_ok=True)
-        pred_mesh.export(os.path.join(recon_dir, f"{shape_name}.obj"))
+            # Save reconstructed mesh
+            recon_dir = os.path.join(exp_dir, "reconstructions")
+            os.makedirs(recon_dir, exist_ok=True)
+            pred_mesh.export(os.path.join(recon_dir, f"{shape_name}.obj"))
+        except Exception as e:
+            print(f"FAILED (metrics: {e})")
+            result["status"] = "failed"
 
         per_shape_results.append(result)
+        del gt_mesh, pred_mesh
+        gc.collect()
 
     # Aggregate statistics (exclude failed shapes)
     ok_results = [r for r in per_shape_results if r.get("status") == "ok"]

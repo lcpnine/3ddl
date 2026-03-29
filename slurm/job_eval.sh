@@ -12,7 +12,7 @@
 #SBATCH --partition=MGPU-TC2
 #SBATCH --qos=q_m1x16
 #SBATCH --nodes=1
-#SBATCH --mem=20G
+#SBATCH --mem=30G
 #SBATCH --cpus-per-task=8
 #SBATCH --time=04:00:00
 #SBATCH --job-name=yt3dl_eval
