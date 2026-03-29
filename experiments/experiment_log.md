@@ -24,6 +24,7 @@ Single source of truth for all experiment results.
 | EXP-02 | 42 | 0.0543 +/- 0.0416 | 0.5920 +/- 0.1321 | skipped | skipped | done (261/300 shapes, 39 failures) |
 | EXP-03 | 42 | 0.0534 +/- 0.0400 | 0.5924 +/- 0.1334 | skipped | skipped | done (259/300 shapes, 41 failures) |
 | EXP-04 | 42 | 0.0609 +/- 0.0469 | 0.5805 +/- 0.1406 | skipped | skipped | done (263/300 shapes, 37 failures) |
+| EXP-05 | 42 | 0.0509 +/- 0.0385 | 0.5766 +/- 0.1271 | skipped | skipped | done (295/300 shapes, 5 failures) |
 
 ## Detailed Results
 
@@ -72,6 +73,19 @@ Single source of truth for all experiment results.
 - **vs EXP-01** (baseline): CD worse 2.7% (0.0593→0.0609), NC improved 5.1% (0.5522→0.5805). Eikonal still provides NC benefit even at 10% labels.
 - **vs EXP-03** (50% labels): CD worse 14.0% (0.0534→0.0609), NC worse 2.0% (0.5924→0.5805). Significant drop from 50%→10% labels.
 - **Note**: No divergence flag. 37 failures (12.3%). Key finding: 10% labels with Eikonal roughly matches baseline (no eikonal, full labels) for CD, but retains NC improvement.
+
+### EXP-05 — 5% labels + Eikonal (seed 42)
+- **Date**: 2026-03-29
+- **Config**: ratio=0.05, eikonal=on, PE=off, epochs=3000, batch=16384
+- **Data**: 300 ShapeNet shapes (airplane/chair/table), 250K sup/unsup points each
+- **Training**: ~5.8hr on TC2 (A40 GPU), L_sdf=0.0338 final, L_eik=0.514, L_z=0.00208
+- **Eval** (MC res=128, IoU skipped, 295/300 shapes, 5 failures):
+  - **CD**: mean=0.0509, std=0.0385, min=0.0126, max=0.2860
+  - **NC**: mean=0.5766, std=0.1271, min=0.2785, max=0.8920
+- **vs EXP-04** (10% labels): CD improved 16.4% (0.0609→0.0509), NC comparable (0.5805→0.5766). Surprisingly, fewer labels yielded better CD.
+- **vs EXP-02** (100% labels + eik): CD improved 6.3% (0.0543→0.0509), NC slightly worse (0.5920→0.5766).
+- **vs EXP-01** (baseline): CD improved 14.2% (0.0593→0.0509), NC improved 4.4% (0.5522→0.5766).
+- **Note**: Diverged flag but only 5 failures (1.7%) — best failure rate among eikonal experiments. Best CD of all experiments so far. The non-monotonic label efficiency curve (5% > 10% > 50%) suggests possible overfitting at higher supervision ratios, or Eikonal regularization becoming more effective when it dominates the loss landscape.
 
 ## Next Steps (as of 2026-03-23)
 

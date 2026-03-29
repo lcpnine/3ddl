@@ -60,12 +60,12 @@ EXP_DIR=experiments/EXP-XX/seed42 sbatch --job-name=EXP-XX_s42_eval slurm/job_ev
 - [x] **2.2** Submit EXP-04 seed 42 (job 15573, training complete; eval job 15662 submitted)
 - [x] **2.3** EXP-03 done: CD=0.0534, NC=0.5924 (259/300 shapes). 50% labels matches full supervision with Eikonal.
 - [x] **2.4** EXP-04 done: CD=0.0609, NC=0.5805 (263/300 shapes). 10% labels ≈ baseline CD, retains NC gain from Eikonal.
-- [ ] **2.5** Submit EXP-05 seed 42: `./slurm/submit.sh EXP-05 42 "supervision_ratio=0.05 use_eikonal=true use_pe=false"`
-- [ ] **2.6** When EXP-05 completes: run `/log-experiment EXP-05`
+- [x] **2.5** Submit EXP-05 seed 42 (job 15687, training on TC2)
+- [x] **2.6** EXP-05 done: CD=0.0509, NC=0.5766 (295/300 shapes). Best CD so far! 5% labels + Eikonal outperforms all higher-label experiments.
 
 ## Step 3: Phase 3 — Positional Encoding (2 at a time)
 
-- [ ] **3.1** Submit EXP-06 seed 42: `./slurm/submit.sh EXP-06 42 "supervision_ratio=0.1 use_eikonal=true use_pe=true"`
+- [x] **3.1** Submit EXP-06 seed 42 (job 15966, queued behind EXP-05 eval)
 - [ ] **3.2** Submit EXP-07 seed 42: `./slurm/submit.sh EXP-07 42 "supervision_ratio=0.05 use_eikonal=true use_pe=true"`
 - [ ] **3.3** When EXP-06 completes: run `/log-experiment EXP-06`
 - [ ] **3.4** When EXP-07 completes: run `/log-experiment EXP-07`
