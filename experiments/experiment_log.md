@@ -25,6 +25,7 @@ Single source of truth for all experiment results.
 | EXP-03 | 42 | 0.0534 +/- 0.0400 | 0.5924 +/- 0.1334 | skipped | skipped | done (259/300 shapes, 41 failures) |
 | EXP-04 | 42 | 0.0609 +/- 0.0469 | 0.5805 +/- 0.1406 | skipped | skipped | done (263/300 shapes, 37 failures) |
 | EXP-05 | 42 | 0.0509 +/- 0.0385 | 0.5766 +/- 0.1271 | skipped | skipped | done (295/300 shapes, 5 failures) |
+| EXP-06 | 42 | 0.1515 +/- 0.0445 | 0.5059 +/- 0.0109 | skipped | skipped | done (240/300 shapes, 45 failures, partial — disk quota) |
 
 ## Detailed Results
 
@@ -86,6 +87,18 @@ Single source of truth for all experiment results.
 - **vs EXP-02** (100% labels + eik): CD improved 6.3% (0.0543→0.0509), NC slightly worse (0.5920→0.5766).
 - **vs EXP-01** (baseline): CD improved 14.2% (0.0593→0.0509), NC improved 4.4% (0.5522→0.5766).
 - **Note**: Diverged flag but only 5 failures (1.7%) — best failure rate among eikonal experiments. Best CD of all experiments so far. The non-monotonic label efficiency curve (5% > 10% > 50%) suggests possible overfitting at higher supervision ratios, or Eikonal regularization becoming more effective when it dominates the loss landscape.
+
+### EXP-06 — 10% labels + Eikonal + PE L=6 (seed 42)
+- **Date**: 2026-03-30
+- **Config**: ratio=0.1, eikonal=on, PE=L=6, epochs=3000, batch=16384
+- **Data**: 300 ShapeNet shapes (airplane/chair/table), 250K sup/unsup points each
+- **Training**: ~6hr on TC2 (A40 GPU), L_sdf=0.0333 final, L_eik=0.021, L_z=0.00074
+- **Eval** (MC res=128, IoU skipped, 240/300 shapes, 45 failures — partial due to disk quota):
+  - **CD**: mean=0.1515, std=0.0445, min=0.0522, max=0.2627
+  - **NC**: mean=0.5059, std=0.0109, min=0.4701, max=0.5372
+- **vs EXP-04** (10% labels, no PE): CD 2.5x worse (0.0609→0.1515), NC worse (0.5805→0.5059). PE severely degrades quality at 10% supervision.
+- **vs EXP-01** (baseline): CD 2.6x worse (0.0593→0.1515), NC worse (0.5522→0.5059).
+- **Note**: PE with L=6 creates high-frequency SDF oscillations → marching cubes generates enormous meshes (~250MB/shape vs ~5MB without PE). This filled the 100GB disk quota at shape 195. Metrics computed for 240 shapes before job terminated. The NC std (0.0109) is unusually tight — PE collapses normal diversity. Root cause: training data lives near a unit sphere but eval grid samples full [-1,1]³ cube; PE amplifies extrapolation errors at cube corners unseen during training.
 
 ## Next Steps (as of 2026-03-23)
 

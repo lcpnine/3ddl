@@ -354,10 +354,13 @@ def evaluate_experiment(
                 iou_str = "  " + "  ".join(f"IoU@{r}={result[f'iou_{r}']:.4f}" for r in voxel_resolutions)
             print(f"CD={cd:.6f}  NC={nc:.4f}{iou_str}  [{elapsed:.1f}s]")
 
-            # Save reconstructed mesh
+            # Save reconstructed mesh (decimate if too large to avoid disk blowup)
             recon_dir = os.path.join(exp_dir, "reconstructions")
             os.makedirs(recon_dir, exist_ok=True)
-            pred_mesh.export(os.path.join(recon_dir, f"{shape_name}.obj"))
+            save_mesh = pred_mesh
+            if len(pred_mesh.faces) > 200000:
+                save_mesh = pred_mesh.simplify_quadric_decimation(200000)
+            save_mesh.export(os.path.join(recon_dir, f"{shape_name}.obj"))
         except Exception as e:
             print(f"FAILED (metrics: {e})")
             result["status"] = "failed"

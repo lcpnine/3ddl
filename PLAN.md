@@ -66,8 +66,8 @@ EXP_DIR=experiments/EXP-XX/seed42 sbatch --job-name=EXP-XX_s42_eval slurm/job_ev
 ## Step 3: Phase 3 — Positional Encoding (2 at a time)
 
 - [x] **3.1** Submit EXP-06 seed 42 (job 15966, queued behind EXP-05 eval)
-- [ ] **3.2** Submit EXP-07 seed 42: `./slurm/submit.sh EXP-07 42 "supervision_ratio=0.05 use_eikonal=true use_pe=true"`
-- [ ] **3.3** When EXP-06 completes: run `/log-experiment EXP-06`
+- [x] **3.2** Submit EXP-07 seed 42 (job 16056, queued behind EXP-06 eval)
+- [x] **3.3** EXP-06 done: CD=0.1515, NC=0.5059 (240/300 shapes, partial — disk quota). PE severely degrades quality at 10% supervision.
 - [ ] **3.4** When EXP-07 completes: run `/log-experiment EXP-07`
 - [ ] **3.5** Submit EXP-09 seed 42: `./slurm/submit.sh EXP-09 42 "supervision_ratio=1.0 use_eikonal=true use_pe=true"`
 - [ ] **3.6** When EXP-09 completes: run `/log-experiment EXP-09`
