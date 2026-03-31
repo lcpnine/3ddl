@@ -27,6 +27,7 @@ Single source of truth for all experiment results.
 | EXP-05 | 42 | 0.0509 +/- 0.0385 | 0.5766 +/- 0.1271 | skipped | skipped | done (295/300 shapes, 5 failures) |
 | EXP-06 | 42 | 0.1515 +/- 0.0445 | 0.5059 +/- 0.0109 | skipped | skipped | done (240/300 shapes, 45 failures, partial — disk quota) |
 | EXP-07 | 42 | 0.1448 +/- n/a | 0.5074 +/- n/a | skipped | skipped | done (0/300 success, 300 failures — PE mesh issues) |
+| EXP-09 | 42 | 0.1450 +/- 0.0451 | 0.5031 +/- 0.0116 | skipped | skipped | done (0/300 success, 300 failures — PE mesh issues) |
 
 ## Detailed Results
 
@@ -114,6 +115,21 @@ Single source of truth for all experiment results.
 - **vs EXP-06** (10% labels + PE): CD slightly better (0.1515→0.1448), NC comparable (0.5059→0.5074). Both PE experiments show similar catastrophic failure, confirming PE is the problem, not the label ratio.
 - **vs EXP-01** (baseline): CD 2.4x worse (0.0593→0.1448), NC worse (0.5522→0.5074).
 - **Note**: All 300 shapes marked "failed" — PE generates oversized meshes that fail validation. NC std is extremely tight (similar to EXP-06's 0.0109), confirming PE collapses normal diversity across all shapes. Training converged normally (L_sdf stable at 0.033, grad_norm ~0.96). The problem is purely at inference/reconstruction time: PE amplifies high-frequency oscillations in the SDF, causing marching cubes to generate massive, noisy meshes. Key insight: EXP-06 and EXP-07 show PE L=6 fails at both 10% and 5% supervision with similar severity — the issue is PE + low supervision, not the specific label ratio.
+
+### EXP-09 — Full supervision + Eikonal + PE L=6 (seed 42)
+- **Date**: 2026-03-31
+- **Config**: ratio=1.0, eikonal=on, PE=L=6, epochs=3000, batch=16384
+- **Data**: 300 ShapeNet shapes (airplane/chair/table), 250K sup/unsup points each
+- **Training**: ~3.1hr on TC2 (A40 GPU, 3.7s/epoch), L_sdf=0.0329 final, L_eik=0.0691, L_z=0.00064
+- **Eval** (MC res=128, IoU skipped, 0/300 success, 300 failures — all shapes failed mesh extraction):
+  - **CD**: mean=0.1450, std=0.0451, min=0.0518, max=0.2644
+  - **NC**: mean=0.5031, std=0.0116, min=0.4704, max=0.5373
+  - Per-category: airplane CD=0.1962/NC=0.5023, chair CD=0.1242/NC=0.5072, table CD=0.1147/NC=0.4998
+- **vs EXP-02** (100% labels, no PE): CD 2.7x worse (0.0543→0.1450), NC worse (0.5920→0.5031). PE severely degrades quality even at full supervision.
+- **vs EXP-06** (10% labels + PE): CD comparable (0.1515→0.1450), NC comparable (0.5059→0.5031). Full labels provide virtually no improvement when PE is active.
+- **vs EXP-07** (5% labels + PE): CD comparable (0.1448→0.1450), NC comparable (0.5074→0.5031). All three PE experiments produce nearly identical poor results.
+- **vs EXP-01** (baseline): CD 2.4x worse (0.0593→0.1450), NC worse (0.5522→0.5031).
+- **Note**: **Critical finding — PE L=6 is catastrophic regardless of supervision level.** EXP-06 (10%), EXP-07 (5%), and EXP-09 (100%) all produce CD ~0.145, NC ~0.50. The problem is not "PE needs more labels" — PE L=6 fundamentally breaks reconstruction in this DeepSDF setup. Root cause confirmed: PE amplifies high-frequency oscillations in the SDF at evaluation grid points far from the training data distribution (cube corners vs near-surface training points). NC std ~0.01 across all PE experiments confirms PE collapses normal diversity. This makes EXP-08 (PE + L_2nd) unlikely to succeed unless L_2nd specifically suppresses PE's extrapolation artifacts.
 
 ## Next Steps (as of 2026-03-23)
 

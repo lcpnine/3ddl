@@ -68,9 +68,9 @@ EXP_DIR=experiments/EXP-XX/seed42 sbatch --job-name=EXP-XX_s42_eval slurm/job_ev
 - [x] **3.1** Submit EXP-06 seed 42 (job 15966, queued behind EXP-05 eval)
 - [x] **3.2** Submit EXP-07 seed 42 (job 16056, queued behind EXP-06 eval)
 - [x] **3.3** EXP-06 done: CD=0.1515, NC=0.5059 (240/300 shapes, partial — disk quota). PE severely degrades quality at 10% supervision.
-- [ ] **3.4** When EXP-07 completes: run `/log-experiment EXP-07`
-- [ ] **3.5** Submit EXP-09 seed 42: `./slurm/submit.sh EXP-09 42 "supervision_ratio=1.0 use_eikonal=true use_pe=true"`
-- [ ] **3.6** When EXP-09 completes: run `/log-experiment EXP-09`
+- [x] **3.4** EXP-07 done: CD=0.1448, NC=0.5074 (0/300 success). PE catastrophic at 5% supervision, similar to EXP-06.
+- [x] **3.5** EXP-09 submitted and completed (job 16391 train, 16536 eval)
+- [x] **3.6** EXP-09 done: CD=0.1450, NC=0.5031 (0/300 success). **PE L=6 catastrophic even at 100% labels.** All PE experiments (EXP-06/07/09) produce CD ~0.145 regardless of supervision.
 
 ## Step 4: Phase 4 — Advanced Regularization
 
