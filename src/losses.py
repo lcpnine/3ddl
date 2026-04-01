@@ -74,7 +74,7 @@ def second_order_loss(
     Returns:
         Scalar mean |divergence|
     """
-    divergence = 0.0
+    divergence = torch.zeros(gradients.shape[0], device=gradients.device)
     for i in range(3):
         d2f = torch.autograd.grad(
             outputs=gradients[:, i],
