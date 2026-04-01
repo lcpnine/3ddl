@@ -82,8 +82,11 @@ def second_order_loss(
             grad_outputs=torch.ones_like(gradients[:, i]),
             create_graph=True,
             retain_graph=True,
-        )[0][:, i]  # d^2f / dx_i^2
-        divergence = divergence + d2f
+            allow_unused=True,
+        )[0]
+        if d2f is None:
+            continue
+        divergence = divergence + d2f[:, i]
 
     return torch.mean(torch.abs(divergence))
 
