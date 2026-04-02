@@ -24,6 +24,7 @@ Single source of truth for all experiment results.
 | EXP-02 | 42 | 0.0543 +/- 0.0416 | 0.5920 +/- 0.1321 | skipped | skipped | done (261/300 shapes, 39 failures) |
 | EXP-03 | 42 | 0.0534 +/- 0.0400 | 0.5924 +/- 0.1334 | skipped | skipped | done (259/300 shapes, 41 failures) |
 | EXP-04 | 42 | 0.0609 +/- 0.0469 | 0.5805 +/- 0.1406 | skipped | skipped | done (263/300 shapes, 37 failures) |
+| EXP-04 | 123 | 0.0443 +/- 0.0228 | 0.6202 +/- 0.0982 | skipped | skipped | done (300/300 shapes, 0 failures) |
 | EXP-05 | 42 | 0.0509 +/- 0.0385 | 0.5766 +/- 0.1271 | skipped | skipped | done (295/300 shapes, 5 failures) |
 | EXP-06 | 42 | 0.1515 +/- 0.0445 | 0.5059 +/- 0.0109 | skipped | skipped | done (240/300 shapes, 45 failures, partial — disk quota) |
 | EXP-07 | 42 | 0.1448 +/- n/a | 0.5074 +/- n/a | skipped | skipped | done (0/300 success, 300 failures — PE mesh issues) |
@@ -76,6 +77,17 @@ Single source of truth for all experiment results.
 - **vs EXP-01** (baseline): CD worse 2.7% (0.0593→0.0609), NC improved 5.1% (0.5522→0.5805). Eikonal still provides NC benefit even at 10% labels.
 - **vs EXP-03** (50% labels): CD worse 14.0% (0.0534→0.0609), NC worse 2.0% (0.5924→0.5805). Significant drop from 50%→10% labels.
 - **Note**: No divergence flag. 37 failures (12.3%). Key finding: 10% labels with Eikonal roughly matches baseline (no eikonal, full labels) for CD, but retains NC improvement.
+
+### EXP-04 — 10% labels + Eikonal (seed 123)
+- **Date**: 2026-04-02
+- **Config**: ratio=0.1, eikonal=on, PE=off, epochs=3000, batch=16384
+- **Data**: 300 ShapeNet shapes (airplane/chair/table), 250K sup/unsup points each
+- **Training**: ~4hr on TC2 (A40 GPU)
+- **Eval** (MC res=128, IoU skipped, 300/300 shapes, 0 failures):
+  - **CD**: mean=0.0443, std=0.0228, min=0.0122, max=0.1299
+  - **NC**: mean=0.6202, std=0.0982, min=0.3693, max=0.8973
+- **vs EXP-04 s42**: CD improved 27.3% (0.0609→0.0443), NC improved 6.8% (0.5805→0.6202). Seed 123 significantly better — zero failures vs 37 failures.
+- **Note**: Much better than seed 42 across all metrics. Zero shape failures vs 12.3% failure rate in s42. Max CD reduced from 0.2625→0.1299. The large seed-to-seed variance (27% CD difference) underscores the importance of multi-seed evaluation.
 
 ### EXP-05 — 5% labels + Eikonal (seed 42)
 - **Date**: 2026-03-29
