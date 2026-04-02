@@ -28,6 +28,7 @@ Single source of truth for all experiment results.
 | EXP-05 | 42 | 0.0509 +/- 0.0385 | 0.5766 +/- 0.1271 | skipped | skipped | done (295/300 shapes, 5 failures) |
 | EXP-06 | 42 | 0.1515 +/- 0.0445 | 0.5059 +/- 0.0109 | skipped | skipped | done (240/300 shapes, 45 failures, partial — disk quota) |
 | EXP-07 | 42 | 0.1448 +/- n/a | 0.5074 +/- n/a | skipped | skipped | done (0/300 success, 300 failures — PE mesh issues) |
+| EXP-08 | 42 | 0.1443 +/- 0.0448 | 0.5053 +/- 0.0119 | skipped | skipped | done (0/300 success, 300 failures — L_2nd didn't save PE) |
 | EXP-09 | 42 | 0.1450 +/- 0.0451 | 0.5031 +/- 0.0116 | skipped | skipped | done (0/300 success, 300 failures — PE mesh issues) |
 
 ## Detailed Results
@@ -142,6 +143,18 @@ Single source of truth for all experiment results.
 - **vs EXP-07** (5% labels + PE): CD comparable (0.1448→0.1450), NC comparable (0.5074→0.5031). All three PE experiments produce nearly identical poor results.
 - **vs EXP-01** (baseline): CD 2.4x worse (0.0593→0.1450), NC worse (0.5522→0.5031).
 - **Note**: **Critical finding — PE L=6 is catastrophic regardless of supervision level.** EXP-06 (10%), EXP-07 (5%), and EXP-09 (100%) all produce CD ~0.145, NC ~0.50. The problem is not "PE needs more labels" — PE L=6 fundamentally breaks reconstruction in this DeepSDF setup. Root cause confirmed: PE amplifies high-frequency oscillations in the SDF at evaluation grid points far from the training data distribution (cube corners vs near-surface training points). NC std ~0.01 across all PE experiments confirms PE collapses normal diversity. This makes EXP-08 (PE + L_2nd) unlikely to succeed unless L_2nd specifically suppresses PE's extrapolation artifacts.
+
+### EXP-08 — 10% labels + Eikonal + PE L=6 + L_2nd (seed 42)
+- **Date**: 2026-04-02
+- **Config**: ratio=0.1, eikonal=on, PE=L=6, L_2nd=0.01, epochs=3000, batch=8192
+- **Data**: 300 ShapeNet shapes (airplane/chair/table), 250K sup/unsup points each
+- **Training**: ~4hr on TC2 (A40 GPU), L_sdf=0.0367 final, L_eik=0.020, L_2nd=0.00061, L_z=0.00206
+- **Eval** (MC res=128, IoU skipped, 0/300 success, 300 failures):
+  - **CD**: mean=0.1443, std=0.0448, min=0.0519, max=0.2645
+  - **NC**: mean=0.5053, std=0.0119, min=0.4639, max=0.5397
+- **vs EXP-06** (same but no L_2nd): CD comparable (0.1515→0.1443), NC comparable (0.5059→0.5053). Second-order regularization provides negligible improvement.
+- **vs EXP-04** (10% labels, no PE): CD 2.4x worse (0.0609→0.1443), NC worse (0.5805→0.5053). L_2nd cannot compensate for PE's fundamental incompatibility.
+- **Note**: Confirms PE L=6 is the root cause, not a regularization gap. All four PE experiments (EXP-06/07/08/09) produce CD ~0.144-0.152 regardless of supervision level (5%-100%) or additional regularization. NC std ~0.012 confirms PE collapses normal diversity. The second-order loss trained normally (L_2nd=0.00061, stable) but had no meaningful effect on reconstruction quality.
 
 ## Next Steps (as of 2026-03-23)
 
