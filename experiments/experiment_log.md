@@ -29,6 +29,7 @@ Single source of truth for all experiment results.
 | EXP-04 | **3-seed** | **0.0496 +/- 0.0098** | **0.5987 +/- 0.0201** | — | — | **CV(CD)=0.197 < 0.2 ✓** |
 | EXP-05 | 42 | 0.0509 +/- 0.0385 | 0.5766 +/- 0.1271 | skipped | skipped | done (295/300 shapes, 5 failures) |
 | EXP-06 | 42 | 0.1515 +/- 0.0445 | 0.5059 +/- 0.0109 | skipped | skipped | done (240/300 shapes, 45 failures, partial — disk quota) |
+| EXP-06 | 123 | 0.1375 +/- 0.0433 | 0.5087 +/- 0.0110 | skipped | skipped | done (0/300 success, 300 failures — PE catastrophe) |
 | EXP-07 | 42 | 0.1448 +/- n/a | 0.5074 +/- n/a | skipped | skipped | done (0/300 success, 300 failures — PE mesh issues) |
 | EXP-08 | 42 | 0.1443 +/- 0.0448 | 0.5053 +/- 0.0119 | skipped | skipped | done (0/300 success, 300 failures — L_2nd didn't save PE) |
 | EXP-09 | 42 | 0.1450 +/- 0.0451 | 0.5031 +/- 0.0116 | skipped | skipped | done (0/300 success, 300 failures — PE mesh issues) |
@@ -134,6 +135,17 @@ Single source of truth for all experiment results.
 - **vs EXP-04** (10% labels, no PE): CD 2.5x worse (0.0609→0.1515), NC worse (0.5805→0.5059). PE severely degrades quality at 10% supervision.
 - **vs EXP-01** (baseline): CD 2.6x worse (0.0593→0.1515), NC worse (0.5522→0.5059).
 - **Note**: PE with L=6 creates high-frequency SDF oscillations → marching cubes generates enormous meshes (~250MB/shape vs ~5MB without PE). This filled the 100GB disk quota at shape 195. Metrics computed for 240 shapes before job terminated. The NC std (0.0109) is unusually tight — PE collapses normal diversity. Root cause: training data lives near a unit sphere but eval grid samples full [-1,1]³ cube; PE amplifies extrapolation errors at cube corners unseen during training.
+
+### EXP-06 — 10% labels + Eikonal + PE L=6 (seed 123)
+- **Date**: 2026-04-02
+- **Config**: ratio=0.1, eikonal=on, PE=L=6, epochs=3000, batch=16384
+- **Data**: 300 ShapeNet shapes (airplane/chair/table), 250K sup/unsup points each
+- **Training**: ~4hr on TC2 (A40 GPU), L_sdf=0.0334 final, L_eik=0.036, L_z=0.00073
+- **Eval** (MC res=128, IoU skipped, 0/300 success, 300 failures):
+  - **CD**: mean=0.1375, std=0.0433, min=0.0510, max=0.2529
+  - **NC**: mean=0.5087, std=0.0110, min=0.4813, max=0.5600
+- **vs EXP-06 s42**: CD slightly better (0.1515→0.1375), NC comparable (0.5059→0.5087). Same catastrophic PE failure.
+- **Note**: Consistent with all PE experiments. NC std ~0.011 confirms PE normal collapse is reproducible across seeds.
 
 ### EXP-07 — 5% labels + Eikonal + PE L=6 (seed 42)
 - **Date**: 2026-03-31
