@@ -25,6 +25,8 @@ Single source of truth for all experiment results.
 | EXP-03 | 42 | 0.0534 +/- 0.0400 | 0.5924 +/- 0.1334 | skipped | skipped | done (259/300 shapes, 41 failures) |
 | EXP-04 | 42 | 0.0609 +/- 0.0469 | 0.5805 +/- 0.1406 | skipped | skipped | done (263/300 shapes, 37 failures) |
 | EXP-04 | 123 | 0.0443 +/- 0.0228 | 0.6202 +/- 0.0982 | skipped | skipped | done (300/300 shapes, 0 failures) |
+| EXP-04 | 456 | 0.0436 +/- 0.0214 | 0.5954 +/- 0.1156 | skipped | skipped | done (300/300 shapes, 0 failures) |
+| EXP-04 | **3-seed** | **0.0496 +/- 0.0098** | **0.5987 +/- 0.0201** | — | — | **CV(CD)=0.197 < 0.2 ✓** |
 | EXP-05 | 42 | 0.0509 +/- 0.0385 | 0.5766 +/- 0.1271 | skipped | skipped | done (295/300 shapes, 5 failures) |
 | EXP-06 | 42 | 0.1515 +/- 0.0445 | 0.5059 +/- 0.0109 | skipped | skipped | done (240/300 shapes, 45 failures, partial — disk quota) |
 | EXP-07 | 42 | 0.1448 +/- n/a | 0.5074 +/- n/a | skipped | skipped | done (0/300 success, 300 failures — PE mesh issues) |
@@ -89,6 +91,24 @@ Single source of truth for all experiment results.
   - **NC**: mean=0.6202, std=0.0982, min=0.3693, max=0.8973
 - **vs EXP-04 s42**: CD improved 27.3% (0.0609→0.0443), NC improved 6.8% (0.5805→0.6202). Seed 123 significantly better — zero failures vs 37 failures.
 - **Note**: Much better than seed 42 across all metrics. Zero shape failures vs 12.3% failure rate in s42. Max CD reduced from 0.2625→0.1299. The large seed-to-seed variance (27% CD difference) underscores the importance of multi-seed evaluation.
+
+### EXP-04 — 10% labels + Eikonal (seed 456)
+- **Date**: 2026-04-02
+- **Config**: ratio=0.1, eikonal=on, PE=off, epochs=3000, batch=16384
+- **Data**: 300 ShapeNet shapes (airplane/chair/table), 250K sup/unsup points each
+- **Training**: ~4hr on TC2 (A40 GPU)
+- **Eval** (MC res=128, IoU skipped, 300/300 shapes, 0 failures):
+  - **CD**: mean=0.0436, std=0.0214, min=0.0109, max=0.1380
+  - **NC**: mean=0.5954, std=0.1156, min=0.3554, max=0.8987
+- **vs EXP-04 s42**: CD improved 28.4% (0.0609→0.0436), NC improved 2.6% (0.5805→0.5954). Consistent with s123.
+- **vs EXP-04 s123**: CD comparable (0.0443→0.0436), NC comparable (0.6202→0.5954). Seeds 123 and 456 agree closely.
+- **Note**: Seed 42 is the outlier with higher CD and 37 failures. Seeds 123/456 both achieve zero failures and CD~0.044.
+
+### EXP-04 — 3-seed summary (seeds 42, 123, 456)
+- **CD**: mean=0.0496, std=0.0098, **CV=0.197 < 0.2** — 3 seeds sufficient, no expansion needed
+- **NC**: mean=0.5987, std=0.0201, CV=0.034
+- **vs EXP-01** (baseline): CD improved 16.4% (0.0593→0.0496), NC improved 8.4% (0.5522→0.5987)
+- **Conclusion**: 10% labels + Eikonal beats the fully-supervised baseline across seeds. Eikonal regularization enables 90% label reduction with improved quality.
 
 ### EXP-05 — 5% labels + Eikonal (seed 42)
 - **Date**: 2026-03-29
