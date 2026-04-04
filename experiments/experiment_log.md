@@ -30,6 +30,8 @@ Single source of truth for all experiment results.
 | EXP-05 | 42 | 0.0509 +/- 0.0385 | 0.5766 +/- 0.1271 | skipped | skipped | done (295/300 shapes, 5 failures) |
 | EXP-06 | 42 | 0.1515 +/- 0.0445 | 0.5059 +/- 0.0109 | skipped | skipped | done (240/300 shapes, 45 failures, partial — disk quota) |
 | EXP-06 | 123 | 0.1375 +/- 0.0433 | 0.5087 +/- 0.0110 | skipped | skipped | done (0/300 success, 300 failures — PE catastrophe) |
+| EXP-06 | 456 | 0.1380 +/- 0.0426 | 0.5097 +/- 0.0113 | skipped | skipped | done (0/300 success, 300 failures — PE catastrophe) |
+| EXP-06 | **3-seed** | **0.1423 +/- 0.0079** | **0.5081 +/- 0.0019** | — | — | **CV(CD)=0.056 < 0.2 ✓** |
 | EXP-07 | 42 | 0.1448 +/- n/a | 0.5074 +/- n/a | skipped | skipped | done (0/300 success, 300 failures — PE mesh issues) |
 | EXP-08 | 42 | 0.1443 +/- 0.0448 | 0.5053 +/- 0.0119 | skipped | skipped | done (0/300 success, 300 failures — L_2nd didn't save PE) |
 | EXP-09 | 42 | 0.1450 +/- 0.0451 | 0.5031 +/- 0.0116 | skipped | skipped | done (0/300 success, 300 failures — PE mesh issues) |
@@ -175,6 +177,24 @@ Single source of truth for all experiment results.
 - **vs EXP-07** (5% labels + PE): CD comparable (0.1448→0.1450), NC comparable (0.5074→0.5031). All three PE experiments produce nearly identical poor results.
 - **vs EXP-01** (baseline): CD 2.4x worse (0.0593→0.1450), NC worse (0.5522→0.5031).
 - **Note**: **Critical finding — PE L=6 is catastrophic regardless of supervision level.** EXP-06 (10%), EXP-07 (5%), and EXP-09 (100%) all produce CD ~0.145, NC ~0.50. The problem is not "PE needs more labels" — PE L=6 fundamentally breaks reconstruction in this DeepSDF setup. Root cause confirmed: PE amplifies high-frequency oscillations in the SDF at evaluation grid points far from the training data distribution (cube corners vs near-surface training points). NC std ~0.01 across all PE experiments confirms PE collapses normal diversity. This makes EXP-08 (PE + L_2nd) unlikely to succeed unless L_2nd specifically suppresses PE's extrapolation artifacts.
+
+### EXP-06 — 10% labels + Eikonal + PE L=6 (seed 456)
+- **Date**: 2026-04-04
+- **Config**: ratio=0.1, eikonal=on, PE=L=6, epochs=3000, batch=16384
+- **Data**: 300 ShapeNet shapes (airplane/chair/table), 250K sup/unsup points each
+- **Training**: ~4hr on TC2 (A40 GPU), L_sdf=0.0324 final, L_eik=0.727, L_z=0.00101
+- **Eval** (MC res=128, IoU skipped, 0/300 success, 300 failures):
+  - **CD**: mean=0.1380, std=0.0426, min=0.0504, max=0.2516
+  - **NC**: mean=0.5097, std=0.0113, min=0.4804, max=0.5413
+- **vs EXP-06 s42**: CD slightly better (0.1515→0.1380), NC comparable (0.5059→0.5097).
+- **vs EXP-06 s123**: CD near-identical (0.1375→0.1380), NC near-identical (0.5087→0.5097).
+- **Note**: Extremely consistent with s123. L_eik much higher (0.727 vs 0.036 for s123) but reconstruction quality identical — PE dominates the failure mode.
+
+### EXP-06 — 3-seed summary (seeds 42, 123, 456)
+- **CD**: mean=0.1423, std=0.0079, **CV=0.056 < 0.2** — 3 seeds sufficient, no expansion needed
+- **NC**: mean=0.5081, std=0.0019, CV=0.004
+- **vs EXP-04 3-seed** (no PE): CD 2.9x worse (0.0496→0.1423), NC worse (0.5987→0.5081)
+- **Conclusion**: PE L=6 is catastrophic and highly reproducible across seeds. The near-zero NC variance (CV=0.004) confirms PE collapses all shapes to similar poor-quality reconstructions.
 
 ### EXP-08 — 10% labels + Eikonal + PE L=6 + L_2nd (seed 42)
 - **Date**: 2026-04-02
