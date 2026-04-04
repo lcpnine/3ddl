@@ -58,6 +58,17 @@ desktop.ini
 # ── OMC (oh-my-claudecode plugin state) ──
 .omc/
 
+# ── Compact backups ──
+.compact-backups/
+.compact-backups/*
+.compact-backups/**/*
+.compact-backups/**/**/*
+.compact-backups/**/**/**/*
+.compact-backups/**/**/**/**/*
+.compact-backups/**/**/**/**/**/*
+.compact-backups/**/**/**/**/**/**/*
+.compact-backups/**/**/**/**/**/**/**/*
+
 # ── IDE ──
 .vscode/
 .idea/
