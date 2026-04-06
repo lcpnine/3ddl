@@ -74,27 +74,39 @@ EXP_DIR=experiments/EXP-XX/seed42 sbatch --job-name=EXP-XX_s42_eval slurm/job_ev
 
 ## Step 4: Phase 4 — Advanced Regularization
 
-- [ ] **4.1** Submit EXP-08 seed 42: `./slurm/submit.sh EXP-08 42 "supervision_ratio=0.1 use_eikonal=true use_pe=true lambda_2nd=0.1 batch_size=8192"`
-- [ ] **4.2** When EXP-08 completes: run `/log-experiment EXP-08`
-- [ ] **4.3** Run `/disk-check`
+- [x] **4.1** Submit EXP-08 seed 42: `./slurm/submit.sh EXP-08 42 "supervision_ratio=0.1 use_eikonal=true use_pe=true lambda_2nd=0.1 batch_size=8192"` (completed; see `experiments/experiment_log.md`)
+- [x] **4.2** When EXP-08 completes: run `/log-experiment EXP-08` (completed; EXP-08 logged with CD `0.1443`, NC `0.5053`)
+- [x] **4.3** Run `/disk-check` (completed on 2026-04-06; see `experiments/disk_usage_log.md`)
 
 ## Step 5: Multi-Seed Runs
 
-- [ ] **5.1** Check EXP-04 CD coefficient of variation. If CV > 0.2, plan 5 seeds; otherwise 3.
-- [ ] **5.2** Submit EXP-04 seed 123: `./slurm/submit.sh EXP-04 123 "supervision_ratio=0.1 use_eikonal=true use_pe=false"`
-- [ ] **5.3** Submit EXP-04 seed 456: `./slurm/submit.sh EXP-04 456 "supervision_ratio=0.1 use_eikonal=true use_pe=false"`
-- [ ] **5.4** Check EXP-06 CD coefficient of variation. If CV > 0.2, plan 5 seeds; otherwise 3.
-- [ ] **5.5** Submit EXP-06 seed 123: `./slurm/submit.sh EXP-06 123 "supervision_ratio=0.1 use_eikonal=true use_pe=true"`
-- [ ] **5.6** Submit EXP-06 seed 456: `./slurm/submit.sh EXP-06 456 "supervision_ratio=0.1 use_eikonal=true use_pe=true"`
-- [ ] **5.7** Log all multi-seed results
-- [ ] **5.8** If CV > 0.2 for either: submit seeds 789 and 101 as well
-- [ ] **5.9** Run `/disk-check`
+- [x] **5.1** Check EXP-04 CD coefficient of variation. If CV > 0.2, plan 5 seeds; otherwise 3. Result: `CV(CD)=0.197 < 0.2`
+- [x] **5.2** Submit EXP-04 seed 123: `./slurm/submit.sh EXP-04 123 "supervision_ratio=0.1 use_eikonal=true use_pe=false"` (completed)
+- [x] **5.3** Submit EXP-04 seed 456: `./slurm/submit.sh EXP-04 456 "supervision_ratio=0.1 use_eikonal=true use_pe=false"` (completed)
+- [x] **5.4** Check EXP-06 CD coefficient of variation. If CV > 0.2, plan 5 seeds; otherwise 3. Result: `CV(CD)=0.056 < 0.2`
+- [x] **5.5** Submit EXP-06 seed 123: `./slurm/submit.sh EXP-06 123 "supervision_ratio=0.1 use_eikonal=true use_pe=true"` (completed)
+- [x] **5.6** Submit EXP-06 seed 456: `./slurm/submit.sh EXP-06 456 "supervision_ratio=0.1 use_eikonal=true use_pe=true"` (completed)
+- [x] **5.7** Log all multi-seed results
+- [x] **5.8** If CV > 0.2 for either: submit seeds 789 and 101 as well. Not needed; no expansion triggered.
+- [x] **5.9** Run `/disk-check` (completed on 2026-04-06; see `experiments/disk_usage_log.md`)
 
 ## Step 6: Wrap-Up
 
-- [ ] **6.1** Run `/generate-figures` for label efficiency curve and ablation charts
+- [x] **6.1** Generate figures for label efficiency curve and ablation charts (completed on 2026-04-06; outputs in `experiments/figures/`, generated via `scripts/generate_figures.py`)
 - [ ] **6.2** Review all results in `experiments/experiment_log.md`
 - [ ] **6.3** Clean up `data/shapenet_raw/` (~26GB) if disk needed
+
+## Step 7: PE L=4 Follow-Up Sweep
+
+- [x] **7.1** Submit EXP-10 seed 42 train: `OVERRIDES="exp_name=EXP-10 seed=42 supervision_ratio=1.0 use_eikonal=true use_pe=true pe_levels=4" sbatch --job-name=EXP-10_s42_train slurm/job_train.sh` (job 17755)
+- [x] **7.2** Submit EXP-11 seed 42 train: `OVERRIDES="exp_name=EXP-11 seed=42 supervision_ratio=0.1 use_eikonal=true use_pe=true pe_levels=4" sbatch --job-name=EXP-11_s42_train slurm/job_train.sh` (job 17756)
+- [x] **7.3** Submit EXP-12 seed 42 train: `OVERRIDES="exp_name=EXP-12 seed=42 supervision_ratio=0.05 use_eikonal=true use_pe=true pe_levels=4" sbatch --job-name=EXP-12_s42_train slurm/job_train.sh` (job 17929)
+- [x] **7.4** EXP-10 train complete; user submitted eval job `18123`
+- [x] **7.5** EXP-11 train complete; eval submitted as job `18180` on 2026-04-05 and completed
+- [x] **7.6** EXP-10 eval finished (job `18123`); logged from `results.json` using per-shape metrics because the aggregate block is empty when all shapes are marked failed
+- [x] **7.7** Submit EXP-11 eval after a queue slot frees: `EXP_DIR=experiments/EXP-11/seed42 sbatch --job-name=EXP-11_s42_eval slurm/job_eval.sh` (job `18180`)
+- [x] **7.8** EXP-12 train finished; eval submitted as job `18181` on 2026-04-05 and completed
+- [x] **7.9** Updated `experiments/experiment_log.md` with final EXP-10/11/12 metrics. Conclusion: PE L=4 remains catastrophic at 100%, 10%, and 5% supervision; lowering frequency from L=6 to L=4 does not rescue PE in this setup
 
 ---
 

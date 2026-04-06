@@ -15,6 +15,9 @@ Single source of truth for all experiment results.
 | EXP-07 | 5% | Yes | L=6 | Minimal label + PE (key comparison vs EXP-05) |
 | EXP-08 | 10% | Yes | L=6 | + L_2nd second-order regularization |
 | EXP-09 | 100% | Yes | L=6 | Full supervision + PE (quality ceiling) |
+| EXP-10 | 100% | Yes | L=4 | Full supervision + lower-frequency PE follow-up |
+| EXP-11 | 10% | Yes | L=4 | Low-label + lower-frequency PE follow-up |
+| EXP-12 | 5% | Yes | L=4 | Minimal-label + lower-frequency PE follow-up |
 
 ## Results
 
@@ -35,6 +38,9 @@ Single source of truth for all experiment results.
 | EXP-07 | 42 | 0.1448 +/- n/a | 0.5074 +/- n/a | skipped | skipped | done (0/300 success, 300 failures — PE mesh issues) |
 | EXP-08 | 42 | 0.1443 +/- 0.0448 | 0.5053 +/- 0.0119 | skipped | skipped | done (0/300 success, 300 failures — L_2nd didn't save PE) |
 | EXP-09 | 42 | 0.1450 +/- 0.0451 | 0.5031 +/- 0.0116 | skipped | skipped | done (0/300 success, 300 failures — PE mesh issues) |
+| EXP-10 | 42 | 0.1401 +/- 0.0420 | 0.5077 +/- 0.0211 | skipped | skipped | done (0/300 success, 300 failures; metrics recovered from per-shape entries) |
+| EXP-11 | 42 | 0.1427 +/- 0.0439 | 0.5071 +/- 0.0194 | skipped | skipped | done (0/300 success, 300 failures; metrics recovered from per-shape entries) |
+| EXP-12 | 42 | 0.1400 +/- 0.0426 | 0.5073 +/- 0.0178 | skipped | skipped | done (0/300 success, 300 failures; metrics recovered from per-shape entries) |
 
 ## Detailed Results
 
@@ -208,7 +214,64 @@ Single source of truth for all experiment results.
 - **vs EXP-04** (10% labels, no PE): CD 2.4x worse (0.0609→0.1443), NC worse (0.5805→0.5053). L_2nd cannot compensate for PE's fundamental incompatibility.
 - **Note**: Confirms PE L=6 is the root cause, not a regularization gap. All four PE experiments (EXP-06/07/08/09) produce CD ~0.144-0.152 regardless of supervision level (5%-100%) or additional regularization. NC std ~0.012 confirms PE collapses normal diversity. The second-order loss trained normally (L_2nd=0.00061, stable) but had no meaningful effect on reconstruction quality.
 
-## Next Steps (as of 2026-03-23)
+### EXP-10 — 100% labels + Eikonal + PE L=4 (seed 42) [follow-up sweep]
+- **Date**: 2026-04-04 to 2026-04-05
+- **Config**: ratio=1.0, eikonal=on, PE=L=4, epochs=3000, batch=16384
+- **Data**: 300 ShapeNet shapes (airplane/chair/table), 250K sup/unsup points each
+- **Training**: completed on TC2 (A40 GPU), final train log at epoch 3000:
+  - **L_total**: 0.047796
+  - **L_sdf**: 0.038596
+  - **L_eik**: 0.091996
+  - **L_z**: 0.002334
+  - **grad_norm_mean**: 0.8433
+- **Eval** (job `18123`, MC res=128, IoU skipped, 0/300 success, 300 failures):
+  - **CD**: mean=0.1401, std=0.0420, min=0.0504, max=0.2512
+  - **NC**: mean=0.5077, std=0.0211, min=0.4338, max=0.5615
+- **vs EXP-09** (100% labels + PE L=6): CD slightly better (0.1450→0.1401), NC slightly better (0.5031→0.5077), but still catastrophic overall.
+- **vs EXP-02** (100% labels, no PE): CD 2.6x worse (0.0543→0.1401), NC worse (0.5920→0.5077).
+- **vs EXP-01** (baseline): CD 2.4x worse (0.0593→0.1401), NC worse (0.5522→0.5077).
+- **Note**: Lowering PE from L=6 to L=4 does **not** rescue full-supervision reconstruction. The evaluation JSON has an empty aggregate block because every shape is tagged `failed`, but each per-shape entry still contains CD/NC values; the summary above was computed from those per-shape metrics. Current conclusion: the PE failure is not confined to the highest tested frequency.
+
+### EXP-11 — 10% labels + Eikonal + PE L=4 (seed 42) [follow-up sweep]
+- **Date**: 2026-04-04 to 2026-04-05
+- **Config**: ratio=0.1, eikonal=on, PE=L=4, epochs=3000, batch=16384
+- **Data**: 300 ShapeNet shapes (airplane/chair/table), 250K sup/unsup points each
+- **Training**: completed on TC2 (A40 GPU), final train log at epoch 3000:
+  - **L_total**: 0.049617
+  - **L_sdf**: 0.038623
+  - **L_eik**: 0.109936
+  - **L_z**: 0.002806
+  - **grad_norm_mean**: 0.8236
+- **Eval** (job `18180`, MC res=128, IoU skipped, 0/300 success, 300 failures):
+  - **CD**: mean=0.1427, std=0.0439, min=0.0528, max=0.2597
+  - **NC**: mean=0.5071, std=0.0194, min=0.4437, max=0.5675
+- **vs EXP-06** (10% labels + PE L=6): CD comparable (0.1515→0.1427), NC comparable (0.5059→0.5071). Lower-frequency PE does not materially improve the sparse-label PE failure mode.
+- **vs EXP-04** (10% labels, no PE): CD 2.3x worse (0.0609→0.1427), NC worse (0.5805→0.5071).
+- **Note**: This key low-label comparison confirms that lowering PE from L=6 to L=4 does not rescue 10% supervision. As with EXP-10, the evaluation JSON stores useful per-shape CD/NC values even though all shapes are tagged `failed`, so the summary above was computed from per-shape metrics.
+
+### EXP-12 — 5% labels + Eikonal + PE L=4 (seed 42) [follow-up sweep]
+- **Date**: 2026-04-05
+- **Config**: ratio=0.05, eikonal=on, PE=L=4, epochs=3000, batch=16384
+- **Data**: 300 ShapeNet shapes (airplane/chair/table), 250K sup/unsup points each
+- **Training**: completed on TC2 (A40 GPU), final train log at epoch 3000:
+  - **L_total**: 0.045941
+  - **L_sdf**: 0.037834
+  - **L_eik**: 0.081069
+  - **L_z**: 0.002240
+  - **grad_norm_mean**: 0.8586
+- **Eval** (job `18181`, MC res=128, IoU skipped, 0/300 success, 300 failures):
+  - **CD**: mean=0.1400, std=0.0426, min=0.0512, max=0.2516
+  - **NC**: mean=0.5073, std=0.0178, min=0.4328, max=0.5531
+- **vs EXP-07** (5% labels + PE L=6): CD comparable (0.1448→0.1400), NC comparable (0.5074→0.5073).
+- **vs EXP-05** (5% labels, no PE): CD 2.8x worse (0.0509→0.1400), NC worse (0.5766→0.5073).
+- **Note**: This final L=4 point matches EXP-10 and EXP-11 almost exactly, completing the pattern that PE collapses to the same poor reconstruction regime across 100%, 10%, and 5% supervision even when the encoding frequency is reduced.
+
+## Next Steps (as of 2026-04-05)
+
+### Immediate
+- The L=4 sweep is complete; use EXP-10/11/12 to update figures and the write-up.
+- Revise the PE conclusion in the report: PE hurts consistently in this setup, and lowering frequency from L=6 to L=4 does not identify a regime where PE helps.
+- If more PE work is needed, it should test a different mechanism entirely rather than more nearby frequency sweeps.
 
 ### Prerequisite: Data Source Upgrade
 EXP-01 used parametric meshes with 10K points (pipeline validation only). All production experiments use **ShapeNet meshes** with 250K points.
