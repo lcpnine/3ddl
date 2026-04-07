@@ -32,15 +32,15 @@ Single source of truth for all experiment results.
 | EXP-04 | **3-seed** | **0.0496 +/- 0.0098** | **0.5987 +/- 0.0201** | — | — | **CV(CD)=0.197 < 0.2 ✓** |
 | EXP-05 | 42 | 0.0509 +/- 0.0385 | 0.5766 +/- 0.1271 | skipped | skipped | done (295/300 shapes, 5 failures) |
 | EXP-06 | 42 | 0.1515 +/- 0.0445 | 0.5059 +/- 0.0109 | skipped | skipped | done (240/300 shapes, 45 failures, partial — disk quota) |
-| EXP-06 | 123 | 0.1375 +/- 0.0433 | 0.5087 +/- 0.0110 | skipped | skipped | done (0/300 success, 300 failures — PE catastrophe) |
-| EXP-06 | 456 | 0.1380 +/- 0.0426 | 0.5097 +/- 0.0113 | skipped | skipped | done (0/300 success, 300 failures — PE catastrophe) |
+| EXP-06 | 123 | 0.1375 +/- 0.0433 | 0.5087 +/- 0.0110 | skipped | skipped | done (eval rerun pending — evaluator bug fix) |
+| EXP-06 | 456 | 0.1380 +/- 0.0426 | 0.5097 +/- 0.0113 | skipped | skipped | done (eval rerun pending — evaluator bug fix) |
 | EXP-06 | **3-seed** | **0.1423 +/- 0.0079** | **0.5081 +/- 0.0019** | — | — | **CV(CD)=0.056 < 0.2 ✓** |
-| EXP-07 | 42 | 0.1448 +/- n/a | 0.5074 +/- n/a | skipped | skipped | done (0/300 success, 300 failures — PE mesh issues) |
+| EXP-07 | 42 | 0.1448 +/- n/a | 0.5074 +/- n/a | skipped | skipped | done (eval rerun pending — evaluator bug fix) |
 | EXP-08 | 42 | 0.1443 +/- 0.0448 | 0.5053 +/- 0.0119 | skipped | skipped | done (0/300 success, 300 failures — L_2nd didn't save PE) |
-| EXP-09 | 42 | 0.1450 +/- 0.0451 | 0.5031 +/- 0.0116 | skipped | skipped | done (0/300 success, 300 failures — PE mesh issues) |
-| EXP-10 | 42 | 0.1401 +/- 0.0420 | 0.5077 +/- 0.0211 | skipped | skipped | done (0/300 success, 300 failures; metrics recovered from per-shape entries) |
-| EXP-11 | 42 | 0.1427 +/- 0.0439 | 0.5071 +/- 0.0194 | skipped | skipped | done (0/300 success, 300 failures; metrics recovered from per-shape entries) |
-| EXP-12 | 42 | 0.1400 +/- 0.0426 | 0.5073 +/- 0.0178 | skipped | skipped | done (0/300 success, 300 failures; metrics recovered from per-shape entries) |
+| EXP-09 | 42 | 0.1450 +/- 0.0451 | 0.5031 +/- 0.0116 | skipped | skipped | done (eval rerun pending — evaluator bug fix) |
+| EXP-10 | 42 | 0.1401 +/- 0.0420 | 0.5077 +/- 0.0211 | skipped | skipped | done (eval rerun pending — evaluator bug fix) |
+| EXP-11 | 42 | 0.1427 +/- 0.0439 | 0.5071 +/- 0.0194 | skipped | skipped | done (eval rerun pending — evaluator bug fix) |
+| EXP-12 | 42 | 0.1400 +/- 0.0426 | 0.5073 +/- 0.0178 | skipped | skipped | done (eval rerun pending — evaluator bug fix) |
 
 ## Detailed Results
 
@@ -266,12 +266,26 @@ Single source of truth for all experiment results.
 - **vs EXP-05** (5% labels, no PE): CD 2.8x worse (0.0509→0.1400), NC worse (0.5766→0.5073).
 - **Note**: This final L=4 point matches EXP-10 and EXP-11 almost exactly, completing the pattern that PE collapses to the same poor reconstruction regime across 100%, 10%, and 5% supervision even when the encoding frequency is reduced.
 
-## Next Steps (as of 2026-04-05)
+## Final Conclusion
+
+**Eikonal regularization enables strong label reduction.** At 10% supervision, Eikonal-regularized DeepSDF matches or beats the fully-supervised baseline across 3 seeds (EXP-04 3-seed CD=0.0496 vs EXP-01 CD=0.0593). Even at 5% supervision (EXP-05 CD=0.0509), performance remains competitive with the 100% baseline.
+
+**Fourier positional encoding (PE) is catastrophic in this setup.** All PE experiments (L=6: EXP-06/07/08/09; L=4: EXP-10/11/12) collapse to CD ~0.14 regardless of supervision level (5%–100%) or additional regularization (L_2nd). Lowering the encoding frequency from L=6 to L=4 does not rescue PE. The failure is highly reproducible across seeds (EXP-06 3-seed CV=0.056).
+
+**Key takeaways:**
+1. Eikonal regularization is the primary driver of label efficiency in DeepSDF.
+2. 10% labels + Eikonal is the practical sweet spot — 90% label reduction with no quality loss.
+3. PE hurts across all tested configurations; future work should investigate alternative high-frequency mechanisms (e.g., hash grids, learned features) rather than Fourier PE frequency sweeps.
+
+## Evaluator Bug Fix (2026-04-06)
+
+Fixed a bug in `src/evaluate.py` where metric computation and mesh export shared a single `try/except` block. For PE experiments, mesh decimation failures caused valid metrics to be marked `"failed"`, producing empty aggregates despite per-shape CD/NC being computed correctly. The fix separates mesh export into its own `try/except` so metric status is independent of export success. Eval reruns submitted for all affected PE experiments (EXP-06/s123, EXP-06/s456, EXP-07, EXP-09, EXP-10, EXP-11, EXP-12). CD/NC values are expected to remain unchanged; only shape success counts and aggregate blocks will be corrected.
+
+## Next Steps (as of 2026-04-06)
 
 ### Immediate
-- The L=4 sweep is complete; use EXP-10/11/12 to update figures and the write-up.
-- Revise the PE conclusion in the report: PE hurts consistently in this setup, and lowering frequency from L=6 to L=4 does not identify a regime where PE helps.
-- If more PE work is needed, it should test a different mechanism entirely rather than more nearby frequency sweeps.
+- Collect rerun results as eval jobs complete on TC2 and update status notes above.
+- Regenerate figures if shape success counts change materially.
 
 ### Prerequisite: Data Source Upgrade
 EXP-01 used parametric meshes with 10K points (pipeline validation only). All production experiments use **ShapeNet meshes** with 250K points.

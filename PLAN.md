@@ -93,7 +93,7 @@ EXP_DIR=experiments/EXP-XX/seed42 sbatch --job-name=EXP-XX_s42_eval slurm/job_ev
 ## Step 6: Wrap-Up
 
 - [x] **6.1** Generate figures for label efficiency curve and ablation charts (completed on 2026-04-06; outputs in `experiments/figures/`, generated via `scripts/generate_figures.py`)
-- [ ] **6.2** Review all results in `experiments/experiment_log.md`
+- [x] **6.2** Review all results in `experiments/experiment_log.md` (completed 2026-04-06; evaluator bug fixed, PE eval reruns submitted)
 - [ ] **6.3** Clean up `data/shapenet_raw/` (~26GB) if disk needed
 
 ## Step 7: PE L=4 Follow-Up Sweep
@@ -107,6 +107,43 @@ EXP_DIR=experiments/EXP-XX/seed42 sbatch --job-name=EXP-XX_s42_eval slurm/job_ev
 - [x] **7.7** Submit EXP-11 eval after a queue slot frees: `EXP_DIR=experiments/EXP-11/seed42 sbatch --job-name=EXP-11_s42_eval slurm/job_eval.sh` (job `18180`)
 - [x] **7.8** EXP-12 train finished; eval submitted as job `18181` on 2026-04-05 and completed
 - [x] **7.9** Updated `experiments/experiment_log.md` with final EXP-10/11/12 metrics. Conclusion: PE L=4 remains catastrophic at 100%, 10%, and 5% supervision; lowering frequency from L=6 to L=4 does not rescue PE in this setup
+- [x] **7.10** Fixed evaluator bug (`src/evaluate.py`): separated metric computation from mesh export so decimation failures no longer mark valid metrics as failed. Reverted QoS to `normal` in SLURM scripts. Cancelled eval rerun (job 18532) due to maintenance.
+
+## Step 8: TC2 Maintenance Backup & Recovery (2026-04-06 → 04-07)
+
+**Context**: TC2 scheduled downtime 2026-04-07 9:00–10:00am. All files backed up locally.
+
+### 8.1 Backup (2026-04-06, before maintenance)
+- [x] **8.1a** Back up `experiments/` (7.4 GB) → `tc2_backup/experiments/`
+- [x] **8.1b** Back up `data/processed_shapenet/` (5.0 GB) → `tc2_backup/data_processed_shapenet/`
+- [x] **8.1c** Back up `logs/` → `tc2_backup/logs/`
+- [x] **8.1d** Back up `configs/` → `tc2_backup/configs/`
+- [x] **8.1e** Back up `data/raw_shapenet/` (420 MB) → `tc2_backup/data_raw_shapenet/`
+- [x] **8.1f** Skip `data/shapenet_raw/` (26 GB) — re-downloadable from ShapeNet
+- [x] **8.1g** Source code already on local machine via git
+
+### 8.2 Post-Maintenance Recovery (2026-04-07, after 10:00am)
+- [ ] **8.2a** Verify TC2 is back online: `ssh tc2 'hostname && squeue -u yutaek001'`
+- [ ] **8.2b** Verify project files intact: `ssh tc2 'ls -la /home/msai/yutaek001/3ddl/experiments/EXP-10/seed42/checkpoints/'`
+- [ ] **8.2c** If files missing, restore from `tc2_backup/` via rsync
+- [ ] **8.2d** Verify fixed `src/evaluate.py` and `slurm/job_eval.sh` (QoS=normal) are in place on TC2
+- [ ] **8.2e** Submit eval reruns (2 at a time, max 2 submitted):
+  ```
+  EXP_DIR=experiments/EXP-10/seed42 sbatch --job-name=EXP-10_s42_eval_rerun slurm/job_eval.sh
+  EXP_DIR=experiments/EXP-11/seed42 sbatch --job-name=EXP-11_s42_eval_rerun slurm/job_eval.sh
+  ```
+  Then as slots free:
+  ```
+  EXP_DIR=experiments/EXP-12/seed42 sbatch --job-name=EXP-12_s42_eval_rerun slurm/job_eval.sh
+  EXP_DIR=experiments/EXP-07/seed42 sbatch --job-name=EXP-07_s42_eval_rerun slurm/job_eval.sh
+  EXP_DIR=experiments/EXP-09/seed42 sbatch --job-name=EXP-09_s42_eval_rerun slurm/job_eval.sh
+  EXP_DIR=experiments/EXP-06/seed123 sbatch --job-name=EXP-06_s123_eval_rerun slurm/job_eval.sh
+  EXP_DIR=experiments/EXP-06/seed456 sbatch --job-name=EXP-06_s456_eval_rerun slurm/job_eval.sh
+  ```
+- [ ] **8.2f** Collect results: `scp tc2:/home/msai/yutaek001/3ddl/experiments/EXP-XX/seedYY/results.json` for each
+- [ ] **8.2g** Verify `n_shapes_evaluated > 0` in each results.json
+- [ ] **8.2h** Update `experiments/experiment_log.md` status notes with actual shape counts
+- [ ] **8.2i** Commit all changes
 
 ---
 

@@ -83,6 +83,9 @@ figures/mesh_comparison_grid/
 # Keep source scripts
 !figures/.gitkeep
 
+# ── TC2 backup (local only) ──
+tc2_backup/
+
 # ── Temporary / debug files ──
 tmp/
 temp/

@@ -10,7 +10,7 @@
 #   EXP_DIR=experiments/EXP-01/seed42 sbatch slurm/job_eval.sh
 #===============================================================
 #SBATCH --partition=MGPU-TC2
-#SBATCH --qos=q_m1x16
+#SBATCH --qos=normal
 #SBATCH --nodes=1
 #SBATCH --mem=30G
 #SBATCH --cpus-per-task=8
