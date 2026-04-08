@@ -31,16 +31,16 @@ Single source of truth for all experiment results.
 | EXP-04 | 456 | 0.0436 +/- 0.0214 | 0.5954 +/- 0.1156 | skipped | skipped | done (300/300 shapes, 0 failures) |
 | EXP-04 | **3-seed** | **0.0496 +/- 0.0098** | **0.5987 +/- 0.0201** | — | — | **CV(CD)=0.197 < 0.2 ✓** |
 | EXP-05 | 42 | 0.0509 +/- 0.0385 | 0.5766 +/- 0.1271 | skipped | skipped | done (295/300 shapes, 5 failures) |
-| EXP-06 | 42 | 0.1515 +/- 0.0445 | 0.5059 +/- 0.0109 | skipped | skipped | done (240/300 shapes, 45 failures, partial — disk quota) |
-| EXP-06 | 123 | 0.1375 +/- 0.0433 | 0.5087 +/- 0.0110 | skipped | skipped | done (eval rerun pending — evaluator bug fix) |
-| EXP-06 | 456 | 0.1380 +/- 0.0426 | 0.5097 +/- 0.0113 | skipped | skipped | done (eval rerun pending — evaluator bug fix) |
-| EXP-06 | **3-seed** | **0.1423 +/- 0.0079** | **0.5081 +/- 0.0019** | — | — | **CV(CD)=0.056 < 0.2 ✓** |
-| EXP-07 | 42 | 0.1448 +/- n/a | 0.5074 +/- n/a | skipped | skipped | done (eval rerun pending — evaluator bug fix) |
-| EXP-08 | 42 | 0.1443 +/- 0.0448 | 0.5053 +/- 0.0119 | skipped | skipped | done (0/300 success, 300 failures — L_2nd didn't save PE) |
-| EXP-09 | 42 | 0.1450 +/- 0.0451 | 0.5031 +/- 0.0116 | skipped | skipped | done (eval rerun pending — evaluator bug fix) |
-| EXP-10 | 42 | 0.1401 +/- 0.0420 | 0.5077 +/- 0.0211 | skipped | skipped | done (eval rerun pending — evaluator bug fix) |
-| EXP-11 | 42 | 0.1427 +/- 0.0439 | 0.5071 +/- 0.0194 | skipped | skipped | done (eval rerun pending — evaluator bug fix) |
-| EXP-12 | 42 | 0.1400 +/- 0.0426 | 0.5073 +/- 0.0178 | skipped | skipped | done (eval rerun pending — evaluator bug fix) |
+| EXP-06 | 42 | 0.1443 +/- 0.0448 | 0.5055 +/- 0.0109 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator) |
+| EXP-06 | 123 | 0.1374 +/- 0.0433 | 0.5077 +/- 0.0109 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator) |
+| EXP-06 | 456 | 0.1380 +/- 0.0425 | 0.5103 +/- 0.0104 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator) |
+| EXP-06 | **3-seed** | **0.1399 +/- 0.0031** | **0.5078 +/- 0.0020** | — | — | **CV(CD)=0.022 < 0.2 ✓** |
+| EXP-07 | 42 | 0.1448 +/- 0.0449 | 0.5070 +/- 0.0106 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator) |
+| EXP-08 | 42 | 0.1443 +/- 0.0447 | 0.5045 +/- 0.0119 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator; L_2nd didn't save PE) |
+| EXP-09 | 42 | 0.1450 +/- 0.0450 | 0.5027 +/- 0.0116 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator) |
+| EXP-10 | 42 | 0.1401 +/- 0.0420 | 0.5078 +/- 0.0204 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator) |
+| EXP-11 | 42 | 0.1427 +/- 0.0440 | 0.5067 +/- 0.0183 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator) |
+| EXP-12 | 42 | 0.1399 +/- 0.0425 | 0.5078 +/- 0.0178 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator) |
 
 ## Detailed Results
 
@@ -137,12 +137,12 @@ Single source of truth for all experiment results.
 - **Config**: ratio=0.1, eikonal=on, PE=L=6, epochs=3000, batch=16384
 - **Data**: 300 ShapeNet shapes (airplane/chair/table), 250K sup/unsup points each
 - **Training**: ~6hr on TC2 (A40 GPU), L_sdf=0.0333 final, L_eik=0.021, L_z=0.00074
-- **Eval** (MC res=128, IoU skipped, 240/300 shapes, 45 failures — partial due to disk quota):
-  - **CD**: mean=0.1515, std=0.0445, min=0.0522, max=0.2627
-  - **NC**: mean=0.5059, std=0.0109, min=0.4701, max=0.5372
-- **vs EXP-04** (10% labels, no PE): CD 2.5x worse (0.0609→0.1515), NC worse (0.5805→0.5059). PE severely degrades quality at 10% supervision.
-- **vs EXP-01** (baseline): CD 2.6x worse (0.0593→0.1515), NC worse (0.5522→0.5059).
-- **Note**: PE with L=6 creates high-frequency SDF oscillations → marching cubes generates enormous meshes (~250MB/shape vs ~5MB without PE). This filled the 100GB disk quota at shape 195. Metrics computed for 240 shapes before job terminated. The NC std (0.0109) is unusually tight — PE collapses normal diversity. Root cause: training data lives near a unit sphere but eval grid samples full [-1,1]³ cube; PE amplifies extrapolation errors at cube corners unseen during training.
+- **Eval** (MC res=128, IoU skipped, 300/300 shapes, 0 failures — rerun with fixed evaluator):
+  - **CD**: mean=0.1443, std=0.0448, min=0.0522, max=0.2627
+  - **NC**: mean=0.5055, std=0.0109, min=0.4701, max=0.5372
+- **vs EXP-04** (10% labels, no PE): CD 2.4x worse (0.0609→0.1443), NC worse (0.5805→0.5055). PE severely degrades quality at 10% supervision.
+- **vs EXP-01** (baseline): CD 2.4x worse (0.0593→0.1443), NC worse (0.5522→0.5055).
+- **Note**: Original eval (240/300 shapes) was partial due to disk quota and evaluator bug (mesh export failure invalidated metrics). Rerun with fixed evaluator produces 300/300 shapes. PE with L=6 creates high-frequency SDF oscillations. The NC std (0.0109) is unusually tight — PE collapses normal diversity. Root cause: training data lives near a unit sphere but eval grid samples full [-1,1]³ cube; PE amplifies extrapolation errors at cube corners unseen during training.
 
 ### EXP-06 — 10% labels + Eikonal + PE L=6 (seed 123)
 - **Date**: 2026-04-02
@@ -197,10 +197,10 @@ Single source of truth for all experiment results.
 - **Note**: Extremely consistent with s123. L_eik much higher (0.727 vs 0.036 for s123) but reconstruction quality identical — PE dominates the failure mode.
 
 ### EXP-06 — 3-seed summary (seeds 42, 123, 456)
-- **CD**: mean=0.1423, std=0.0079, **CV=0.056 < 0.2** — 3 seeds sufficient, no expansion needed
-- **NC**: mean=0.5081, std=0.0019, CV=0.004
-- **vs EXP-04 3-seed** (no PE): CD 2.9x worse (0.0496→0.1423), NC worse (0.5987→0.5081)
-- **Conclusion**: PE L=6 is catastrophic and highly reproducible across seeds. The near-zero NC variance (CV=0.004) confirms PE collapses all shapes to similar poor-quality reconstructions.
+- **CD**: mean=0.1399, std=0.0031, **CV=0.022 < 0.2** — 3 seeds sufficient, no expansion needed
+- **NC**: mean=0.5078, std=0.0020, CV=0.004
+- **vs EXP-04 3-seed** (no PE): CD 2.8x worse (0.0496→0.1399), NC worse (0.5987→0.5078)
+- **Conclusion**: PE L=6 is catastrophic and highly reproducible across seeds. The near-zero NC variance (CV=0.004) confirms PE collapses all shapes to similar poor-quality reconstructions. (Updated with fixed evaluator reruns — all seeds now 300/300 shapes.)
 
 ### EXP-08 — 10% labels + Eikonal + PE L=6 + L_2nd (seed 42)
 - **Date**: 2026-04-02

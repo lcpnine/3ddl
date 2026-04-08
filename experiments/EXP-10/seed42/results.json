@@ -1,0 +1,2129 @@
+{
+  "experiment": "EXP-10",
+  "seed": 42,
+  "supervision_ratio": 1.0,
+  "use_eikonal": true,
+  "use_pe": true,
+  "pe_levels": 4,
+  "diverged": true,
+  "n_shapes_evaluated": 300,
+  "n_shapes_failed": 0,
+  "mc_resolution": 128,
+  "n_eval_points": 30000,
+  "aggregate": {
+    "chamfer_distance": {
+      "mean": 0.14012864826694865,
+      "std": 0.04204553679313742,
+      "min": 0.05040890475230504,
+      "max": 0.24900445869070584
+    },
+    "normal_consistency": {
+      "mean": 0.5078083403209496,
+      "std": 0.020415020202176865,
+      "min": 0.43353355925044595,
+      "max": 0.5624266676010959
+    }
+  },
+  "per_shape": [
+    {
+      "shape": "airplane_0000",
+      "status": "ok",
+      "chamfer_distance": 0.19983669096850387,
+      "normal_consistency": 0.5106991969995326,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0001",
+      "status": "ok",
+      "chamfer_distance": 0.16075601204849177,
+      "normal_consistency": 0.5281328164453806,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0002",
+      "status": "ok",
+      "chamfer_distance": 0.1712031917624983,
+      "normal_consistency": 0.5337778333308554,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0003",
+      "status": "ok",
+      "chamfer_distance": 0.21825834084500442,
+      "normal_consistency": 0.5323183023193081,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0004",
+      "status": "ok",
+      "chamfer_distance": 0.16618383922790547,
+      "normal_consistency": 0.5337497324973145,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0005",
+      "status": "ok",
+      "chamfer_distance": 0.1819434260462315,
+      "normal_consistency": 0.5363810826160421,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0006",
+      "status": "ok",
+      "chamfer_distance": 0.21961824168670055,
+      "normal_consistency": 0.5219537935454862,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0007",
+      "status": "ok",
+      "chamfer_distance": 0.16193601522031337,
+      "normal_consistency": 0.5211075345242266,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0008",
+      "status": "ok",
+      "chamfer_distance": 0.16001098142647313,
+      "normal_consistency": 0.508205102737731,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0009",
+      "status": "ok",
+      "chamfer_distance": 0.19201183651585446,
+      "normal_consistency": 0.5510974324723097,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0010",
+      "status": "ok",
+      "chamfer_distance": 0.1482099044548231,
+      "normal_consistency": 0.4759312455138219,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0011",
+      "status": "ok",
+      "chamfer_distance": 0.17267632923494886,
+      "normal_consistency": 0.5341355099140775,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0012",
+      "status": "ok",
+      "chamfer_distance": 0.1480952058827058,
+      "normal_consistency": 0.5044070124692668,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0013",
+      "status": "ok",
+      "chamfer_distance": 0.19253658903148393,
+      "normal_consistency": 0.524539370379759,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0014",
+      "status": "ok",
+      "chamfer_distance": 0.1990452187174579,
+      "normal_consistency": 0.5271358902221761,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0015",
+      "status": "ok",
+      "chamfer_distance": 0.24900445869070584,
+      "normal_consistency": 0.5174672523095077,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0016",
+      "status": "ok",
+      "chamfer_distance": 0.22018758095779592,
+      "normal_consistency": 0.5244248205848453,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0017",
+      "status": "ok",
+      "chamfer_distance": 0.115089207047227,
+      "normal_consistency": 0.5257885855730204,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0018",
+      "status": "ok",
+      "chamfer_distance": 0.1961196118964781,
+      "normal_consistency": 0.5162935820068891,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0019",
+      "status": "ok",
+      "chamfer_distance": 0.1814112049061558,
+      "normal_consistency": 0.5219130156554531,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0020",
+      "status": "ok",
+      "chamfer_distance": 0.21022420673920258,
+      "normal_consistency": 0.48782442125237857,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0021",
+      "status": "ok",
+      "chamfer_distance": 0.18165471184748022,
+      "normal_consistency": 0.5401638035378732,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0022",
+      "status": "ok",
+      "chamfer_distance": 0.148643843592753,
+      "normal_consistency": 0.5033972795325016,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0023",
+      "status": "ok",
+      "chamfer_distance": 0.1729240686849843,
+      "normal_consistency": 0.5146742569576744,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0024",
+      "status": "ok",
+      "chamfer_distance": 0.18221832898102733,
+      "normal_consistency": 0.5019466362553062,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0025",
+      "status": "ok",
+      "chamfer_distance": 0.2136249852362794,
+      "normal_consistency": 0.5001382663902468,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0026",
+      "status": "ok",
+      "chamfer_distance": 0.18408661750367472,
+      "normal_consistency": 0.5376786471777373,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0027",
+      "status": "ok",
+      "chamfer_distance": 0.16423578692372487,
+      "normal_consistency": 0.5075478342803219,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0028",
+      "status": "ok",
+      "chamfer_distance": 0.17951725120607642,
+      "normal_consistency": 0.5405271556070903,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0029",
+      "status": "ok",
+      "chamfer_distance": 0.22450855146345858,
+      "normal_consistency": 0.49802101053602477,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0030",
+      "status": "ok",
+      "chamfer_distance": 0.18004709158967536,
+      "normal_consistency": 0.5194789343364608,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0031",
+      "status": "ok",
+      "chamfer_distance": 0.21012004638180873,
+      "normal_consistency": 0.5148507196255299,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0032",
+      "status": "ok",
+      "chamfer_distance": 0.1688195430339911,
+      "normal_consistency": 0.5229261285984166,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0033",
+      "status": "ok",
+      "chamfer_distance": 0.18728452247784394,
+      "normal_consistency": 0.49612518129242134,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0034",
+      "status": "ok",
+      "chamfer_distance": 0.1830684997166537,
+      "normal_consistency": 0.5511946536750482,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0035",
+      "status": "ok",
+      "chamfer_distance": 0.19661276930061156,
+      "normal_consistency": 0.5372150353959108,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0036",
+      "status": "ok",
+      "chamfer_distance": 0.19140978405824402,
+      "normal_consistency": 0.5502032998156043,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0037",
+      "status": "ok",
+      "chamfer_distance": 0.18517233084604084,
+      "normal_consistency": 0.535178019264107,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0038",
+      "status": "ok",
+      "chamfer_distance": 0.16583899171363886,
+      "normal_consistency": 0.5343939710844179,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0039",
+      "status": "ok",
+      "chamfer_distance": 0.183383194253661,
+      "normal_consistency": 0.5624266676010959,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0040",
+      "status": "ok",
+      "chamfer_distance": 0.22533531756785005,
+      "normal_consistency": 0.5465655156797778,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0041",
+      "status": "ok",
+      "chamfer_distance": 0.19070353860820818,
+      "normal_consistency": 0.5188408989701498,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0042",
+      "status": "ok",
+      "chamfer_distance": 0.1673616793573179,
+      "normal_consistency": 0.4995740419720821,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0043",
+      "status": "ok",
+      "chamfer_distance": 0.16035757543675044,
+      "normal_consistency": 0.5114780900064096,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0044",
+      "status": "ok",
+      "chamfer_distance": 0.1923913835453878,
+      "normal_consistency": 0.5125148905297685,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0045",
+      "status": "ok",
+      "chamfer_distance": 0.17892839464868632,
+      "normal_consistency": 0.5380900144259302,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0046",
+      "status": "ok",
+      "chamfer_distance": 0.20464343696508908,
+      "normal_consistency": 0.5042696199739753,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0047",
+      "status": "ok",
+      "chamfer_distance": 0.1811324273127973,
+      "normal_consistency": 0.5411426630144287,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0048",
+      "status": "ok",
+      "chamfer_distance": 0.19719664960175462,
+      "normal_consistency": 0.5201146732181259,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0049",
+      "status": "ok",
+      "chamfer_distance": 0.18543719997433947,
+      "normal_consistency": 0.5144070964361567,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0050",
+      "status": "ok",
+      "chamfer_distance": 0.1821524660997613,
+      "normal_consistency": 0.5037876319693771,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0051",
+      "status": "ok",
+      "chamfer_distance": 0.17574453767302398,
+      "normal_consistency": 0.5335360308098467,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0052",
+      "status": "ok",
+      "chamfer_distance": 0.20776164634977662,
+      "normal_consistency": 0.5037088616716263,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0053",
+      "status": "ok",
+      "chamfer_distance": 0.1936981399827947,
+      "normal_consistency": 0.5292629261674383,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0054",
+      "status": "ok",
+      "chamfer_distance": 0.17217052163993113,
+      "normal_consistency": 0.5367218489925607,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0055",
+      "status": "ok",
+      "chamfer_distance": 0.1690086700954922,
+      "normal_consistency": 0.5576727920887399,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0056",
+      "status": "ok",
+      "chamfer_distance": 0.18171150040273865,
+      "normal_consistency": 0.5071501445071622,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0057",
+      "status": "ok",
+      "chamfer_distance": 0.17964219297752768,
+      "normal_consistency": 0.5200172119920696,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0058",
+      "status": "ok",
+      "chamfer_distance": 0.1770823252345871,
+      "normal_consistency": 0.5311298803804156,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0059",
+      "status": "ok",
+      "chamfer_distance": 0.16792842173168823,
+      "normal_consistency": 0.519316722687147,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0060",
+      "status": "ok",
+      "chamfer_distance": 0.1722332279138219,
+      "normal_consistency": 0.5257934171577523,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0061",
+      "status": "ok",
+      "chamfer_distance": 0.1817402370787691,
+      "normal_consistency": 0.5266194498247135,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0062",
+      "status": "ok",
+      "chamfer_distance": 0.1863297975948289,
+      "normal_consistency": 0.5377786689497741,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0063",
+      "status": "ok",
+      "chamfer_distance": 0.1700987819479667,
+      "normal_consistency": 0.5348289708629113,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0064",
+      "status": "ok",
+      "chamfer_distance": 0.17493140785785352,
+      "normal_consistency": 0.5200274927367226,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0065",
+      "status": "ok",
+      "chamfer_distance": 0.16672307032208405,
+      "normal_consistency": 0.5165790340431342,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0066",
+      "status": "ok",
+      "chamfer_distance": 0.1935369367767855,
+      "normal_consistency": 0.5230602056383347,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0067",
+      "status": "ok",
+      "chamfer_distance": 0.17687045383126804,
+      "normal_consistency": 0.5510958660885491,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0068",
+      "status": "ok",
+      "chamfer_distance": 0.18665262027816507,
+      "normal_consistency": 0.5291401410153131,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0069",
+      "status": "ok",
+      "chamfer_distance": 0.21471736580396728,
+      "normal_consistency": 0.5145408683007655,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0070",
+      "status": "ok",
+      "chamfer_distance": 0.18663742482371928,
+      "normal_consistency": 0.5332060143996865,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0071",
+      "status": "ok",
+      "chamfer_distance": 0.20572904222191138,
+      "normal_consistency": 0.5106978156601613,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0072",
+      "status": "ok",
+      "chamfer_distance": 0.2443471978690662,
+      "normal_consistency": 0.5006135481248105,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0073",
+      "status": "ok",
+      "chamfer_distance": 0.19138662023943842,
+      "normal_consistency": 0.545583364679461,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0074",
+      "status": "ok",
+      "chamfer_distance": 0.1486922748384862,
+      "normal_consistency": 0.5162398694146036,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0075",
+      "status": "ok",
+      "chamfer_distance": 0.20661142627505497,
+      "normal_consistency": 0.5347665008067911,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0076",
+      "status": "ok",
+      "chamfer_distance": 0.19260487097115467,
+      "normal_consistency": 0.5255393400743246,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0077",
+      "status": "ok",
+      "chamfer_distance": 0.1962823290377915,
+      "normal_consistency": 0.5163814085360215,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0078",
+      "status": "ok",
+      "chamfer_distance": 0.18676010336599855,
+      "normal_consistency": 0.5258947504271249,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0079",
+      "status": "ok",
+      "chamfer_distance": 0.17085584255115568,
+      "normal_consistency": 0.5287781141440409,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0080",
+      "status": "ok",
+      "chamfer_distance": 0.2439542922082123,
+      "normal_consistency": 0.5099359318190813,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0081",
+      "status": "ok",
+      "chamfer_distance": 0.21536367471809212,
+      "normal_consistency": 0.4965059212320496,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0082",
+      "status": "ok",
+      "chamfer_distance": 0.18497178517324211,
+      "normal_consistency": 0.5549293366756713,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0083",
+      "status": "ok",
+      "chamfer_distance": 0.19912965692615223,
+      "normal_consistency": 0.5287689761350096,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0084",
+      "status": "ok",
+      "chamfer_distance": 0.1934525520888234,
+      "normal_consistency": 0.5037886132194641,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0085",
+      "status": "ok",
+      "chamfer_distance": 0.16188110782987641,
+      "normal_consistency": 0.5119642500699066,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0086",
+      "status": "ok",
+      "chamfer_distance": 0.1969387605379,
+      "normal_consistency": 0.5364357928388863,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0087",
+      "status": "ok",
+      "chamfer_distance": 0.23508333415665628,
+      "normal_consistency": 0.4943076553862749,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0088",
+      "status": "ok",
+      "chamfer_distance": 0.23422136996782617,
+      "normal_consistency": 0.5148857200981604,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0089",
+      "status": "ok",
+      "chamfer_distance": 0.19770926289828733,
+      "normal_consistency": 0.539134794055976,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0090",
+      "status": "ok",
+      "chamfer_distance": 0.1717062760900061,
+      "normal_consistency": 0.5392928174088282,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0091",
+      "status": "ok",
+      "chamfer_distance": 0.19411224750680925,
+      "normal_consistency": 0.5028801121148704,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0092",
+      "status": "ok",
+      "chamfer_distance": 0.15594719118657174,
+      "normal_consistency": 0.5132113954854981,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0093",
+      "status": "ok",
+      "chamfer_distance": 0.18143974858946116,
+      "normal_consistency": 0.5469399544929309,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0094",
+      "status": "ok",
+      "chamfer_distance": 0.16508429718606443,
+      "normal_consistency": 0.5290984281615819,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0095",
+      "status": "ok",
+      "chamfer_distance": 0.1961290097446554,
+      "normal_consistency": 0.52576271233926,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0096",
+      "status": "ok",
+      "chamfer_distance": 0.18124754066866294,
+      "normal_consistency": 0.5303988297649691,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0097",
+      "status": "ok",
+      "chamfer_distance": 0.18106107317174988,
+      "normal_consistency": 0.5291092619645446,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0098",
+      "status": "ok",
+      "chamfer_distance": 0.18677142060504728,
+      "normal_consistency": 0.49257209953354236,
+      "mesh_saved": false
+    },
+    {
+      "shape": "airplane_0099",
+      "status": "ok",
+      "chamfer_distance": 0.18163127957377315,
+      "normal_consistency": 0.548467443658746,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0000",
+      "status": "ok",
+      "chamfer_distance": 0.09249976478887945,
+      "normal_consistency": 0.5032593204290906,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0001",
+      "status": "ok",
+      "chamfer_distance": 0.1020629412400565,
+      "normal_consistency": 0.491216916072049,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0002",
+      "status": "ok",
+      "chamfer_distance": 0.10466835088786762,
+      "normal_consistency": 0.5008695591369642,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0003",
+      "status": "ok",
+      "chamfer_distance": 0.16262137964072307,
+      "normal_consistency": 0.5273893111269844,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0004",
+      "status": "ok",
+      "chamfer_distance": 0.12155011441029191,
+      "normal_consistency": 0.5108561647861953,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0005",
+      "status": "ok",
+      "chamfer_distance": 0.08591668734107076,
+      "normal_consistency": 0.5083958170387596,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0006",
+      "status": "ok",
+      "chamfer_distance": 0.12470676597183147,
+      "normal_consistency": 0.49862383417150435,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0007",
+      "status": "ok",
+      "chamfer_distance": 0.14349473302177398,
+      "normal_consistency": 0.5010005928340683,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0008",
+      "status": "ok",
+      "chamfer_distance": 0.1352084012885554,
+      "normal_consistency": 0.4842731453406988,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0009",
+      "status": "ok",
+      "chamfer_distance": 0.13643846685014324,
+      "normal_consistency": 0.4926278488962371,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0010",
+      "status": "ok",
+      "chamfer_distance": 0.14817776761826618,
+      "normal_consistency": 0.5154429348965895,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0011",
+      "status": "ok",
+      "chamfer_distance": 0.11425321955308085,
+      "normal_consistency": 0.4918431525234865,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0012",
+      "status": "ok",
+      "chamfer_distance": 0.11843878858931864,
+      "normal_consistency": 0.49324129255745697,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0013",
+      "status": "ok",
+      "chamfer_distance": 0.14926372756787082,
+      "normal_consistency": 0.5182778294219031,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0014",
+      "status": "ok",
+      "chamfer_distance": 0.16781042852903233,
+      "normal_consistency": 0.48776829438836417,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0015",
+      "status": "ok",
+      "chamfer_distance": 0.061782955077817205,
+      "normal_consistency": 0.5100542762321262,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0016",
+      "status": "ok",
+      "chamfer_distance": 0.13857671049698395,
+      "normal_consistency": 0.503517344171699,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0017",
+      "status": "ok",
+      "chamfer_distance": 0.08102823849505734,
+      "normal_consistency": 0.47643860475628036,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0018",
+      "status": "ok",
+      "chamfer_distance": 0.10886476898253891,
+      "normal_consistency": 0.4903937622527668,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0019",
+      "status": "ok",
+      "chamfer_distance": 0.10448746350416935,
+      "normal_consistency": 0.49231860279980233,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0020",
+      "status": "ok",
+      "chamfer_distance": 0.1372218764296961,
+      "normal_consistency": 0.5093916381577057,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0021",
+      "status": "ok",
+      "chamfer_distance": 0.12850869064659035,
+      "normal_consistency": 0.495412714810066,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0022",
+      "status": "ok",
+      "chamfer_distance": 0.07087702086612006,
+      "normal_consistency": 0.4933534526658548,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0023",
+      "status": "ok",
+      "chamfer_distance": 0.11669589368031383,
+      "normal_consistency": 0.48147283158871507,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0024",
+      "status": "ok",
+      "chamfer_distance": 0.09346562992893219,
+      "normal_consistency": 0.48129830133033996,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0025",
+      "status": "ok",
+      "chamfer_distance": 0.12717051547222966,
+      "normal_consistency": 0.494813680252329,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0026",
+      "status": "ok",
+      "chamfer_distance": 0.11766794225392888,
+      "normal_consistency": 0.5027621008801657,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0027",
+      "status": "ok",
+      "chamfer_distance": 0.11643267492793567,
+      "normal_consistency": 0.4915927272389343,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0028",
+      "status": "ok",
+      "chamfer_distance": 0.13332633753448772,
+      "normal_consistency": 0.5095680878061581,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0029",
+      "status": "ok",
+      "chamfer_distance": 0.08201076787987131,
+      "normal_consistency": 0.49028111843830696,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0030",
+      "status": "ok",
+      "chamfer_distance": 0.12623224638006966,
+      "normal_consistency": 0.4778311696243679,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0031",
+      "status": "ok",
+      "chamfer_distance": 0.11348502558739622,
+      "normal_consistency": 0.48362326543901435,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0032",
+      "status": "ok",
+      "chamfer_distance": 0.13080017904732516,
+      "normal_consistency": 0.5037320776358037,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0033",
+      "status": "ok",
+      "chamfer_distance": 0.06836038118561234,
+      "normal_consistency": 0.5092561049517359,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0034",
+      "status": "ok",
+      "chamfer_distance": 0.11679446330290823,
+      "normal_consistency": 0.4916500169517304,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0035",
+      "status": "ok",
+      "chamfer_distance": 0.16069099429686998,
+      "normal_consistency": 0.5174891897040432,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0036",
+      "status": "ok",
+      "chamfer_distance": 0.15026714671499794,
+      "normal_consistency": 0.5071028931613121,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0037",
+      "status": "ok",
+      "chamfer_distance": 0.15955498561117043,
+      "normal_consistency": 0.5039417868603707,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0038",
+      "status": "ok",
+      "chamfer_distance": 0.10565865210006778,
+      "normal_consistency": 0.510680314111771,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0039",
+      "status": "ok",
+      "chamfer_distance": 0.07676484537665465,
+      "normal_consistency": 0.4981584243862947,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0040",
+      "status": "ok",
+      "chamfer_distance": 0.1101880849831703,
+      "normal_consistency": 0.4900353239790856,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0041",
+      "status": "ok",
+      "chamfer_distance": 0.09477679299564094,
+      "normal_consistency": 0.48332302759122187,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0042",
+      "status": "ok",
+      "chamfer_distance": 0.07500942659237832,
+      "normal_consistency": 0.5233381037696428,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0043",
+      "status": "ok",
+      "chamfer_distance": 0.14139099875850064,
+      "normal_consistency": 0.4847211976876112,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0044",
+      "status": "ok",
+      "chamfer_distance": 0.13870029807835874,
+      "normal_consistency": 0.48523429736418827,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0045",
+      "status": "ok",
+      "chamfer_distance": 0.13623244042079025,
+      "normal_consistency": 0.5197236150170864,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0046",
+      "status": "ok",
+      "chamfer_distance": 0.12867516477360447,
+      "normal_consistency": 0.5081942923440307,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0047",
+      "status": "ok",
+      "chamfer_distance": 0.13254629614800179,
+      "normal_consistency": 0.5020942504953038,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0048",
+      "status": "ok",
+      "chamfer_distance": 0.16441422799822117,
+      "normal_consistency": 0.4827093736458109,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0049",
+      "status": "ok",
+      "chamfer_distance": 0.10953334141944288,
+      "normal_consistency": 0.5087330173485605,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0050",
+      "status": "ok",
+      "chamfer_distance": 0.10037018901852546,
+      "normal_consistency": 0.5099470568351077,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0051",
+      "status": "ok",
+      "chamfer_distance": 0.07505480629661217,
+      "normal_consistency": 0.5098217548657906,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0052",
+      "status": "ok",
+      "chamfer_distance": 0.13116569800547304,
+      "normal_consistency": 0.5145112027251887,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0053",
+      "status": "ok",
+      "chamfer_distance": 0.12207442288344171,
+      "normal_consistency": 0.5086288020714252,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0054",
+      "status": "ok",
+      "chamfer_distance": 0.1301242379114872,
+      "normal_consistency": 0.5019182147004986,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0055",
+      "status": "ok",
+      "chamfer_distance": 0.11783913875979973,
+      "normal_consistency": 0.5153343264892414,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0056",
+      "status": "ok",
+      "chamfer_distance": 0.13289883956644027,
+      "normal_consistency": 0.4987507820653621,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0057",
+      "status": "ok",
+      "chamfer_distance": 0.12247775697886337,
+      "normal_consistency": 0.5129309518014,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0058",
+      "status": "ok",
+      "chamfer_distance": 0.11078696625775172,
+      "normal_consistency": 0.5005439321403576,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0059",
+      "status": "ok",
+      "chamfer_distance": 0.10621515862059425,
+      "normal_consistency": 0.4984487789763951,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0060",
+      "status": "ok",
+      "chamfer_distance": 0.1299401658031028,
+      "normal_consistency": 0.513502116373644,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0061",
+      "status": "ok",
+      "chamfer_distance": 0.12290891231618316,
+      "normal_consistency": 0.4994591202277307,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0062",
+      "status": "ok",
+      "chamfer_distance": 0.1170819190908783,
+      "normal_consistency": 0.49468219227177385,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0063",
+      "status": "ok",
+      "chamfer_distance": 0.1494144426205086,
+      "normal_consistency": 0.5172673629109503,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0064",
+      "status": "ok",
+      "chamfer_distance": 0.11069295574466827,
+      "normal_consistency": 0.5060732886563026,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0065",
+      "status": "ok",
+      "chamfer_distance": 0.13167617231045303,
+      "normal_consistency": 0.5083951911518806,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0066",
+      "status": "ok",
+      "chamfer_distance": 0.15758149887598208,
+      "normal_consistency": 0.49995834610413536,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0067",
+      "status": "ok",
+      "chamfer_distance": 0.1512997872920416,
+      "normal_consistency": 0.4898999493162817,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0068",
+      "status": "ok",
+      "chamfer_distance": 0.09250644188454911,
+      "normal_consistency": 0.4851774277052391,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0069",
+      "status": "ok",
+      "chamfer_distance": 0.11371250012491246,
+      "normal_consistency": 0.4939592088066901,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0070",
+      "status": "ok",
+      "chamfer_distance": 0.09633762363548441,
+      "normal_consistency": 0.5057542768410489,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0071",
+      "status": "ok",
+      "chamfer_distance": 0.10365161613818376,
+      "normal_consistency": 0.48338013596516793,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0072",
+      "status": "ok",
+      "chamfer_distance": 0.1980465496111433,
+      "normal_consistency": 0.51594898077913,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0073",
+      "status": "ok",
+      "chamfer_distance": 0.1944022849321804,
+      "normal_consistency": 0.5047493738499471,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0074",
+      "status": "ok",
+      "chamfer_distance": 0.13656456583482116,
+      "normal_consistency": 0.4963864119894274,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0075",
+      "status": "ok",
+      "chamfer_distance": 0.13650391436910464,
+      "normal_consistency": 0.5301019069871816,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0076",
+      "status": "ok",
+      "chamfer_distance": 0.13374080194350738,
+      "normal_consistency": 0.5042344694763587,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0077",
+      "status": "ok",
+      "chamfer_distance": 0.07799746015661752,
+      "normal_consistency": 0.5097133703299964,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0078",
+      "status": "ok",
+      "chamfer_distance": 0.11359235466674877,
+      "normal_consistency": 0.4905012573017547,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0079",
+      "status": "ok",
+      "chamfer_distance": 0.12402335178180438,
+      "normal_consistency": 0.46946593248300056,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0080",
+      "status": "ok",
+      "chamfer_distance": 0.11607387381481152,
+      "normal_consistency": 0.5021591393184398,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0081",
+      "status": "ok",
+      "chamfer_distance": 0.11468244179861571,
+      "normal_consistency": 0.5014931207237796,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0082",
+      "status": "ok",
+      "chamfer_distance": 0.17342662539614084,
+      "normal_consistency": 0.5186826331017563,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0083",
+      "status": "ok",
+      "chamfer_distance": 0.11735096310800788,
+      "normal_consistency": 0.49782094830720575,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0084",
+      "status": "ok",
+      "chamfer_distance": 0.11551106827715757,
+      "normal_consistency": 0.5099417501109829,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0085",
+      "status": "ok",
+      "chamfer_distance": 0.12342774137103343,
+      "normal_consistency": 0.4906572553147769,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0086",
+      "status": "ok",
+      "chamfer_distance": 0.09144202122153766,
+      "normal_consistency": 0.5042974145408157,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0087",
+      "status": "ok",
+      "chamfer_distance": 0.11820959121038548,
+      "normal_consistency": 0.49365027926272925,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0088",
+      "status": "ok",
+      "chamfer_distance": 0.12267075178029624,
+      "normal_consistency": 0.5192590704011026,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0089",
+      "status": "ok",
+      "chamfer_distance": 0.12698868852569445,
+      "normal_consistency": 0.4998140649430301,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0090",
+      "status": "ok",
+      "chamfer_distance": 0.12535196165484402,
+      "normal_consistency": 0.5274369257213185,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0091",
+      "status": "ok",
+      "chamfer_distance": 0.09901006593235263,
+      "normal_consistency": 0.49155911690820653,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0092",
+      "status": "ok",
+      "chamfer_distance": 0.11574568027345171,
+      "normal_consistency": 0.5121087547361399,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0093",
+      "status": "ok",
+      "chamfer_distance": 0.16257470671906457,
+      "normal_consistency": 0.5055595598976295,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0094",
+      "status": "ok",
+      "chamfer_distance": 0.08286519723488729,
+      "normal_consistency": 0.49775742305798826,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0095",
+      "status": "ok",
+      "chamfer_distance": 0.13201459492704612,
+      "normal_consistency": 0.519466965715096,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0096",
+      "status": "ok",
+      "chamfer_distance": 0.1542470007525306,
+      "normal_consistency": 0.5130166215355565,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0097",
+      "status": "ok",
+      "chamfer_distance": 0.11022768178406478,
+      "normal_consistency": 0.5060041451147278,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0098",
+      "status": "ok",
+      "chamfer_distance": 0.12046376409978311,
+      "normal_consistency": 0.5101358436008788,
+      "mesh_saved": false
+    },
+    {
+      "shape": "chair_0099",
+      "status": "ok",
+      "chamfer_distance": 0.11787269800814204,
+      "normal_consistency": 0.5064103642312516,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0000",
+      "status": "ok",
+      "chamfer_distance": 0.17686918239399688,
+      "normal_consistency": 0.5106572582038426,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0001",
+      "status": "ok",
+      "chamfer_distance": 0.14502319671263325,
+      "normal_consistency": 0.4919027529298265,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0002",
+      "status": "ok",
+      "chamfer_distance": 0.09441451289479019,
+      "normal_consistency": 0.4798362028120269,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0003",
+      "status": "ok",
+      "chamfer_distance": 0.11817983655962541,
+      "normal_consistency": 0.49902530390070726,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0004",
+      "status": "ok",
+      "chamfer_distance": 0.13700333545193294,
+      "normal_consistency": 0.48914586100157065,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0005",
+      "status": "ok",
+      "chamfer_distance": 0.12050145570322601,
+      "normal_consistency": 0.48733410874561706,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0006",
+      "status": "ok",
+      "chamfer_distance": 0.12119969094399323,
+      "normal_consistency": 0.47242766542287784,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0007",
+      "status": "ok",
+      "chamfer_distance": 0.13825412169725987,
+      "normal_consistency": 0.48921086195527885,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0008",
+      "status": "ok",
+      "chamfer_distance": 0.09812114537514091,
+      "normal_consistency": 0.49414610241950857,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0009",
+      "status": "ok",
+      "chamfer_distance": 0.09176918438844026,
+      "normal_consistency": 0.4873602475213794,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0010",
+      "status": "ok",
+      "chamfer_distance": 0.11062727348358344,
+      "normal_consistency": 0.5200375414974482,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0011",
+      "status": "ok",
+      "chamfer_distance": 0.12464212486281231,
+      "normal_consistency": 0.5141542519887697,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0012",
+      "status": "ok",
+      "chamfer_distance": 0.1409106760901601,
+      "normal_consistency": 0.5037286718029493,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0013",
+      "status": "ok",
+      "chamfer_distance": 0.11340397666082605,
+      "normal_consistency": 0.5202452066413572,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0014",
+      "status": "ok",
+      "chamfer_distance": 0.13940240057597686,
+      "normal_consistency": 0.4972863272117924,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0015",
+      "status": "ok",
+      "chamfer_distance": 0.06882882973185421,
+      "normal_consistency": 0.5349005754246621,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0016",
+      "status": "ok",
+      "chamfer_distance": 0.09377848176842418,
+      "normal_consistency": 0.5208058776392744,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0017",
+      "status": "ok",
+      "chamfer_distance": 0.09304219677969261,
+      "normal_consistency": 0.515192436195169,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0018",
+      "status": "ok",
+      "chamfer_distance": 0.10983336666079158,
+      "normal_consistency": 0.5284702886784836,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0019",
+      "status": "ok",
+      "chamfer_distance": 0.12534958768827037,
+      "normal_consistency": 0.4647110896558218,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0020",
+      "status": "ok",
+      "chamfer_distance": 0.0626845442101254,
+      "normal_consistency": 0.5024672191631673,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0021",
+      "status": "ok",
+      "chamfer_distance": 0.1437924069257515,
+      "normal_consistency": 0.49576078005640506,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0022",
+      "status": "ok",
+      "chamfer_distance": 0.09132303376719711,
+      "normal_consistency": 0.4656453023978408,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0023",
+      "status": "ok",
+      "chamfer_distance": 0.10738236909918471,
+      "normal_consistency": 0.521873553367178,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0024",
+      "status": "ok",
+      "chamfer_distance": 0.14851146718904754,
+      "normal_consistency": 0.5324407882546448,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0025",
+      "status": "ok",
+      "chamfer_distance": 0.09429026854301942,
+      "normal_consistency": 0.5553552581826057,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0026",
+      "status": "ok",
+      "chamfer_distance": 0.09056919750223173,
+      "normal_consistency": 0.4836765922983376,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0027",
+      "status": "ok",
+      "chamfer_distance": 0.10147571959666175,
+      "normal_consistency": 0.5121248891477602,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0028",
+      "status": "ok",
+      "chamfer_distance": 0.05040890475230504,
+      "normal_consistency": 0.4643320497010009,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0029",
+      "status": "ok",
+      "chamfer_distance": 0.11894530278224799,
+      "normal_consistency": 0.5130381836689518,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0030",
+      "status": "ok",
+      "chamfer_distance": 0.11562007051400065,
+      "normal_consistency": 0.48049110476798845,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0031",
+      "status": "ok",
+      "chamfer_distance": 0.10826291459492628,
+      "normal_consistency": 0.4989825959233065,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0032",
+      "status": "ok",
+      "chamfer_distance": 0.1122166928433106,
+      "normal_consistency": 0.4724671124970651,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0033",
+      "status": "ok",
+      "chamfer_distance": 0.06678435323843351,
+      "normal_consistency": 0.5084624490463976,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0034",
+      "status": "ok",
+      "chamfer_distance": 0.1052945580764149,
+      "normal_consistency": 0.4800618193564205,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0035",
+      "status": "ok",
+      "chamfer_distance": 0.09784505851251972,
+      "normal_consistency": 0.46537275752647794,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0036",
+      "status": "ok",
+      "chamfer_distance": 0.1270850291968803,
+      "normal_consistency": 0.49424515537213143,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0037",
+      "status": "ok",
+      "chamfer_distance": 0.11774891961967549,
+      "normal_consistency": 0.4570892907150444,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0038",
+      "status": "ok",
+      "chamfer_distance": 0.09750242608672635,
+      "normal_consistency": 0.5116984449059592,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0039",
+      "status": "ok",
+      "chamfer_distance": 0.10743495594487702,
+      "normal_consistency": 0.49617901595228875,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0040",
+      "status": "ok",
+      "chamfer_distance": 0.05793517440241201,
+      "normal_consistency": 0.49408782671016915,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0041",
+      "status": "ok",
+      "chamfer_distance": 0.11456546422276846,
+      "normal_consistency": 0.4811781854655684,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0042",
+      "status": "ok",
+      "chamfer_distance": 0.14154676110590295,
+      "normal_consistency": 0.4885457894710575,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0043",
+      "status": "ok",
+      "chamfer_distance": 0.10764066944300328,
+      "normal_consistency": 0.48758007162370703,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0044",
+      "status": "ok",
+      "chamfer_distance": 0.08702575169655224,
+      "normal_consistency": 0.4767465573079801,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0045",
+      "status": "ok",
+      "chamfer_distance": 0.07160145701828344,
+      "normal_consistency": 0.4935459393389619,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0046",
+      "status": "ok",
+      "chamfer_distance": 0.09932276731573439,
+      "normal_consistency": 0.4847297118850892,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0047",
+      "status": "ok",
+      "chamfer_distance": 0.10434878663745094,
+      "normal_consistency": 0.5019527399004471,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0048",
+      "status": "ok",
+      "chamfer_distance": 0.10701329449251225,
+      "normal_consistency": 0.5303285380466553,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0049",
+      "status": "ok",
+      "chamfer_distance": 0.1783907598826095,
+      "normal_consistency": 0.46751333495384184,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0050",
+      "status": "ok",
+      "chamfer_distance": 0.18242177462424233,
+      "normal_consistency": 0.49929614485817697,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0051",
+      "status": "ok",
+      "chamfer_distance": 0.1916748643377639,
+      "normal_consistency": 0.49092378020379485,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0052",
+      "status": "ok",
+      "chamfer_distance": 0.12857071713565327,
+      "normal_consistency": 0.49487895735506254,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0053",
+      "status": "ok",
+      "chamfer_distance": 0.11513132036768055,
+      "normal_consistency": 0.5324383156966331,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0054",
+      "status": "ok",
+      "chamfer_distance": 0.12471538092495614,
+      "normal_consistency": 0.5098506918039566,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0055",
+      "status": "ok",
+      "chamfer_distance": 0.1035465558006598,
+      "normal_consistency": 0.5451175721211894,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0056",
+      "status": "ok",
+      "chamfer_distance": 0.10328937962880372,
+      "normal_consistency": 0.5036931509234907,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0057",
+      "status": "ok",
+      "chamfer_distance": 0.11531702780762992,
+      "normal_consistency": 0.5288393633826571,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0058",
+      "status": "ok",
+      "chamfer_distance": 0.20386536236017655,
+      "normal_consistency": 0.4867372403566651,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0059",
+      "status": "ok",
+      "chamfer_distance": 0.08302916771276424,
+      "normal_consistency": 0.49242399059931075,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0060",
+      "status": "ok",
+      "chamfer_distance": 0.09753139382384064,
+      "normal_consistency": 0.5007668711357232,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0061",
+      "status": "ok",
+      "chamfer_distance": 0.13498194718914347,
+      "normal_consistency": 0.5127445155813637,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0062",
+      "status": "ok",
+      "chamfer_distance": 0.0741636818402373,
+      "normal_consistency": 0.452738178265858,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0063",
+      "status": "ok",
+      "chamfer_distance": 0.09847979641977359,
+      "normal_consistency": 0.5169434619904981,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0064",
+      "status": "ok",
+      "chamfer_distance": 0.11284803174269252,
+      "normal_consistency": 0.5015519850303359,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0065",
+      "status": "ok",
+      "chamfer_distance": 0.0697522489389986,
+      "normal_consistency": 0.4959363817055831,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0066",
+      "status": "ok",
+      "chamfer_distance": 0.12250577849484667,
+      "normal_consistency": 0.4786403309816977,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0067",
+      "status": "ok",
+      "chamfer_distance": 0.12207082435510247,
+      "normal_consistency": 0.5064751371983547,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0068",
+      "status": "ok",
+      "chamfer_distance": 0.14939460985961023,
+      "normal_consistency": 0.4923924974663719,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0069",
+      "status": "ok",
+      "chamfer_distance": 0.09940757614500922,
+      "normal_consistency": 0.5427188627794471,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0070",
+      "status": "ok",
+      "chamfer_distance": 0.06076663625574861,
+      "normal_consistency": 0.49224523249030944,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0071",
+      "status": "ok",
+      "chamfer_distance": 0.11872569703714796,
+      "normal_consistency": 0.5130851164597161,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0072",
+      "status": "ok",
+      "chamfer_distance": 0.10742699157915435,
+      "normal_consistency": 0.5008475958422667,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0073",
+      "status": "ok",
+      "chamfer_distance": 0.13511687168301006,
+      "normal_consistency": 0.5047977031017242,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0074",
+      "status": "ok",
+      "chamfer_distance": 0.136846278759172,
+      "normal_consistency": 0.48160702093697655,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0075",
+      "status": "ok",
+      "chamfer_distance": 0.11116884282483167,
+      "normal_consistency": 0.4925421448866553,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0076",
+      "status": "ok",
+      "chamfer_distance": 0.10669082088533106,
+      "normal_consistency": 0.4872421611836629,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0077",
+      "status": "ok",
+      "chamfer_distance": 0.18326496957618607,
+      "normal_consistency": 0.5273548703965734,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0078",
+      "status": "ok",
+      "chamfer_distance": 0.1114017137539369,
+      "normal_consistency": 0.5170530472165051,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0079",
+      "status": "ok",
+      "chamfer_distance": 0.08643001816987951,
+      "normal_consistency": 0.5179566398852685,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0080",
+      "status": "ok",
+      "chamfer_distance": 0.14087014013754115,
+      "normal_consistency": 0.5018386088778035,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0081",
+      "status": "ok",
+      "chamfer_distance": 0.13177635968388526,
+      "normal_consistency": 0.43353355925044595,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0082",
+      "status": "ok",
+      "chamfer_distance": 0.11108552436554837,
+      "normal_consistency": 0.5044375130236769,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0083",
+      "status": "ok",
+      "chamfer_distance": 0.07299890944607994,
+      "normal_consistency": 0.4896683804343299,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0084",
+      "status": "ok",
+      "chamfer_distance": 0.11951310275348476,
+      "normal_consistency": 0.5185380284399619,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0085",
+      "status": "ok",
+      "chamfer_distance": 0.07021160414274788,
+      "normal_consistency": 0.5099338134353569,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0086",
+      "status": "ok",
+      "chamfer_distance": 0.09546473685503497,
+      "normal_consistency": 0.48997995494210916,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0087",
+      "status": "ok",
+      "chamfer_distance": 0.10055540864824025,
+      "normal_consistency": 0.49514811895532473,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0088",
+      "status": "ok",
+      "chamfer_distance": 0.10532788665778016,
+      "normal_consistency": 0.47438292872948795,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0089",
+      "status": "ok",
+      "chamfer_distance": 0.15831539140976958,
+      "normal_consistency": 0.5292110260954093,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0090",
+      "status": "ok",
+      "chamfer_distance": 0.07706157203900202,
+      "normal_consistency": 0.5112326903823153,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0091",
+      "status": "ok",
+      "chamfer_distance": 0.12087418918826322,
+      "normal_consistency": 0.5201511038621509,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0092",
+      "status": "ok",
+      "chamfer_distance": 0.07725204256091014,
+      "normal_consistency": 0.5086208921095399,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0093",
+      "status": "ok",
+      "chamfer_distance": 0.11881220199874473,
+      "normal_consistency": 0.48259154400256377,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0094",
+      "status": "ok",
+      "chamfer_distance": 0.07855638229025101,
+      "normal_consistency": 0.4635320484623688,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0095",
+      "status": "ok",
+      "chamfer_distance": 0.14219971073378257,
+      "normal_consistency": 0.5217554935169033,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0096",
+      "status": "ok",
+      "chamfer_distance": 0.12066896737620893,
+      "normal_consistency": 0.5210417779467258,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0097",
+      "status": "ok",
+      "chamfer_distance": 0.08859810381324046,
+      "normal_consistency": 0.5001881440744174,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0098",
+      "status": "ok",
+      "chamfer_distance": 0.10241476649901264,
+      "normal_consistency": 0.4736515946062364,
+      "mesh_saved": false
+    },
+    {
+      "shape": "table_0099",
+      "status": "ok",
+      "chamfer_distance": 0.10413892749531323,
+      "normal_consistency": 0.458442229670097,
+      "mesh_saved": false
+    }
+  ]
+}

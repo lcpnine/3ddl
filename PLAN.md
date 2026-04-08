@@ -123,26 +123,19 @@ EXP_DIR=experiments/EXP-XX/seed42 sbatch --job-name=EXP-XX_s42_eval slurm/job_ev
 - [x] **8.1g** Source code already on local machine via git
 
 ### 8.2 Post-Maintenance Recovery (2026-04-07, after 10:00am)
-- [ ] **8.2a** Verify TC2 is back online: `ssh tc2 'hostname && squeue -u yutaek001'`
-- [ ] **8.2b** Verify project files intact: `ssh tc2 'ls -la /home/msai/yutaek001/3ddl/experiments/EXP-10/seed42/checkpoints/'`
-- [ ] **8.2c** If files missing, restore from `tc2_backup/` via rsync
-- [ ] **8.2d** Verify fixed `src/evaluate.py` and `slurm/job_eval.sh` (QoS=normal) are in place on TC2
-- [ ] **8.2e** Submit eval reruns (2 at a time, max 2 submitted):
-  ```
-  EXP_DIR=experiments/EXP-10/seed42 sbatch --job-name=EXP-10_s42_eval_rerun slurm/job_eval.sh
-  EXP_DIR=experiments/EXP-11/seed42 sbatch --job-name=EXP-11_s42_eval_rerun slurm/job_eval.sh
-  ```
-  Then as slots free:
-  ```
-  EXP_DIR=experiments/EXP-12/seed42 sbatch --job-name=EXP-12_s42_eval_rerun slurm/job_eval.sh
-  EXP_DIR=experiments/EXP-07/seed42 sbatch --job-name=EXP-07_s42_eval_rerun slurm/job_eval.sh
-  EXP_DIR=experiments/EXP-09/seed42 sbatch --job-name=EXP-09_s42_eval_rerun slurm/job_eval.sh
-  EXP_DIR=experiments/EXP-06/seed123 sbatch --job-name=EXP-06_s123_eval_rerun slurm/job_eval.sh
-  EXP_DIR=experiments/EXP-06/seed456 sbatch --job-name=EXP-06_s456_eval_rerun slurm/job_eval.sh
-  ```
-- [ ] **8.2f** Collect results: `scp tc2:/home/msai/yutaek001/3ddl/experiments/EXP-XX/seedYY/results.json` for each
-- [ ] **8.2g** Verify `n_shapes_evaluated > 0` in each results.json
-- [ ] **8.2h** Update `experiments/experiment_log.md` status notes with actual shape counts
+- [x] **8.2a** Verify TC2 is back online: `ssh tc2 'hostname && squeue -u yutaek001'`
+- [x] **8.2b** Verify project files intact: `ssh tc2 'ls -la /home/msai/yutaek001/3ddl/experiments/EXP-10/seed42/checkpoints/'`
+- [x] **8.2c** Files intact after maintenance — no restore needed
+- [x] **8.2d** Verify fixed `src/evaluate.py` and `slurm/job_eval.sh` on TC2; also updated QoS to `q_m1x16` (extended to 2026-04-09)
+- [x] **8.2e** Submit eval reruns — 9 total (original 7 + EXP-08 + EXP-06/s42):
+  - Batch 1: EXP-10/s42 (18670), EXP-11/s42 (18671)
+  - Batch 2: EXP-12/s42 (18784), EXP-07/s42 (18785)
+  - Batch 3: EXP-09/s42 (18855), EXP-06/s123 (18856)
+  - Batch 4: EXP-06/s456 (19030), EXP-08/s42 (19031)
+  - Batch 5: EXP-06/s42 (19118)
+- [x] **8.2f** Collect all 9 results.json locally
+- [x] **8.2g** Verified `n_shapes_evaluated=300` (0 failures) in all 9 results.json
+- [x] **8.2h** Updated `experiments/experiment_log.md` — results table and detailed sections with corrected shape counts, CD/NC values, and 3-seed summary
 - [ ] **8.2i** Commit all changes
 
 ---
