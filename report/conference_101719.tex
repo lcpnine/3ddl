@@ -151,7 +151,7 @@ For reduced supervision experiments, supervised points are subsampled to the tar
 
 \subsection{Evaluation Metrics}
 
-We evaluate reconstructed meshes extracted via marching cubes~\cite{marchingcubes} at resolution $128^3$:
+We evaluate reconstructed meshes extracted via marching cubes~\cite{marchingcubes} at resolution $128^3$ (overriding the codebase default of $256^3$ to reduce evaluation time):
 
 \textbf{Chamfer Distance (CD)}: Bidirectional mean squared nearest-neighbor distance between 30{,}000 points sampled from predicted and ground-truth meshes. Lower is better.
 
@@ -242,7 +242,7 @@ Fig.~\ref{fig:label_efficiency} illustrates this label efficiency curve. The non
 \begin{figure}[t]
     \centering
     \includegraphics[width=\columnwidth]{figures/qualitative_meshes.png}
-    \caption{Qualitative reconstruction comparison for non-PE experiments. Rows: airplane, chair, table. Columns: ground truth, baseline (EXP-01), Eikonal at 100\% (EXP-02), Eikonal at 10\% (EXP-04). All reconstructions are smoothed by marching cubes at $128^3$ resolution. PE experiment meshes were not saved due to an evaluator bug and are unavailable for visualization.}
+    \caption{Qualitative reconstruction comparison for non-PE experiments. Rows: airplane, chair, table. Columns: ground truth, baseline (EXP-01), Eikonal at 100\% (EXP-02), Eikonal at 10\% (EXP-04). All reconstructions are smoothed by marching cubes at $128^3$ resolution. PE experiment meshes are omitted from this figure as the original mesh exports were lost due to an evaluator bug; metrics were recovered via re-evaluation (see Section~V-F).}
     \label{fig:qualitative}
 \end{figure}
 
@@ -359,7 +359,7 @@ Our study has several limitations. We evaluate on a single dataset (300 ShapeNet
 \section{Conclusion}
 %% ============================================================
 
-We demonstrate that Eikonal regularization is an effective mechanism for reducing supervision requirements in DeepSDF. With only 10\% of signed distance labels and Eikonal regularization on unsupervised points, we achieve reconstruction quality that surpasses the fully-supervised baseline by 16.4\% in Chamfer Distance across 300 ShapeNet shapes. We note that our evaluation is on training shapes (not a held-out test set), so these results reflect fitting quality rather than generalization to novel shapes. Nonetheless, the consistent improvement across supervision ratios and the multi-seed validation suggest that the 90\% label reduction is a robust finding with practical implications for scaling neural implicit reconstruction.
+We demonstrate that Eikonal regularization is an effective mechanism for reducing supervision requirements in DeepSDF. With only 10\% of signed distance labels and Eikonal regularization on unsupervised points, we achieve a 3-seed mean Chamfer Distance that improves over the single-seed fully-supervised baseline by 16.4\% across 300 ShapeNet shapes (two of three seeds individually outperform the baseline; see Section~V-A). We note that our evaluation is on training shapes (not a held-out test set), so these results reflect fitting quality rather than generalization to novel shapes. Nonetheless, the consistent improvement across supervision ratios and the multi-seed validation suggest that the 90\% label reduction is a robust finding with practical implications for scaling neural implicit reconstruction.
 
 In contrast, Fourier positional encoding proves consistently detrimental in this setting, degrading Chamfer Distance by 2.4--2.8$\times$ regardless of supervision level, PE frequency, or additional regularization. We attribute this to PE's amplification of high-frequency artifacts in volumetric regions outside the training distribution, a failure mode specific to SDF evaluation via marching cubes.
 
