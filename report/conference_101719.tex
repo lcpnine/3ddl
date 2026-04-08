@@ -144,6 +144,7 @@ Default hyperparameters are $\lambda_{\text{eik}} = 0.1$, $\lambda_z = 10^{-4}$,
 %% ============================================================
 
 \subsection{Dataset}
+\label{sec:dataset}
 
 We use 300 shapes from ShapeNet~\cite{shapenet} spanning three categories: airplane, chair, and table. Raw meshes are first converted to watertight manifolds, then sampled to produce 250{,}000 supervised points (with ground-truth SDF values) and 250{,}000 unsupervised points (coordinates only) per shape. During training, shapes are split 75\%/25\% (225 train, 75 validation) for loss monitoring. Evaluation attempts to reconstruct all 300 shapes (both training and validation); however, mesh extraction occasionally fails for individual shapes (up to 41 failures in some runs), and reported metrics are computed only over successfully reconstructed shapes. Because evaluation includes training shapes, the reported metrics reflect fitting quality and should not be interpreted as generalization to unseen shapes.
 
@@ -195,12 +196,13 @@ All experiments are trained on NVIDIA A40 GPUs for 3{,}000 epochs ($\sim$4--6 ho
 %% ============================================================
 
 \subsection{Eikonal Regularization Enables Label Reduction}
+\label{sec:eikonal_results}
 
 Table~\ref{tab:results} presents the main quantitative results. The vanilla DeepSDF baseline (EXP-01) achieves CD = 0.0593 with 100\% supervision and no Eikonal regularization. Adding Eikonal at full supervision (EXP-02) immediately improves CD by 8.4\% to 0.0543 and NC by 7.2\% to 0.5920.
 
 \begin{table}[t]
 \centering
-\caption{Main results. Single-seed rows report the per-shape mean over successfully evaluated shapes (259--300 depending on run; see Section~V-F). Multi-seed rows (EXP-04, EXP-06) report the mean $\pm$ std of per-seed means \emph{across 3 seeds}; these are not directly comparable to single-seed entries. Evaluation includes both training and validation shapes (Section~IV-A).}
+\caption{Main results. Single-seed rows report the per-shape mean over successfully evaluated shapes (259--300 depending on run; see Section~\ref{sec:eval_pipeline}). Multi-seed rows (EXP-04, EXP-06) report the mean $\pm$ std of per-seed means \emph{across 3 seeds}; these are not directly comparable to single-seed entries. Evaluation includes both training and validation shapes (Section~\ref{sec:dataset}).}
 \label{tab:results}
 \renewcommand{\arraystretch}{1.1}
 \begin{tabular}{@{}llcc@{}}
@@ -242,7 +244,7 @@ Fig.~\ref{fig:label_efficiency} illustrates this label efficiency curve. The non
 \begin{figure}[t]
     \centering
     \includegraphics[width=\columnwidth]{figures/qualitative_meshes.png}
-    \caption{Qualitative reconstruction comparison for non-PE experiments. Rows: airplane, chair, table. Columns: ground truth, baseline (EXP-01), Eikonal at 100\% (EXP-02), Eikonal at 10\% (EXP-04). All reconstructions are smoothed by marching cubes at $128^3$ resolution. PE experiment meshes are omitted (see Section~V-F).}
+    \caption{Qualitative reconstruction comparison for non-PE experiments. Rows: airplane, chair, table. Columns: ground truth, baseline (EXP-01), Eikonal at 100\% (EXP-02), Eikonal at 10\% (EXP-04). All reconstructions are extracted via marching cubes at $128^3$ resolution. PE experiment meshes are omitted (see Section~\ref{sec:eval_pipeline}).}
     \label{fig:qualitative}
 \end{figure}
 
@@ -320,6 +322,7 @@ EXP-06 (10\% + Eik + PE) & 0.1399 & 0.0031 & 0.022 & 0.5078 \\
 The near-zero CV of EXP-06 is itself informative: PE is so dominant a failure mode that it overwhelms the natural stochasticity of training, producing nearly identical poor outcomes regardless of random initialization.
 
 \subsection{Note on Evaluation Pipeline}
+\label{sec:eval_pipeline}
 
 An initial version of our evaluator coupled metric computation with mesh decimation for export; when decimation failed (common for the large, noisy meshes produced by PE experiments), the per-shape metrics were discarded even though they had been computed successfully. This caused early PE runs to report 0/300 successful evaluations despite having valid CD and NC values. We fixed the evaluator to separate metric computation from mesh export and re-ran evaluation for all PE experiments (EXP-06 through EXP-12, which includes EXP-08). After the fix, the re-evaluated runs recovered valid CD and NC metrics for all 300 shapes in each PE experiment. The non-PE single-seed experiments (EXP-01 through EXP-05) were not re-evaluated; of these, EXP-02, EXP-03, and EXP-05 had 39, 41, and 5 mesh extraction failures respectively, and their reported means are computed over the successfully evaluated subset only.
 
@@ -353,13 +356,13 @@ This finding highlights a key difference between radiance fields and distance fi
 
 \subsection{Limitations}
 
-Our study has several limitations. We evaluate on a single dataset (300 ShapeNet shapes across 3 categories), and results may differ with more diverse geometry or larger datasets. We use a fixed marching cubes resolution of $128^3$; higher resolutions might reveal different PE behavior. IoU evaluation was omitted due to computational constraints. The non-monotonic label efficiency curve (5\% slightly outperforming 10\%) warrants further investigation with additional seeds and categories. Qualitative mesh comparisons are limited to non-PE experiments (Fig.~\ref{fig:qualitative}); PE mesh exports were not retained (Section~V-F). Finally, our PE analysis is limited to standard Fourier encoding; alternative approaches such as hash grid encodings~\cite{instantngp} or learned feature grids may interact differently with SDF learning.
+Our study has several limitations. We evaluate on a single dataset (300 ShapeNet shapes across 3 categories), and results may differ with more diverse geometry or larger datasets. We use a fixed marching cubes resolution of $128^3$; higher resolutions might reveal different PE behavior. IoU evaluation was omitted due to computational constraints. The non-monotonic label efficiency curve (5\% slightly outperforming 10\%) warrants further investigation with additional seeds and categories. Qualitative mesh comparisons are limited to non-PE experiments (Fig.~\ref{fig:qualitative}); PE mesh exports were not retained (Section~\ref{sec:eval_pipeline}). Finally, our PE analysis is limited to standard Fourier encoding; alternative approaches such as hash grid encodings~\cite{instantngp} or learned feature grids may interact differently with SDF learning.
 
 %% ============================================================
 \section{Conclusion}
 %% ============================================================
 
-We demonstrate that Eikonal regularization is an effective mechanism for reducing supervision requirements in DeepSDF. With only 10\% of signed distance labels and Eikonal regularization on unsupervised points, we achieve a 3-seed mean Chamfer Distance that is competitive with, and in two of three seeds better than, the single-seed fully-supervised baseline across 300 ShapeNet shapes (see Section~V-A). We note that our evaluation is on training shapes (not a held-out test set), so these results reflect fitting quality rather than generalization to novel shapes. Nonetheless, the consistent improvement across supervision ratios and the multi-seed validation suggest that competitive performance at 10\% supervision is a promising finding with practical implications for scaling neural implicit reconstruction.
+We demonstrate that Eikonal regularization is an effective mechanism for reducing supervision requirements in DeepSDF. With only 10\% of signed distance labels and Eikonal regularization on unsupervised points, we achieve a 3-seed mean Chamfer Distance that is competitive with, and in two of three seeds better than, the single-seed fully-supervised baseline across 300 ShapeNet shapes (see Section~\ref{sec:eikonal_results}). We note that our evaluation is on training shapes (not a held-out test set), so these results reflect fitting quality rather than generalization to novel shapes. Nonetheless, the consistent improvement across supervision ratios and the multi-seed validation suggest that competitive performance at 10\% supervision is a promising finding with practical implications for scaling neural implicit reconstruction.
 
 In contrast, Fourier positional encoding proves consistently detrimental in this setting, degrading Chamfer Distance by 2.4--2.8$\times$ regardless of supervision level, PE frequency, or additional regularization. We attribute this to PE's amplification of high-frequency artifacts in volumetric regions outside the training distribution, a failure mode specific to SDF evaluation via marching cubes.
 
