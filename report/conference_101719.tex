@@ -86,7 +86,7 @@ Given a dataset of 3D shapes, we aim to learn a function $f_\theta: \mathbb{R}^{
     \item \textbf{Supervised points}: $\{(x_j, s_j)\}_{j=1}^{N_s}$ with ground-truth SDF values
     \item \textbf{Unsupervised points}: $\{x_k\}_{k=1}^{N_u}$ with coordinates only
 \end{itemize}
-The supervision ratio $r = N_s / (N_s + N_u)$ controls the fraction of points with SDF labels. We investigate $r \in \{0.05, 0.10, 0.50, 1.0\}$.
+During preprocessing, each shape is sampled to produce a fixed pool of 250{,}000 supervised points (with SDF labels) and a separate pool of 250{,}000 unsupervised points (coordinates only). The supervision ratio $r$ controls the fraction of the supervised pool that is retained: at $r = 0.1$, only 25{,}000 supervised points are used, while all 250{,}000 unsupervised points remain available. At $r = 1.0$ the full supervised pool is used alongside the full unsupervised pool. Each training batch samples half its points from the supervised set and half from the unsupervised set. We investigate $r \in \{0.05, 0.10, 0.50, 1.0\}$.
 
 \subsection{Architecture}
 
@@ -200,7 +200,7 @@ Table~\ref{tab:results} presents the main quantitative results. The vanilla Deep
 
 \begin{table}[t]
 \centering
-\caption{Main results. CD and NC are mean $\pm$ std over evaluated shapes. Multi-seed experiments report mean $\pm$ std across seeds. Best CD per group in \textbf{bold}.}
+\caption{Main results. Single-seed rows report the mean across 300 evaluated shapes (per-shape variability omitted for clarity). Multi-seed rows (EXP-04, EXP-06) report mean $\pm$ std \emph{across 3 seeds}. Best CD per group in \textbf{bold}.}
 \label{tab:results}
 \renewcommand{\arraystretch}{1.1}
 \begin{tabular}{@{}llcc@{}}
@@ -211,11 +211,11 @@ ID & Config & CD ($\downarrow$) & NC ($\uparrow$) \\
 01 & 100\%, no Eik & 0.0593 & 0.5522 \\
 02 & 100\% + Eik & 0.0543 & 0.5920 \\
 03 & 50\% + Eik & 0.0534 & 0.5924 \\
-04 & 10\% + Eik (3-seed) & \textbf{0.0496} & \textbf{0.5987} \\
+04 & 10\% + Eik (3-seed) & \textbf{0.0496}{\scriptsize$\pm$0.010} & \textbf{0.5987}{\scriptsize$\pm$0.020} \\
 05 & 5\% + Eik & 0.0509 & 0.5766 \\
 \midrule
 \multicolumn{4}{@{}l}{\textit{With Fourier PE ($L=6$)}} \\
-06 & 10\% + Eik + PE (3-seed) & 0.1399 & 0.5078 \\
+06 & 10\% + Eik + PE (3-seed) & 0.1399{\scriptsize$\pm$0.003} & 0.5078{\scriptsize$\pm$0.002} \\
 07 & 5\% + Eik + PE & 0.1448 & 0.5070 \\
 08 & 10\% + Eik + PE + L$_\text{2nd}$ & 0.1443 & 0.5045 \\
 09 & 100\% + Eik + PE & 0.1450 & 0.5027 \\
@@ -230,7 +230,7 @@ ID & Config & CD ($\downarrow$) & NC ($\uparrow$) \\
 
 The most striking result is that \emph{reducing} supervision to 10\% with Eikonal (EXP-04) actually \emph{improves} upon both the full-supervision Eikonal model and the baseline, achieving the best overall CD of 0.0496---a 16.4\% improvement over EXP-01. Even at 5\% supervision (EXP-05), CD = 0.0509 remains 14.2\% better than the fully-supervised baseline.
 
-Fig.~\ref{fig:label_efficiency} illustrates this label efficiency curve. The non-monotonic pattern---where lower supervision ratios yield \emph{better} Chamfer Distance---suggests that dense SDF supervision may cause overfitting, and that Eikonal regularization provides a stronger geometric prior that more than compensates for the loss of direct supervision.
+Fig.~\ref{fig:label_efficiency} illustrates this label efficiency curve. The non-monotonic pattern---where lower supervision ratios yield \emph{better} Chamfer Distance---suggests that dense SDF supervision may act as a weaker regularizer than the Eikonal constraint. One plausible explanation is that the network overfits to noise in the SDF values when labels are abundant, while Eikonal regularization provides a geometric prior that more than compensates for the loss of direct supervision. However, confirming this hypothesis would require further analysis (e.g., per-shape error distributions or training-curve ablations).
 
 \begin{figure}[t]
     \centering
@@ -265,6 +265,32 @@ To test whether the PE failure was specific to $L=6$, we conducted a follow-up s
     \label{fig:pe_freq}
 \end{figure}
 
+\subsection{Per-Category Analysis}
+
+Table~\ref{tab:percategory} breaks down the PE failure by shape category for two representative experiments. The category-level pattern is informative: airplanes consistently show the worst CD ($\sim$0.196), nearly double that of chairs ($\sim$0.124) and tables ($\sim$0.115). This ordering may reflect geometric complexity---airplanes have thinner structures and sharper features that are more sensitive to SDF extrapolation errors. Notably, Normal Consistency is nearly identical across all categories ($\sim$0.50--0.51), confirming that the PE collapse is universal rather than category-specific.
+
+\begin{table}[t]
+\centering
+\caption{Per-category CD and NC for two PE experiments. The PE failure affects all categories, with airplanes showing the largest degradation.}
+\label{tab:percategory}
+\renewcommand{\arraystretch}{1.1}
+\begin{tabular}{@{}llcc@{}}
+\toprule
+Experiment & Category & CD ($\downarrow$) & NC ($\uparrow$) \\
+\midrule
+\multirow{3}{*}{EXP-07 (5\% + PE L=6)} & Airplane & 0.1957 & 0.5073 \\
+ & Chair & 0.1240 & 0.5081 \\
+ & Table & 0.1146 & 0.5066 \\
+\midrule
+\multirow{3}{*}{EXP-09 (100\% + PE L=6)} & Airplane & 0.1962 & 0.5023 \\
+ & Chair & 0.1242 & 0.5072 \\
+ & Table & 0.1147 & 0.4998 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+For non-PE experiments, per-category breakdowns were not recorded in the evaluation pipeline, which is a limitation of our analysis. The per-shape CD standard deviations (0.02--0.05) in the non-PE experiments suggest meaningful category-level variation exists but was not captured.
+
 \subsection{Multi-Seed Validation}
 
 We validated our two key experiments with 3 seeds each (Table~\ref{tab:multiseed}). EXP-04 (10\% + Eikonal) shows moderate variance (CV = 0.197), primarily due to one seed (42) having higher CD with 37 mesh extraction failures; seeds 123 and 456 both achieve CD $\sim$0.044 with zero failures. EXP-06 (10\% + PE) shows very low variance (CV = 0.022), confirming the PE failure is highly reproducible.
@@ -294,17 +320,17 @@ The near-zero CV of EXP-06 is itself informative: PE is so dominant a failure mo
 
 The Eikonal constraint $\|\nabla_x f\| = 1$ provides a geometric prior that is complementary to direct SDF supervision. While $\mathcal{L}_{\text{sdf}}$ teaches the network the correct distance values at specific points, $\mathcal{L}_{\text{eik}}$ constrains the \emph{gradient field} everywhere, enforcing that the learned function behaves as a valid distance function throughout the volume---not just at labeled locations.
 
-Unsupervised points contribute to $\mathcal{L}_{\text{eik}}$ without requiring SDF labels, effectively providing ``free'' supervision about the geometric structure of the solution space. At low supervision ratios, the Eikonal loss dominates the training signal, acting as a strong regularizer that prevents overfitting to the sparse labeled points. This explains the counter-intuitive finding that 10\% supervision outperforms 100\%: with abundant labels, the network may overfit to noise in the SDF values, while with fewer labels and stronger geometric regularization, it learns a smoother, more accurate distance field.
+Unsupervised points contribute to $\mathcal{L}_{\text{eik}}$ without requiring SDF labels, effectively providing ``free'' supervision about the geometric structure of the solution space. At low supervision ratios, the Eikonal loss dominates the training signal, acting as a strong regularizer that prevents overfitting to the sparse labeled points. This explains the counter-intuitive finding that 10\% supervision outperforms 100\%: with abundant labels, the network may overfit to noise in the SDF values, while with fewer labels and stronger geometric regularization, it may learn a smoother, more accurate distance field. We note that this is a hypothesis consistent with the observed non-monotonic trend; a definitive causal account would require controlled experiments isolating the overfitting mechanism.
 
 The ratio-dependent warmup schedule is important: without it, the Eikonal loss can dominate too early before the network establishes basic geometry from $\mathcal{L}_{\text{sdf}}$, leading to degenerate solutions.
 
 \subsection{Why Fourier PE Fails for SDF Learning}
 
-The PE failure is surprising given its success in NeRF~\cite{nerf}, but can be understood through the lens of train-test distribution mismatch. During training, points are sampled near the shape surface (within a unit sphere). However, evaluation via marching cubes queries the SDF on a dense $128^3$ grid spanning $[-1, 1]^3$, including cube corners at distance $\sqrt{3} \approx 1.73$ from the origin---regions never seen during training.
+The PE failure is surprising given its success in NeRF~\cite{nerf}. We hypothesize that it can be understood through the lens of train-test distribution mismatch. During training, points are sampled near the shape surface (within a unit sphere). However, evaluation via marching cubes queries the SDF on a dense $128^3$ grid spanning $[-1, 1]^3$, including cube corners at distance $\sqrt{3} \approx 1.73$ from the origin---regions never seen during training.
 
 Without PE, the MLP's inductive bias toward smooth functions produces reasonable SDF extrapolation in these unseen regions. With PE, the sinusoidal encoding amplifies high-frequency oscillations, causing wild SDF fluctuations at grid points far from the training distribution. This creates spurious zero-crossings that produce noisy, oversized meshes during marching cubes extraction.
 
-Several observations support this diagnosis:
+Several observations are consistent with this hypothesis:
 \begin{itemize}
     \item Training losses converge normally for PE experiments ($\mathcal{L}_{\text{sdf}} \sim 0.033$), indicating the failure is at inference, not training.
     \item NC standard deviation collapses to $\sim$0.01 across all PE experiments, suggesting all shapes converge to similar poor-quality reconstructions.
@@ -316,7 +342,7 @@ This finding highlights a key difference between radiance fields and distance fi
 
 \subsection{Limitations}
 
-Our study has several limitations. We evaluate on a single dataset (300 ShapeNet shapes across 3 categories), and results may differ with more diverse geometry or larger datasets. We use a fixed marching cubes resolution of $128^3$; higher resolutions might reveal different PE behavior. IoU evaluation was omitted due to computational constraints. The non-monotonic label efficiency curve (5\% slightly outperforming 10\%) warrants further investigation with additional seeds and categories. Finally, our PE analysis is limited to standard Fourier encoding; alternative approaches such as hash grid encodings~\cite{instantngp} or learned feature grids may interact differently with SDF learning.
+Our study has several limitations. We evaluate on a single dataset (300 ShapeNet shapes across 3 categories), and results may differ with more diverse geometry or larger datasets. We use a fixed marching cubes resolution of $128^3$; higher resolutions might reveal different PE behavior. IoU evaluation was omitted due to computational constraints. The non-monotonic label efficiency curve (5\% slightly outperforming 10\%) warrants further investigation with additional seeds and categories. We also lack qualitative mesh visualizations comparing reconstructions across experiments; such comparisons would help illustrate the PE failure mode (oversized, noisy meshes) more concretely than aggregate metrics alone. Finally, our PE analysis is limited to standard Fourier encoding; alternative approaches such as hash grid encodings~\cite{instantngp} or learned feature grids may interact differently with SDF learning.
 
 %% ============================================================
 \section{Conclusion}
