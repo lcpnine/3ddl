@@ -270,7 +270,7 @@ Single source of truth for all experiment results.
 
 **Eikonal regularization enables strong label reduction.** At 10% supervision, Eikonal-regularized DeepSDF matches or beats the fully-supervised baseline across 3 seeds (EXP-04 3-seed CD=0.0496 vs EXP-01 CD=0.0593). Even at 5% supervision (EXP-05 CD=0.0509), performance remains competitive with the 100% baseline.
 
-**Fourier positional encoding (PE) is catastrophic in this setup.** All PE experiments (L=6: EXP-06/07/08/09; L=4: EXP-10/11/12) collapse to CD ~0.14 regardless of supervision level (5%–100%) or additional regularization (L_2nd). Lowering the encoding frequency from L=6 to L=4 does not rescue PE. The failure is highly reproducible across seeds (EXP-06 3-seed CV=0.056).
+**Fourier positional encoding (PE) is catastrophic in this setup.** All PE experiments (L=6: EXP-06/07/08/09; L=4: EXP-10/11/12) collapse to CD ~0.14 regardless of supervision level (5%–100%) or additional regularization (L_2nd). Lowering the encoding frequency from L=6 to L=4 does not rescue PE. The failure is highly reproducible across seeds (EXP-06 3-seed CV=0.022).
 
 **Key takeaways:**
 1. Eikonal regularization is the primary driver of label efficiency in DeepSDF.

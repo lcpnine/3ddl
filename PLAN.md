@@ -136,7 +136,7 @@ EXP_DIR=experiments/EXP-XX/seed42 sbatch --job-name=EXP-XX_s42_eval slurm/job_ev
 - [x] **8.2f** Collect all 9 results.json locally
 - [x] **8.2g** Verified `n_shapes_evaluated=300` (0 failures) in all 9 results.json
 - [x] **8.2h** Updated `experiments/experiment_log.md` — results table and detailed sections with corrected shape counts, CD/NC values, and 3-seed summary
-- [ ] **8.2i** Commit all changes
+- [x] **8.2i** Commit all changes (8a41399)
 
 ---
 
