@@ -145,7 +145,7 @@ Default hyperparameters are $\lambda_{\text{eik}} = 0.1$, $\lambda_z = 10^{-4}$,
 
 \subsection{Dataset}
 
-We use 300 shapes from ShapeNet~\cite{shapenet} spanning three categories: airplane, chair, and table. Raw meshes are first converted to watertight manifolds, then sampled to produce 250{,}000 supervised points (with ground-truth SDF values) and 250{,}000 unsupervised points (coordinates only) per shape. The data is split 75\%/25\% for training (225 shapes) and validation (75 shapes).
+We use 300 shapes from ShapeNet~\cite{shapenet} spanning three categories: airplane, chair, and table. Raw meshes are first converted to watertight manifolds, then sampled to produce 250{,}000 supervised points (with ground-truth SDF values) and 250{,}000 unsupervised points (coordinates only) per shape. During training, shapes are split 75\%/25\% (225 train, 75 validation) for loss monitoring. However, \textbf{evaluation is performed on all 300 shapes} (both training and validation), so the reported metrics reflect reconstruction quality on training data and should not be interpreted as generalization performance to unseen shapes. This is a limitation of our evaluation protocol.
 
 For reduced supervision experiments, supervised points are subsampled to the target ratio (e.g., 10\% retains 25{,}000 supervised points) while all 250{,}000 unsupervised points remain available for Eikonal regularization.
 
@@ -200,7 +200,7 @@ Table~\ref{tab:results} presents the main quantitative results. The vanilla Deep
 
 \begin{table}[t]
 \centering
-\caption{Main results. Single-seed rows report the mean across 300 evaluated shapes (per-shape variability omitted for clarity). Multi-seed rows (EXP-04, EXP-06) report mean $\pm$ std \emph{across 3 seeds}. Best CD per group in \textbf{bold}.}
+\caption{Main results. Single-seed rows report the per-shape mean over successfully evaluated shapes (259--300 depending on run; see text). Multi-seed rows (EXP-04, EXP-06) report mean $\pm$ std \emph{across 3 seeds}. Best CD per group in \textbf{bold}. All metrics are on the full 300-shape set (train + val); see Section~IV-A.}
 \label{tab:results}
 \renewcommand{\arraystretch}{1.1}
 \begin{tabular}{@{}llcc@{}}
@@ -312,6 +312,10 @@ EXP-06 (10\% + Eik + PE) & 0.1399 & 0.0031 & 0.022 & 0.5078 \\
 
 The near-zero CV of EXP-06 is itself informative: PE is so dominant a failure mode that it overwhelms the natural stochasticity of training, producing nearly identical poor outcomes regardless of random initialization.
 
+\subsection{Note on Evaluation Pipeline}
+
+An initial version of our evaluator coupled metric computation with mesh decimation for export; when decimation failed (common for the large, noisy meshes produced by PE experiments), the per-shape metrics were discarded even though they had been computed successfully. This caused early PE runs to report 0/300 successful evaluations despite having valid CD and NC values. We fixed the evaluator to separate metric computation from mesh export and re-ran evaluation for all PE experiments (EXP-06 through EXP-12) and EXP-08. After the fix, all re-evaluated runs report 300/300 shapes with valid metrics. The non-PE single-seed experiments (EXP-01 through EXP-05) were not re-evaluated; of these, EXP-02, EXP-03, and EXP-05 had 39, 41, and 5 mesh extraction failures respectively, and their reported means are computed over the successfully evaluated subset only.
+
 %% ============================================================
 \section{Discussion}
 %% ============================================================
@@ -326,7 +330,7 @@ The ratio-dependent warmup schedule is important: without it, the Eikonal loss c
 
 \subsection{Why Fourier PE Fails for SDF Learning}
 
-The PE failure is surprising given its success in NeRF~\cite{nerf}. We hypothesize that it can be understood through the lens of train-test distribution mismatch. During training, points are sampled near the shape surface (within a unit sphere). However, evaluation via marching cubes queries the SDF on a dense $128^3$ grid spanning $[-1, 1]^3$, including cube corners at distance $\sqrt{3} \approx 1.73$ from the origin---regions never seen during training.
+The PE failure is surprising given its success in NeRF~\cite{nerf}. We hypothesize that it can be understood through the lens of train-test distribution mismatch. Training points are loaded from preprocessed samples whose spatial distribution is determined by the preprocessing pipeline; in typical SDF preprocessing, these points are concentrated near shape surfaces and within the unit sphere. Evaluation via marching cubes, however, queries the SDF on a dense $128^3$ grid spanning $[-1, 1]^3$, including cube corners at distance $\sqrt{3} \approx 1.73$ from the origin---potentially including regions underrepresented in the training distribution.
 
 Without PE, the MLP's inductive bias toward smooth functions produces reasonable SDF extrapolation in these unseen regions. With PE, the sinusoidal encoding amplifies high-frequency oscillations, causing wild SDF fluctuations at grid points far from the training distribution. This creates spurious zero-crossings that produce noisy, oversized meshes during marching cubes extraction.
 
@@ -342,13 +346,13 @@ This finding highlights a key difference between radiance fields and distance fi
 
 \subsection{Limitations}
 
-Our study has several limitations. We evaluate on a single dataset (300 ShapeNet shapes across 3 categories), and results may differ with more diverse geometry or larger datasets. We use a fixed marching cubes resolution of $128^3$; higher resolutions might reveal different PE behavior. IoU evaluation was omitted due to computational constraints. The non-monotonic label efficiency curve (5\% slightly outperforming 10\%) warrants further investigation with additional seeds and categories. We also lack qualitative mesh visualizations comparing reconstructions across experiments; such comparisons would help illustrate the PE failure mode (oversized, noisy meshes) more concretely than aggregate metrics alone. Finally, our PE analysis is limited to standard Fourier encoding; alternative approaches such as hash grid encodings~\cite{instantngp} or learned feature grids may interact differently with SDF learning.
+Our study has several limitations. We evaluate on a single dataset (300 ShapeNet shapes across 3 categories), and results may differ with more diverse geometry or larger datasets. We use a fixed marching cubes resolution of $128^3$; higher resolutions might reveal different PE behavior. IoU evaluation was omitted due to computational constraints. The non-monotonic label efficiency curve (5\% slightly outperforming 10\%) warrants further investigation with additional seeds and categories. We do not include qualitative mesh visualizations comparing reconstructions across experiments. Such comparisons would help illustrate the PE failure mode (oversized, noisy meshes from spurious zero-crossings) more concretely than aggregate metrics alone, and would also show the surface quality differences between supervision ratios in the non-PE regime. Generating publication-quality renders from the extracted meshes was beyond the scope of this study but would strengthen future work. Finally, our PE analysis is limited to standard Fourier encoding; alternative approaches such as hash grid encodings~\cite{instantngp} or learned feature grids may interact differently with SDF learning.
 
 %% ============================================================
 \section{Conclusion}
 %% ============================================================
 
-We demonstrate that Eikonal regularization is a highly effective mechanism for reducing supervision requirements in DeepSDF. With only 10\% of signed distance labels and Eikonal regularization on unsupervised points, we achieve reconstruction quality that surpasses the fully-supervised baseline by 16.4\% in Chamfer Distance across 300 ShapeNet shapes. This 90\% label reduction has practical implications for scaling neural implicit reconstruction to domains where dense SDF annotation is prohibitively expensive.
+We demonstrate that Eikonal regularization is an effective mechanism for reducing supervision requirements in DeepSDF. With only 10\% of signed distance labels and Eikonal regularization on unsupervised points, we achieve reconstruction quality that surpasses the fully-supervised baseline by 16.4\% in Chamfer Distance across 300 ShapeNet shapes. We note that our evaluation is on training shapes (not a held-out test set), so these results reflect fitting quality rather than generalization to novel shapes. Nonetheless, the consistent improvement across supervision ratios and the multi-seed validation suggest that the 90\% label reduction is a robust finding with practical implications for scaling neural implicit reconstruction.
 
 In contrast, Fourier positional encoding proves consistently detrimental in this setting, degrading Chamfer Distance by 2.4--2.8$\times$ regardless of supervision level, PE frequency, or additional regularization. We attribute this to PE's amplification of high-frequency artifacts in volumetric regions outside the training distribution, a failure mode specific to SDF evaluation via marching cubes.
 
