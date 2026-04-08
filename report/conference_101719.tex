@@ -24,7 +24,7 @@ yutaek001@e.ntu.edu.sg}
 \maketitle
 
 \begin{abstract}
-Neural implicit representations such as DeepSDF learn continuous signed distance functions for 3D shape reconstruction, but require dense signed distance supervision for every training point. We investigate whether Eikonal regularization, which enforces the unit gradient norm constraint on unsupervised points, can reduce this supervision requirement. We train DeepSDF on 300 ShapeNet shapes at supervision ratios from 5\% to 100\% and evaluate with Chamfer Distance and Normal Consistency. Our experiments suggest that Eikonal regularization enables a 90\% reduction in signed distance labels: at 10\% supervision, the Eikonal-regularized model achieves a 3-seed mean Chamfer Distance of 0.0496, matching or outperforming the single-seed fully-supervised baseline (0.0593) in this setting. We additionally test Fourier positional encoding at two frequency levels, finding that it consistently degrades reconstruction quality across all supervision levels, collapsing Chamfer Distance to approximately 0.14 regardless of label availability or additional regularization. These results suggest that geometric priors are more effective than spectral input transformations for label-efficient 3D reconstruction.
+Neural implicit representations such as DeepSDF learn continuous signed distance functions for 3D shape reconstruction, but require dense signed distance supervision for every training point. We investigate whether Eikonal regularization, which enforces the unit gradient norm constraint on unsupervised points, can reduce this supervision requirement. We train DeepSDF on 300 ShapeNet shapes at supervision ratios from 5\% to 100\% and evaluate with Chamfer Distance and Normal Consistency. Our experiments suggest that 10\% supervision can remain competitive with or outperform the single-seed fully-supervised baseline in this setting: the Eikonal-regularized model achieves a 3-seed mean Chamfer Distance of 0.0496 compared to 0.0593 for the baseline. We additionally test Fourier positional encoding at two frequency levels, finding that it consistently degrades reconstruction quality across all supervision levels, collapsing Chamfer Distance to approximately 0.14 regardless of label availability or additional regularization. These results suggest that geometric priors are more effective than spectral input transformations for label-efficient 3D reconstruction.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -51,7 +51,7 @@ In this work, we systematically investigate two questions:
 
 We conduct 12 experiments on 300 ShapeNet shapes across supervision ratios from 5\% to 100\%, with and without Eikonal regularization, Fourier PE at two frequency levels, and second-order smoothness regularization. Our key findings are:
 \begin{itemize}
-    \item Eikonal regularization enables a \textbf{90\% label reduction}: at 10\% supervision, the regularized model (3-seed mean) can match or outperform the single-seed fully-supervised baseline in Chamfer Distance.
+    \item Eikonal regularization allows \textbf{10\% supervision to remain competitive}: the regularized model (3-seed mean) matches or outperforms the single-seed fully-supervised baseline in Chamfer Distance.
     \item Fourier positional encoding is \textbf{consistently harmful}: all PE configurations collapse reconstruction to approximately 2.4--2.8$\times$ worse than baseline, regardless of supervision level or additional regularization.
 \end{itemize}
 
@@ -230,12 +230,12 @@ ID & Config & CD ($\downarrow$) & NC ($\uparrow$) \\
 
 The most striking result is that \emph{reducing} supervision to 10\% with Eikonal (EXP-04) yields a 3-seed mean CD of 0.0496---a 16.4\% improvement over the single-seed baseline EXP-01 (0.0593). We note that this comparison is between a seed-averaged value and a single run, so should be interpreted cautiously; however, two of the three EXP-04 seeds (123 and 456) individually outperform EXP-01, while seed 42 is slightly worse (0.0609). Even at 5\% supervision (EXP-05, single seed), CD = 0.0509 remains 14.2\% better than EXP-01.
 
-Fig.~\ref{fig:label_efficiency} illustrates this label efficiency curve. The non-monotonic pattern---where lower supervision ratios yield \emph{better} Chamfer Distance---suggests that dense SDF supervision may act as a weaker regularizer than the Eikonal constraint. One plausible explanation is that the network overfits to noise in the SDF values when labels are abundant, while Eikonal regularization provides a geometric prior that more than compensates for the loss of direct supervision. However, confirming this hypothesis would require further analysis (e.g., per-shape error distributions or training-curve ablations).
+Fig.~\ref{fig:label_efficiency} illustrates this label efficiency curve. The non-monotonic pattern---where low-supervision Eikonal models remain competitive, with the best results appearing at 5--10\% supervision in our runs---suggests that dense SDF supervision may act as a weaker regularizer than the Eikonal constraint. One plausible explanation is that the network overfits to noise in the SDF values when labels are abundant, while Eikonal regularization provides a geometric prior that more than compensates for the loss of direct supervision. However, confirming this hypothesis would require further analysis (e.g., per-shape error distributions or training-curve ablations).
 
 \begin{figure}[t]
     \centering
     \includegraphics[width=\columnwidth]{figures/label_efficiency_cd.png}
-    \caption{Label efficiency: Chamfer Distance vs.\ supervision ratio. Eikonal-only models (green) improve as labels decrease, while PE models (orange, red) remain in a high-error regime regardless of supervision level.}
+    \caption{Label efficiency: Chamfer Distance vs.\ supervision ratio. Low-supervision Eikonal models (green) remain competitive with or outperform full supervision, while PE models (orange, red) remain in a high-error regime regardless of supervision level.}
     \label{fig:label_efficiency}
 \end{figure}
 
@@ -359,7 +359,7 @@ Our study has several limitations. We evaluate on a single dataset (300 ShapeNet
 \section{Conclusion}
 %% ============================================================
 
-We demonstrate that Eikonal regularization is an effective mechanism for reducing supervision requirements in DeepSDF. With only 10\% of signed distance labels and Eikonal regularization on unsupervised points, we achieve a 3-seed mean Chamfer Distance that improves over the single-seed fully-supervised baseline by 16.4\% across 300 ShapeNet shapes (two of three seeds individually outperform the baseline; see Section~V-A). We note that our evaluation is on training shapes (not a held-out test set), so these results reflect fitting quality rather than generalization to novel shapes. Nonetheless, the consistent improvement across supervision ratios and the multi-seed validation suggest that the 90\% label reduction is a robust finding with practical implications for scaling neural implicit reconstruction.
+We demonstrate that Eikonal regularization is an effective mechanism for reducing supervision requirements in DeepSDF. With only 10\% of signed distance labels and Eikonal regularization on unsupervised points, we achieve a 3-seed mean Chamfer Distance that improves over the single-seed fully-supervised baseline by 16.4\% across 300 ShapeNet shapes (two of three seeds individually outperform the baseline; see Section~V-A). We note that our evaluation is on training shapes (not a held-out test set), so these results reflect fitting quality rather than generalization to novel shapes. Nonetheless, the consistent improvement across supervision ratios and the multi-seed validation suggest that competitive performance at 10\% supervision is a promising finding with practical implications for scaling neural implicit reconstruction.
 
 In contrast, Fourier positional encoding proves consistently detrimental in this setting, degrading Chamfer Distance by 2.4--2.8$\times$ regardless of supervision level, PE frequency, or additional regularization. We attribute this to PE's amplification of high-frequency artifacts in volumetric regions outside the training distribution, a failure mode specific to SDF evaluation via marching cubes.
 
