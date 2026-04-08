@@ -242,7 +242,7 @@ Fig.~\ref{fig:label_efficiency} illustrates this label efficiency curve. The non
 \begin{figure}[t]
     \centering
     \includegraphics[width=\columnwidth]{figures/qualitative_meshes.png}
-    \caption{Qualitative reconstruction comparison for non-PE experiments. Rows: airplane, chair, table. Columns: ground truth, baseline (EXP-01), Eikonal at 100\% (EXP-02), Eikonal at 10\% (EXP-04). All reconstructions are smoothed by marching cubes at $128^3$ resolution. PE experiment meshes are omitted from this figure as the original mesh exports were lost due to an evaluator bug; metrics were recovered via re-evaluation (see Section~V-F).}
+    \caption{Qualitative reconstruction comparison for non-PE experiments. Rows: airplane, chair, table. Columns: ground truth, baseline (EXP-01), Eikonal at 100\% (EXP-02), Eikonal at 10\% (EXP-04). All reconstructions are smoothed by marching cubes at $128^3$ resolution. PE experiment meshes are omitted (see Section~V-F).}
     \label{fig:qualitative}
 \end{figure}
 
@@ -353,7 +353,7 @@ This finding highlights a key difference between radiance fields and distance fi
 
 \subsection{Limitations}
 
-Our study has several limitations. We evaluate on a single dataset (300 ShapeNet shapes across 3 categories), and results may differ with more diverse geometry or larger datasets. We use a fixed marching cubes resolution of $128^3$; higher resolutions might reveal different PE behavior. IoU evaluation was omitted due to computational constraints. The non-monotonic label efficiency curve (5\% slightly outperforming 10\%) warrants further investigation with additional seeds and categories. Qualitative mesh comparisons are limited to non-PE experiments (Fig.~\ref{fig:qualitative}), as PE runs did not produce saved meshes due to the evaluator bug described in Section~V-F. Visualizations of PE failure meshes (expected to show oversized, noisy geometry from spurious zero-crossings) would further strengthen the analysis but were not available. Finally, our PE analysis is limited to standard Fourier encoding; alternative approaches such as hash grid encodings~\cite{instantngp} or learned feature grids may interact differently with SDF learning.
+Our study has several limitations. We evaluate on a single dataset (300 ShapeNet shapes across 3 categories), and results may differ with more diverse geometry or larger datasets. We use a fixed marching cubes resolution of $128^3$; higher resolutions might reveal different PE behavior. IoU evaluation was omitted due to computational constraints. The non-monotonic label efficiency curve (5\% slightly outperforming 10\%) warrants further investigation with additional seeds and categories. Qualitative mesh comparisons are limited to non-PE experiments (Fig.~\ref{fig:qualitative}); PE mesh exports were not retained (Section~V-F). Finally, our PE analysis is limited to standard Fourier encoding; alternative approaches such as hash grid encodings~\cite{instantngp} or learned feature grids may interact differently with SDF learning.
 
 %% ============================================================
 \section{Conclusion}
