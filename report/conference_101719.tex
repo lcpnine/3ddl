@@ -239,6 +239,13 @@ Fig.~\ref{fig:label_efficiency} illustrates this label efficiency curve. The non
     \label{fig:label_efficiency}
 \end{figure}
 
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\columnwidth]{figures/qualitative_meshes.png}
+    \caption{Qualitative reconstruction comparison for non-PE experiments. Rows: airplane, chair, table. Columns: ground truth, baseline (EXP-01), Eikonal at 100\% (EXP-02), Eikonal at 10\% (EXP-04). All reconstructions are smoothed by marching cubes at $128^3$ resolution. PE experiment meshes were not saved due to an evaluator bug and are unavailable for visualization.}
+    \label{fig:qualitative}
+\end{figure}
+
 \subsection{Fourier PE Degrades Reconstruction}
 
 All seven PE experiments (EXP-06 through EXP-12) produce CD in the narrow range 0.1399--0.1450, representing a 2.4--2.8$\times$ degradation from the non-PE results. This collapse is remarkably consistent: it occurs at every supervision level (5\%, 10\%, 100\%), both PE frequencies ($L=4$, $L=6$), and even with additional second-order regularization (EXP-08).
@@ -256,7 +263,7 @@ Normal Consistency further reveals the PE failure mode. Non-PE experiments show 
 
 \subsection{PE Frequency Ablation}
 
-To test whether the PE failure was specific to $L=6$, we conducted a follow-up sweep at $L=4$ (EXP-10/11/12). As shown in Fig.~\ref{fig:pe_freq}, reducing PE frequency from $L=6$ to $L=4$ provides negligible improvement: CD changes by less than 3\% across all supervision ratios, remaining firmly in the $\sim$0.14 failure regime. The failure is not a matter of frequency tuning but a fundamental incompatibility between Fourier PE and SDF evaluation via marching cubes.
+To test whether the PE failure was specific to $L=6$, we conducted a follow-up sweep at $L=4$ (EXP-10/11/12). As shown in Fig.~\ref{fig:pe_freq}, reducing PE frequency from $L=6$ to $L=4$ provides negligible improvement: CD changes by less than 3\% across all supervision ratios, remaining firmly in the $\sim$0.14 failure regime. The failure is not a matter of frequency tuning, suggesting a deeper incompatibility between Fourier PE and SDF evaluation via dense grid queries in this setup.
 
 \begin{figure}[t]
     \centering
@@ -346,7 +353,7 @@ This finding highlights a key difference between radiance fields and distance fi
 
 \subsection{Limitations}
 
-Our study has several limitations. We evaluate on a single dataset (300 ShapeNet shapes across 3 categories), and results may differ with more diverse geometry or larger datasets. We use a fixed marching cubes resolution of $128^3$; higher resolutions might reveal different PE behavior. IoU evaluation was omitted due to computational constraints. The non-monotonic label efficiency curve (5\% slightly outperforming 10\%) warrants further investigation with additional seeds and categories. We do not include qualitative mesh visualizations comparing reconstructions across experiments. Such comparisons would help illustrate the PE failure mode (oversized, noisy meshes from spurious zero-crossings) more concretely than aggregate metrics alone, and would also show the surface quality differences between supervision ratios in the non-PE regime. Generating publication-quality renders from the extracted meshes was beyond the scope of this study but would strengthen future work. Finally, our PE analysis is limited to standard Fourier encoding; alternative approaches such as hash grid encodings~\cite{instantngp} or learned feature grids may interact differently with SDF learning.
+Our study has several limitations. We evaluate on a single dataset (300 ShapeNet shapes across 3 categories), and results may differ with more diverse geometry or larger datasets. We use a fixed marching cubes resolution of $128^3$; higher resolutions might reveal different PE behavior. IoU evaluation was omitted due to computational constraints. The non-monotonic label efficiency curve (5\% slightly outperforming 10\%) warrants further investigation with additional seeds and categories. Qualitative mesh comparisons are limited to non-PE experiments (Fig.~\ref{fig:qualitative}), as PE runs did not produce saved meshes due to the evaluator bug described in Section~V-F. Visualizations of PE failure meshes (expected to show oversized, noisy geometry from spurious zero-crossings) would further strengthen the analysis but were not available. Finally, our PE analysis is limited to standard Fourier encoding; alternative approaches such as hash grid encodings~\cite{instantngp} or learned feature grids may interact differently with SDF learning.
 
 %% ============================================================
 \section{Conclusion}
