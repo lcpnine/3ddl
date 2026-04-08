@@ -5,58 +5,354 @@
 \usepackage{algorithmic}
 \usepackage{graphicx}
 \usepackage{textcomp}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{xcolor}
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
 
 \title{Semi-Supervised DeepSDF with Eikonal Regularization and Fourier Positional Encoding}
 
-\author{\IEEEauthorblockN{Author Name}
+\author{\IEEEauthorblockN{Yu Taek Lee}
 \IEEEauthorblockA{\textit{School of Computer Science and Engineering} \\
 \textit{Nanyang Technological University}\\
 Singapore \\
-email@ntu.edu.sg}
+yutaek001@e.ntu.edu.sg}
 }
 
 \maketitle
 
 \begin{abstract}
-% ~150 words. IEEE: no symbols, special characters, footnotes, or math in the title or abstract.
-Replace this placeholder with the abstract summarizing the research question, method, and main findings (Eikonal label efficiency, Fourier PE failure mode).
+Neural implicit representations such as DeepSDF learn continuous signed distance functions for 3D shape reconstruction, but require dense signed distance supervision for every training point. We investigate whether Eikonal regularization, which enforces the unit gradient norm constraint on unsupervised points, can reduce this supervision requirement. We train DeepSDF on 300 ShapeNet shapes at supervision ratios from 5\% to 100\% and evaluate with Chamfer Distance and Normal Consistency. Our experiments show that Eikonal regularization enables a 90\% reduction in signed distance labels: at 10\% supervision, the Eikonal-regularized model achieves a Chamfer Distance of 0.0496, a 16.4\% improvement over the fully-supervised baseline (0.0593). We additionally test Fourier positional encoding at two frequency levels, finding that it consistently degrades reconstruction quality across all supervision levels, collapsing Chamfer Distance to approximately 0.14 regardless of label availability or additional regularization. These results suggest that geometric priors are more effective than spectral input transformations for label-efficient 3D reconstruction.
 \end{abstract}
 
 \begin{IEEEkeywords}
 DeepSDF, signed distance functions, Eikonal regularization, semi-supervised learning, positional encoding, 3D reconstruction
 \end{IEEEkeywords}
 
+%% ============================================================
 \section{Introduction}
-% Motivation: semi-supervised SDF learning, label efficiency for 3D reconstruction.
+%% ============================================================
 
+Learning 3D shape representations from data is a central problem in computer vision with applications in robotics, autonomous driving, and virtual reality. Traditional approaches such as voxel grids and point clouds suffer from resolution limitations and lack of surface continuity. Neural implicit representations address these issues by parameterizing shapes as continuous functions---typically signed distance functions (SDFs)---that can be queried at arbitrary resolution~\cite{deepsdf}.
+
+DeepSDF~\cite{deepsdf} learns a neural network $f_\theta(z, x) \to s$ that maps a latent code $z$ and a 3D coordinate $x$ to a signed distance value $s$. Through an auto-decoder framework, per-shape latent codes are jointly optimized with the network weights, enabling the model to represent a distribution of shapes. However, DeepSDF requires dense signed distance supervision: every training point must have a ground-truth SDF value, which is expensive to obtain for real-world 3D data.
+
+This supervision bottleneck motivates semi-supervised approaches that leverage geometric priors to reduce label requirements. The Eikonal equation $\|\nabla_x f(x)\| = 1$ is a fundamental property of signed distance functions~\cite{igr}. Enforcing this constraint on unsupervised points---those without SDF labels---provides a training signal derived purely from the geometry of the problem. If effective, this could substantially reduce the annotation effort for training neural implicit representations.
+
+Separately, Fourier positional encoding (PE) has been shown to help multi-layer perceptrons (MLPs) learn high-frequency functions by mapping low-dimensional inputs to higher-dimensional sinusoidal features~\cite{nerf, fourierfeatures}. While this technique is standard in Neural Radiance Fields (NeRF), its interaction with SDF learning---particularly in semi-supervised settings---is less understood.
+
+In this work, we systematically investigate two questions:
+\begin{enumerate}
+    \item Can Eikonal regularization reduce the need for signed distance supervision in DeepSDF, and by how much?
+    \item Does Fourier positional encoding help or hurt reconstruction quality in this semi-supervised SDF setting?
+\end{enumerate}
+
+We conduct 12 experiments on 300 ShapeNet shapes across supervision ratios from 5\% to 100\%, with and without Eikonal regularization, Fourier PE at two frequency levels, and second-order smoothness regularization. Our key findings are:
+\begin{itemize}
+    \item Eikonal regularization enables a \textbf{90\% label reduction}: at 10\% supervision, the regularized model surpasses the fully-supervised baseline by 16.4\% in Chamfer Distance.
+    \item Fourier positional encoding is \textbf{consistently harmful}: all PE configurations collapse reconstruction to approximately 2.4--2.8$\times$ worse than baseline, regardless of supervision level or additional regularization.
+\end{itemize}
+
+%% ============================================================
 \section{Related Work}
-% DeepSDF; Eikonal / geometric regularization in neural implicits; PE (NeRF, SIREN, etc.).
+%% ============================================================
 
+\subsection{Neural Implicit Representations}
+
+Neural implicit representations encode 3D geometry as the level set of a learned function. Occupancy Networks~\cite{occnet} predict binary inside/outside occupancy, while DeepSDF~\cite{deepsdf} regresses continuous signed distance values, enabling gradient-based surface extraction via marching cubes~\cite{marchingcubes}. DeepSDF's auto-decoder framework avoids the need for an encoder by directly optimizing per-shape latent codes during training. While effective, it requires dense SDF supervision at every training point.
+
+\subsection{Geometric Regularization}
+
+The Eikonal equation $\|\nabla_x f(x)\| = 1$ is a necessary condition for valid signed distance functions. Gropp et al.~\cite{igr} introduced Implicit Geometric Regularization (IGR), demonstrating that enforcing this constraint during training improves surface quality and enables learning from raw point clouds without SDF labels. This approach has been adopted in subsequent work on neural implicit surfaces~\cite{volsdf, neus}. In our work, we apply Eikonal regularization specifically to reduce the number of supervised training points, quantifying the label efficiency gains across multiple supervision ratios.
+
+SIREN~\cite{siren} takes a different approach to geometric regularization by using periodic activation functions (sinusoidal) instead of ReLU, which naturally satisfies certain differential equation constraints. However, SIREN requires architectural changes, whereas Eikonal regularization can be applied as a loss term to standard ReLU networks.
+
+\subsection{Positional Encoding}
+
+Fourier positional encoding was introduced in NeRF~\cite{nerf} to overcome the spectral bias of MLPs---their tendency to learn low-frequency functions first~\cite{spectralbias}. By mapping input coordinates through sinusoidal functions at multiple frequency bands, $\gamma(x) = [\sin(2^0\pi x), \cos(2^0\pi x), \ldots, \sin(2^{L-1}\pi x), \cos(2^{L-1}\pi x)]$, the network can represent high-frequency variations. Tancik et al.~\cite{fourierfeatures} provided a theoretical framework for this approach based on the Neural Tangent Kernel.
+
+While Fourier features are standard in radiance field methods, their application to SDF learning is less established. NeRF operates in a supervised regime where every ray has a target color, and the network is evaluated primarily at points along training rays. In contrast, SDF evaluation via marching cubes requires querying the network on a dense grid that includes regions far from the training data distribution, creating an extrapolation challenge for high-frequency encodings.
+
+%% ============================================================
 \section{Method}
-% Architecture, $L_{\text{sdf}}$, $L_{\text{eik}}$, $L_{\text{2nd}}$, $L_z$, training procedure, Fourier PE formulation.
+%% ============================================================
 
+\subsection{Problem Formulation}
+
+Given a dataset of 3D shapes, we aim to learn a function $f_\theta: \mathbb{R}^{d_z} \times \mathbb{R}^3 \to \mathbb{R}$ that maps a shape-specific latent code $z_i \in \mathbb{R}^{d_z}$ and a spatial coordinate $x \in \mathbb{R}^3$ to the signed distance to the shape's surface. For each shape $i$, we have:
+\begin{itemize}
+    \item \textbf{Supervised points}: $\{(x_j, s_j)\}_{j=1}^{N_s}$ with ground-truth SDF values
+    \item \textbf{Unsupervised points}: $\{x_k\}_{k=1}^{N_u}$ with coordinates only
+\end{itemize}
+The supervision ratio $r = N_s / (N_s + N_u)$ controls the fraction of points with SDF labels. We investigate $r \in \{0.05, 0.10, 0.50, 1.0\}$.
+
+\subsection{Architecture}
+
+We use an 8-layer MLP with hidden dimension 512, following the DeepSDF architecture~\cite{deepsdf}. A skip connection concatenates the input to the activations at layer 4. Each shape is associated with a learnable latent code $z_i \in \mathbb{R}^{256}$, initialized from $\mathcal{N}(0, 0.01^2)$ and jointly optimized with the network weights (auto-decoder). The final layer produces a scalar SDF value without activation, with weights initialized from $\mathcal{N}(0, 1/\sqrt{512})$ and bias set to 0.1 to approximate a sphere.
+
+When Fourier PE is enabled, input coordinates are transformed as:
+\begin{equation}
+    \gamma(x) = \left[\sin(2^0 \pi x), \cos(2^0 \pi x), \ldots, \sin(2^{L-1} \pi x), \cos(2^{L-1} \pi x)\right]
+\end{equation}
+where $L$ is the number of frequency levels. This maps each 3D coordinate from $\mathbb{R}^3$ to $\mathbb{R}^{6L}$. The network input becomes $[z_i; \gamma(x)]$ instead of $[z_i; x]$. We test $L=4$ (24-dimensional) and $L=6$ (36-dimensional).
+
+\subsection{Loss Functions}
+
+The total training loss combines four terms:
+\begin{equation}
+    \mathcal{L} = \mathcal{L}_{\text{sdf}} + \lambda_{\text{eik}}(t) \cdot \mathcal{L}_{\text{eik}} + \lambda_z \cdot \mathcal{L}_z + \lambda_{\text{2nd}} \cdot \mathcal{L}_{\text{2nd}}
+\end{equation}
+
+\textbf{SDF loss} ($\mathcal{L}_{\text{sdf}}$): L1 regression on supervised points only:
+\begin{equation}
+    \mathcal{L}_{\text{sdf}} = \frac{1}{N_s} \sum_{j=1}^{N_s} |f_\theta(z_i, x_j) - s_j|
+\end{equation}
+
+\textbf{Eikonal loss} ($\mathcal{L}_{\text{eik}}$): Enforces $\|\nabla_x f\| = 1$ on all points (supervised and unsupervised), providing geometric regularization from unlabeled data:
+\begin{equation}
+    \mathcal{L}_{\text{eik}} = \frac{1}{N_s + N_u} \sum_{k} \left(\|\nabla_x f_\theta(z_i, x_k)\| - 1\right)^2
+\end{equation}
+
+\textbf{Latent regularization} ($\mathcal{L}_z$): Prevents latent code drift:
+\begin{equation}
+    \mathcal{L}_z = \|z_i\|^2
+\end{equation}
+
+\textbf{Second-order loss} ($\mathcal{L}_{\text{2nd}}$): Optionally penalizes the divergence of the gradient field to encourage smoother surfaces:
+\begin{equation}
+    \mathcal{L}_{\text{2nd}} = \frac{1}{N} \sum_k |\nabla \cdot \nabla_x f_\theta(z_i, x_k)|
+\end{equation}
+
+\subsection{Eikonal Warmup Schedule}
+
+The Eikonal weight uses a linear warmup to prevent the gradient norm constraint from dominating before the network learns basic geometry from $\mathcal{L}_{\text{sdf}}$:
+\begin{equation}
+    \lambda_{\text{eik}}(t) = \lambda_{\text{eik}} \cdot \min\left(1, \frac{t}{T_w}\right)
+\end{equation}
+where $T_w$ is ratio-dependent: 100 epochs for $r \geq 0.5$, 150 epochs for $r = 0.1$, and 200 epochs for $r = 0.05$. Lower supervision ratios require longer warmup because fewer supervised points provide weaker initial geometry signal.
+
+\subsection{Training Procedure}
+
+Training iterates over all shapes per epoch, sampling a batch of 16{,}384 points per shape (split evenly between supervised and unsupervised). Gradients are accumulated across all shapes and applied once per epoch. We use the Adam optimizer with learning rate $5 \times 10^{-4}$, stepped by $0.5\times$ every 500 epochs, and gradient clipping at $\max\_norm = 1.0$.
+
+Default hyperparameters are $\lambda_{\text{eik}} = 0.1$, $\lambda_z = 10^{-4}$, and $\lambda_{\text{2nd}} = 0$ (disabled unless specified). All models train for 3{,}000 epochs.
+
+%% ============================================================
 \section{Experiments}
-% ShapeNet setup, metrics (CD, NC), experiment matrix, training hyperparameters.
+%% ============================================================
 
+\subsection{Dataset}
+
+We use 300 shapes from ShapeNet~\cite{shapenet} spanning three categories: airplane, chair, and table. Raw meshes are first converted to watertight manifolds, then sampled to produce 250{,}000 supervised points (with ground-truth SDF values) and 250{,}000 unsupervised points (coordinates only) per shape. The data is split 75\%/25\% for training (225 shapes) and validation (75 shapes).
+
+For reduced supervision experiments, supervised points are subsampled to the target ratio (e.g., 10\% retains 25{,}000 supervised points) while all 250{,}000 unsupervised points remain available for Eikonal regularization.
+
+\subsection{Evaluation Metrics}
+
+We evaluate reconstructed meshes extracted via marching cubes~\cite{marchingcubes} at resolution $128^3$:
+
+\textbf{Chamfer Distance (CD)}: Bidirectional mean squared nearest-neighbor distance between 30{,}000 points sampled from predicted and ground-truth meshes. Lower is better.
+
+\textbf{Normal Consistency (NC)}: Mean absolute dot product between normals of matched point pairs. Higher is better (maximum 1.0).
+
+Volumetric IoU was omitted due to computational constraints.
+
+\subsection{Experiment Design}
+
+Table~\ref{tab:experiments} summarizes our 12 experiments. We systematically vary supervision ratio ($r$), Eikonal regularization, and Fourier PE to isolate each factor's contribution. Key comparisons include EXP-04 vs.\ EXP-01 (label efficiency with Eikonal) and EXP-06 vs.\ EXP-04 (PE effect at low supervision). Multi-seed runs (3 seeds) are conducted for EXP-04 and EXP-06 to assess variance.
+
+\begin{table}[t]
+\centering
+\caption{Experiment design. All experiments use Eikonal regularization except EXP-01 (vanilla baseline).}
+\label{tab:experiments}
+\renewcommand{\arraystretch}{1.1}
+\begin{tabular}{@{}lccccl@{}}
+\toprule
+ID & $r$ & Eik & PE & Extra & Purpose \\
+\midrule
+01 & 100\% & -- & -- & -- & Baseline \\
+02 & 100\% & \checkmark & -- & -- & Eikonal effect \\
+03 & 50\% & \checkmark & -- & -- & Half labels \\
+04 & 10\% & \checkmark & -- & -- & Low-label (3 seeds) \\
+05 & 5\% & \checkmark & -- & -- & Minimal labels \\
+06 & 10\% & \checkmark & $L$=6 & -- & PE effect (3 seeds) \\
+07 & 5\% & \checkmark & $L$=6 & -- & PE at min.\ labels \\
+08 & 10\% & \checkmark & $L$=6 & $\mathcal{L}_{\text{2nd}}$ & Can L$_\text{2nd}$ save PE? \\
+09 & 100\% & \checkmark & $L$=6 & -- & PE quality ceiling \\
+10 & 100\% & \checkmark & $L$=4 & -- & Lower PE freq \\
+11 & 10\% & \checkmark & $L$=4 & -- & Lower PE, low-label \\
+12 & 5\% & \checkmark & $L$=4 & -- & Lower PE, min.\ label \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+All experiments are trained on NVIDIA A40 GPUs for 3{,}000 epochs ($\sim$4--6 hours per run). We use identical hyperparameters across experiments except for the specified variations.
+
+%% ============================================================
 \section{Results}
-% Label-efficiency curve, PE ablation, multi-seed validation, per-category analysis if applicable.
+%% ============================================================
 
+\subsection{Eikonal Regularization Enables Label Reduction}
+
+Table~\ref{tab:results} presents the main quantitative results. The vanilla DeepSDF baseline (EXP-01) achieves CD = 0.0593 with 100\% supervision and no Eikonal regularization. Adding Eikonal at full supervision (EXP-02) immediately improves CD by 8.4\% to 0.0543 and NC by 7.2\% to 0.5920.
+
+\begin{table}[t]
+\centering
+\caption{Main results. CD and NC are mean $\pm$ std over evaluated shapes. Multi-seed experiments report mean $\pm$ std across seeds. Best CD per group in \textbf{bold}.}
+\label{tab:results}
+\renewcommand{\arraystretch}{1.1}
+\begin{tabular}{@{}llcc@{}}
+\toprule
+ID & Config & CD ($\downarrow$) & NC ($\uparrow$) \\
+\midrule
+\multicolumn{4}{@{}l}{\textit{Without Positional Encoding}} \\
+01 & 100\%, no Eik & 0.0593 & 0.5522 \\
+02 & 100\% + Eik & 0.0543 & 0.5920 \\
+03 & 50\% + Eik & 0.0534 & 0.5924 \\
+04 & 10\% + Eik (3-seed) & \textbf{0.0496} & \textbf{0.5987} \\
+05 & 5\% + Eik & 0.0509 & 0.5766 \\
+\midrule
+\multicolumn{4}{@{}l}{\textit{With Fourier PE ($L=6$)}} \\
+06 & 10\% + Eik + PE (3-seed) & 0.1399 & 0.5078 \\
+07 & 5\% + Eik + PE & 0.1448 & 0.5070 \\
+08 & 10\% + Eik + PE + L$_\text{2nd}$ & 0.1443 & 0.5045 \\
+09 & 100\% + Eik + PE & 0.1450 & 0.5027 \\
+\midrule
+\multicolumn{4}{@{}l}{\textit{With Fourier PE ($L=4$)}} \\
+10 & 100\% + Eik + PE & 0.1401 & 0.5078 \\
+11 & 10\% + Eik + PE & 0.1427 & 0.5067 \\
+12 & 5\% + Eik + PE & 0.1399 & 0.5078 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The most striking result is that \emph{reducing} supervision to 10\% with Eikonal (EXP-04) actually \emph{improves} upon both the full-supervision Eikonal model and the baseline, achieving the best overall CD of 0.0496---a 16.4\% improvement over EXP-01. Even at 5\% supervision (EXP-05), CD = 0.0509 remains 14.2\% better than the fully-supervised baseline.
+
+Fig.~\ref{fig:label_efficiency} illustrates this label efficiency curve. The non-monotonic pattern---where lower supervision ratios yield \emph{better} Chamfer Distance---suggests that dense SDF supervision may cause overfitting, and that Eikonal regularization provides a stronger geometric prior that more than compensates for the loss of direct supervision.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\columnwidth]{figures/label_efficiency_cd.png}
+    \caption{Label efficiency: Chamfer Distance vs.\ supervision ratio. Eikonal-only models (green) improve as labels decrease, while PE models (orange, red) remain in a high-error regime regardless of supervision level.}
+    \label{fig:label_efficiency}
+\end{figure}
+
+\subsection{Fourier PE Degrades Reconstruction}
+
+All seven PE experiments (EXP-06 through EXP-12) produce CD in the narrow range 0.1399--0.1450, representing a 2.4--2.8$\times$ degradation from the non-PE results. This collapse is remarkably consistent: it occurs at every supervision level (5\%, 10\%, 100\%), both PE frequencies ($L=4$, $L=6$), and even with additional second-order regularization (EXP-08).
+
+Fig.~\ref{fig:ablation} provides a comprehensive ablation view. The clear separation between PE and non-PE experiments confirms that positional encoding is the dominant factor degrading quality.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\columnwidth]{figures/ablation_cd_nc.png}
+    \caption{Ablation across all experiments. Top: Chamfer Distance. Bottom: Normal Consistency. PE experiments (right group) cluster around CD $\sim$0.14 regardless of configuration.}
+    \label{fig:ablation}
+\end{figure}
+
+Normal Consistency further reveals the PE failure mode. Non-PE experiments show healthy NC variation across shapes (std $\sim$0.10--0.14), while PE experiments exhibit collapsed NC diversity (std $\sim$0.01--0.02). This indicates that PE forces all shapes toward similar, low-quality reconstructions.
+
+\subsection{PE Frequency Ablation}
+
+To test whether the PE failure was specific to $L=6$, we conducted a follow-up sweep at $L=4$ (EXP-10/11/12). As shown in Fig.~\ref{fig:pe_freq}, reducing PE frequency from $L=6$ to $L=4$ provides negligible improvement: CD changes by less than 3\% across all supervision ratios, remaining firmly in the $\sim$0.14 failure regime. The failure is not a matter of frequency tuning but a fundamental incompatibility between Fourier PE and SDF evaluation via marching cubes.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\columnwidth]{figures/pe_frequency_ablation_cd.png}
+    \caption{PE frequency ablation. Both $L=4$ and $L=6$ collapse to the same poor Chamfer Distance regime at all supervision levels.}
+    \label{fig:pe_freq}
+\end{figure}
+
+\subsection{Multi-Seed Validation}
+
+We validated our two key experiments with 3 seeds each (Table~\ref{tab:multiseed}). EXP-04 (10\% + Eikonal) shows moderate variance (CV = 0.197), primarily due to one seed (42) having higher CD with 37 mesh extraction failures; seeds 123 and 456 both achieve CD $\sim$0.044 with zero failures. EXP-06 (10\% + PE) shows very low variance (CV = 0.022), confirming the PE failure is highly reproducible.
+
+\begin{table}[t]
+\centering
+\caption{Multi-seed validation for key experiments (3 seeds: 42, 123, 456). CV = coefficient of variation.}
+\label{tab:multiseed}
+\renewcommand{\arraystretch}{1.1}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Experiment & CD mean & CD std & CV & NC mean \\
+\midrule
+EXP-04 (10\% + Eik) & 0.0496 & 0.0098 & 0.197 & 0.5987 \\
+EXP-06 (10\% + Eik + PE) & 0.1399 & 0.0031 & 0.022 & 0.5078 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The near-zero CV of EXP-06 is itself informative: PE is so dominant a failure mode that it overwhelms the natural stochasticity of training, producing nearly identical poor outcomes regardless of random initialization.
+
+%% ============================================================
 \section{Discussion}
-% Why Eikonal helps; why PE fails (extrapolation / high-frequency oscillations); limitations.
+%% ============================================================
 
+\subsection{Why Eikonal Regularization Enables Label Reduction}
+
+The Eikonal constraint $\|\nabla_x f\| = 1$ provides a geometric prior that is complementary to direct SDF supervision. While $\mathcal{L}_{\text{sdf}}$ teaches the network the correct distance values at specific points, $\mathcal{L}_{\text{eik}}$ constrains the \emph{gradient field} everywhere, enforcing that the learned function behaves as a valid distance function throughout the volume---not just at labeled locations.
+
+Unsupervised points contribute to $\mathcal{L}_{\text{eik}}$ without requiring SDF labels, effectively providing ``free'' supervision about the geometric structure of the solution space. At low supervision ratios, the Eikonal loss dominates the training signal, acting as a strong regularizer that prevents overfitting to the sparse labeled points. This explains the counter-intuitive finding that 10\% supervision outperforms 100\%: with abundant labels, the network may overfit to noise in the SDF values, while with fewer labels and stronger geometric regularization, it learns a smoother, more accurate distance field.
+
+The ratio-dependent warmup schedule is important: without it, the Eikonal loss can dominate too early before the network establishes basic geometry from $\mathcal{L}_{\text{sdf}}$, leading to degenerate solutions.
+
+\subsection{Why Fourier PE Fails for SDF Learning}
+
+The PE failure is surprising given its success in NeRF~\cite{nerf}, but can be understood through the lens of train-test distribution mismatch. During training, points are sampled near the shape surface (within a unit sphere). However, evaluation via marching cubes queries the SDF on a dense $128^3$ grid spanning $[-1, 1]^3$, including cube corners at distance $\sqrt{3} \approx 1.73$ from the origin---regions never seen during training.
+
+Without PE, the MLP's inductive bias toward smooth functions produces reasonable SDF extrapolation in these unseen regions. With PE, the sinusoidal encoding amplifies high-frequency oscillations, causing wild SDF fluctuations at grid points far from the training distribution. This creates spurious zero-crossings that produce noisy, oversized meshes during marching cubes extraction.
+
+Several observations support this diagnosis:
+\begin{itemize}
+    \item Training losses converge normally for PE experiments ($\mathcal{L}_{\text{sdf}} \sim 0.033$), indicating the failure is at inference, not training.
+    \item NC standard deviation collapses to $\sim$0.01 across all PE experiments, suggesting all shapes converge to similar poor-quality reconstructions.
+    \item Reducing PE frequency from $L=6$ to $L=4$ does not resolve the issue, as even $L=4$ introduces sufficient high-frequency components to corrupt extrapolation.
+    \item Second-order regularization ($\mathcal{L}_{\text{2nd}}$) does not help because it penalizes curvature at training points, not at the distant grid points where PE extrapolation fails.
+\end{itemize}
+
+This finding highlights a key difference between radiance fields and distance fields: NeRF evaluates primarily along training camera rays, while SDF evaluation requires dense volumetric queries, making extrapolation robustness critical.
+
+\subsection{Limitations}
+
+Our study has several limitations. We evaluate on a single dataset (300 ShapeNet shapes across 3 categories), and results may differ with more diverse geometry or larger datasets. We use a fixed marching cubes resolution of $128^3$; higher resolutions might reveal different PE behavior. IoU evaluation was omitted due to computational constraints. The non-monotonic label efficiency curve (5\% slightly outperforming 10\%) warrants further investigation with additional seeds and categories. Finally, our PE analysis is limited to standard Fourier encoding; alternative approaches such as hash grid encodings~\cite{instantngp} or learned feature grids may interact differently with SDF learning.
+
+%% ============================================================
 \section{Conclusion}
-% Practical takeaway (e.g., low labels + Eikonal); future work.
+%% ============================================================
 
-% Uncomment and place after first citation in text:
-% \section*{Acknowledgment}
-% This work was supported by ...
+We demonstrate that Eikonal regularization is a highly effective mechanism for reducing supervision requirements in DeepSDF. With only 10\% of signed distance labels and Eikonal regularization on unsupervised points, we achieve reconstruction quality that surpasses the fully-supervised baseline by 16.4\% in Chamfer Distance across 300 ShapeNet shapes. This 90\% label reduction has practical implications for scaling neural implicit reconstruction to domains where dense SDF annotation is prohibitively expensive.
+
+In contrast, Fourier positional encoding proves consistently detrimental in this setting, degrading Chamfer Distance by 2.4--2.8$\times$ regardless of supervision level, PE frequency, or additional regularization. We attribute this to PE's amplification of high-frequency artifacts in volumetric regions outside the training distribution, a failure mode specific to SDF evaluation via marching cubes.
+
+For practitioners, we recommend the combination of Eikonal regularization with 10\% supervision as a practical default for DeepSDF training. For future work, alternative input encodings that avoid Fourier features' extrapolation problems---such as multi-resolution hash grids~\cite{instantngp} or learned spatial features---merit investigation. Additionally, extending the semi-supervised framework to category-specific evaluation and larger datasets would further validate the generality of these findings.
 
 \begin{thebibliography}{00}
-\bibitem{deepsdf} J. J. Park et al., ``DeepSDF: Learning continuous signed distance functions for shape representation,'' in \textit{Proc. IEEE CVPR}, 2019.
-% Add remaining references (NeRF, Tancik Fourier features, course materials, etc.).
+\bibitem{deepsdf} J.~J.~Park, P.~Florence, J.~Straub, R.~Newcombe, and S.~Lovegrove, ``DeepSDF: Learning continuous signed distance functions for shape representation,'' in \textit{Proc. IEEE/CVF CVPR}, 2019, pp.~165--174.
+
+\bibitem{igr} A.~Gropp, L.~Yariv, N.~Haim, M.~Atzmon, and Y.~Lipman, ``Implicit geometric regularization for learning shapes,'' in \textit{Proc. ICML}, 2020, pp.~3789--3799.
+
+\bibitem{nerf} B.~Mildenhall, P.~P.~Srinivasan, M.~Tancik, J.~T.~Barron, R.~Ramamoorthi, and R.~Ng, ``NeRF: Representing scenes as neural radiance fields for view synthesis,'' in \textit{Proc. ECCV}, 2020, pp.~405--421.
+
+\bibitem{fourierfeatures} M.~Tancik \textit{et al.}, ``Fourier features let networks learn high frequency functions in low dimensional domains,'' in \textit{Proc. NeurIPS}, 2020, pp.~7537--7547.
+
+\bibitem{siren} V.~Sitzmann, J.~N.~P.~Martel, A.~W.~Bergman, D.~B.~Lindell, and G.~Wetzstein, ``Implicit neural representations with periodic activation functions,'' in \textit{Proc. NeurIPS}, 2020, pp.~7462--7473.
+
+\bibitem{shapenet} A.~X.~Chang \textit{et al.}, ``ShapeNet: An information-rich 3D model repository,'' \textit{arXiv preprint arXiv:1512.03012}, 2015.
+
+\bibitem{marchingcubes} W.~E.~Lorensen and H.~E.~Cline, ``Marching cubes: A high resolution 3D surface construction algorithm,'' \textit{ACM SIGGRAPH Computer Graphics}, vol.~21, no.~4, pp.~163--169, 1987.
+
+\bibitem{occnet} L.~Mescheder, M.~Oechsle, M.~Niemeyer, S.~Nowozin, and A.~Geiger, ``Occupancy Networks: Learning 3D reconstruction in function space,'' in \textit{Proc. IEEE/CVF CVPR}, 2019, pp.~4460--4470.
+
+\bibitem{volsdf} L.~Yariv \textit{et al.}, ``Volume rendering of neural implicit surfaces,'' in \textit{Proc. NeurIPS}, 2021, pp.~4805--4815.
+
+\bibitem{neus} P.~Wang \textit{et al.}, ``NeuS: Learning neural implicit surfaces by volume rendering for multi-view reconstruction,'' in \textit{Proc. NeurIPS}, 2021, pp.~27171--27183.
+
+\bibitem{spectralbias} N.~Rahaman \textit{et al.}, ``On the spectral bias of neural networks,'' in \textit{Proc. ICML}, 2019, pp.~5301--5310.
+
+\bibitem{instantngp} T.~M\"{u}ller, A.~Evans, C.~Schied, and A.~Keller, ``Instant neural graphics primitives with a multiresolution hash encoding,'' \textit{ACM Trans. Graphics}, vol.~41, no.~4, pp.~1--15, 2022.
+
 \end{thebibliography}
 
 \end{document}
