@@ -2,5 +2,5 @@ Generated from experiments/experiment_log.md
 
 Key takeaways:
 - 10% + Eikonal beats the full-supervision baseline: CD 0.0496 vs 0.0593
-- PE L=6 at 10% is catastrophic: CD 0.1423
+- PE L=6 at 10% is catastrophic: CD 0.1399
 - PE L=4 at 10% remains catastrophic: CD 0.1427
