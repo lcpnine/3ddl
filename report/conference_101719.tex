@@ -1,0 +1,62 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\begin{document}
+
+\title{Semi-Supervised DeepSDF with Eikonal Regularization and Fourier Positional Encoding}
+
+\author{\IEEEauthorblockN{Author Name}
+\IEEEauthorblockA{\textit{School of Computer Science and Engineering} \\
+\textit{Nanyang Technological University}\\
+Singapore \\
+email@ntu.edu.sg}
+}
+
+\maketitle
+
+\begin{abstract}
+% ~150 words. IEEE: no symbols, special characters, footnotes, or math in the title or abstract.
+Replace this placeholder with the abstract summarizing the research question, method, and main findings (Eikonal label efficiency, Fourier PE failure mode).
+\end{abstract}
+
+\begin{IEEEkeywords}
+DeepSDF, signed distance functions, Eikonal regularization, semi-supervised learning, positional encoding, 3D reconstruction
+\end{IEEEkeywords}
+
+\section{Introduction}
+% Motivation: semi-supervised SDF learning, label efficiency for 3D reconstruction.
+
+\section{Related Work}
+% DeepSDF; Eikonal / geometric regularization in neural implicits; PE (NeRF, SIREN, etc.).
+
+\section{Method}
+% Architecture, $L_{\text{sdf}}$, $L_{\text{eik}}$, $L_{\text{2nd}}$, $L_z$, training procedure, Fourier PE formulation.
+
+\section{Experiments}
+% ShapeNet setup, metrics (CD, NC), experiment matrix, training hyperparameters.
+
+\section{Results}
+% Label-efficiency curve, PE ablation, multi-seed validation, per-category analysis if applicable.
+
+\section{Discussion}
+% Why Eikonal helps; why PE fails (extrapolation / high-frequency oscillations); limitations.
+
+\section{Conclusion}
+% Practical takeaway (e.g., low labels + Eikonal); future work.
+
+% Uncomment and place after first citation in text:
+% \section*{Acknowledgment}
+% This work was supported by ...
+
+\begin{thebibliography}{00}
+\bibitem{deepsdf} J. J. Park et al., ``DeepSDF: Learning continuous signed distance functions for shape representation,'' in \textit{Proc. IEEE CVPR}, 2019.
+% Add remaining references (NeRF, Tancik Fourier features, course materials, etc.).
+\end{thebibliography}
+
+\end{document}
