@@ -100,3 +100,5 @@ mlruns/
 
 # ── SLURM job arrays temp ──
 job_registry_lock.tmp
+
+report/figures/**/*
