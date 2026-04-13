@@ -32,15 +32,15 @@ Single source of truth for all experiment results.
 | EXP-04 | **3-seed** | **0.0496 +/- 0.0098** | **0.5987 +/- 0.0201** | — | — | **CV(CD)=0.197 < 0.2 ✓** |
 | EXP-05 | 42 | 0.0509 +/- 0.0385 | 0.5766 +/- 0.1271 | skipped | skipped | done (295/300 shapes, 5 failures) |
 | EXP-06 | 42 | 0.1443 +/- 0.0448 | 0.5055 +/- 0.0109 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator) |
-| EXP-06 | 123 | 0.1374 +/- 0.0433 | 0.5077 +/- 0.0109 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator) |
-| EXP-06 | 456 | 0.1380 +/- 0.0425 | 0.5103 +/- 0.0104 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator) |
-| EXP-06 | **3-seed** | **0.1399 +/- 0.0031** | **0.5078 +/- 0.0020** | — | — | **CV(CD)=0.022 < 0.2 ✓** |
-| EXP-07 | 42 | 0.1448 +/- 0.0449 | 0.5070 +/- 0.0106 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator) |
-| EXP-08 | 42 | 0.1443 +/- 0.0447 | 0.5045 +/- 0.0119 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator; L_2nd didn't save PE) |
-| EXP-09 | 42 | 0.1450 +/- 0.0450 | 0.5027 +/- 0.0116 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator) |
-| EXP-10 | 42 | 0.1401 +/- 0.0420 | 0.5078 +/- 0.0204 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator) |
-| EXP-11 | 42 | 0.1427 +/- 0.0440 | 0.5067 +/- 0.0183 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator) |
-| EXP-12 | 42 | 0.1399 +/- 0.0425 | 0.5078 +/- 0.0178 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator) |
+| EXP-06 | 123 | 0.1375 +/- 0.0433 | 0.5087 +/- 0.0110 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator) |
+| EXP-06 | 456 | 0.1380 +/- 0.0425 | 0.5097 +/- 0.0113 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator) |
+| EXP-06 | **3-seed** | **0.1399 +/- 0.0031** | **0.5080 +/- 0.0022** | — | — | **CV(CD)=0.022 < 0.2 ✓** |
+| EXP-07 | 42 | 0.1448 +/- 0.0449 | 0.5074 +/- 0.0106 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator) |
+| EXP-08 | 42 | 0.1443 +/- 0.0447 | 0.5053 +/- 0.0119 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator; L_2nd didn't save PE) |
+| EXP-09 | 42 | 0.1450 +/- 0.0450 | 0.5031 +/- 0.0116 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator) |
+| EXP-10 | 42 | 0.1401 +/- 0.0420 | 0.5077 +/- 0.0211 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator) |
+| EXP-11 | 42 | 0.1427 +/- 0.0440 | 0.5071 +/- 0.0194 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator) |
+| EXP-12 | 42 | 0.1400 +/- 0.0425 | 0.5073 +/- 0.0178 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator) |
 
 ## Detailed Results
 
@@ -198,8 +198,8 @@ Single source of truth for all experiment results.
 
 ### EXP-06 — 3-seed summary (seeds 42, 123, 456)
 - **CD**: mean=0.1399, std=0.0031, **CV=0.022 < 0.2** — 3 seeds sufficient, no expansion needed
-- **NC**: mean=0.5078, std=0.0020, CV=0.004
-- **vs EXP-04 3-seed** (no PE): CD 2.8x worse (0.0496→0.1399), NC worse (0.5987→0.5078)
+- **NC**: mean=0.5080, std=0.0022, CV=0.004
+- **vs EXP-04 3-seed** (no PE): CD 2.8x worse (0.0496→0.1399), NC worse (0.5987→0.5080)
 - **Conclusion**: PE L=6 is catastrophic and highly reproducible across seeds. The near-zero NC variance (CV=0.004) confirms PE collapses all shapes to similar poor-quality reconstructions. (Updated with fixed evaluator reruns — all seeds now 300/300 shapes.)
 
 ### EXP-08 — 10% labels + Eikonal + PE L=6 + L_2nd (seed 42)
