@@ -138,6 +138,61 @@ EXP_DIR=experiments/EXP-XX/seed42 sbatch --job-name=EXP-XX_s42_eval slurm/job_ev
 - [x] **8.2h** Updated `experiments/experiment_log.md` — results table and detailed sections with corrected shape counts, CD/NC values, and 3-seed summary
 - [x] **8.2i** Commit all changes (8a41399)
 
+## Step 9: PE Failure Root Cause Analysis (2026-04-15)
+
+**Why**: All 7 PE experiments (EXP-06/07/08/09/10/11/12) produced CD ~0.14 regardless of
+supervision level (5%–100%) or frequency (L=4, L=6). The mechanism was unknown. Diagnosing
+the exact cause was needed to (a) explain the failure in the conference report and (b) determine
+whether PE can be rescued for future work.
+
+**4 hypotheses tested**:
+1. Coordinate scaling wrong
+2. PE frequency too high
+3. Training/inference distribution mismatch (near-surface training vs full [-1,1]³ eval)
+4. π factor in PE formula
+
+- [x] **9.1** Check A — Training point coverage: confirmed unsupervised points have max radius = 1.000,
+  zero coverage at r > 1.0. Cube corners (r = √3 ≈ 1.73) never sampled during training.
+  Code: `scripts/preprocess.py:125-143` (unit sphere rejection sampling). Run locally on
+  `data/processed/` parametric data (80 shapes).
+
+- [x] **9.2** Check D — PE feature distance: `dist(surface, cube corner) = 2.83` out of max 8.49 for L=6;
+  14 oscillation cycles at highest frequency (2⁵·π ≈ 100 rad/unit). Even near-surface
+  movement of 0.05 units yields feature distance 2.62 — confirms PE is highly sensitive to
+  coordinate position. Run locally using `src/model.py:FourierPositionalEncoding`.
+
+- [x] **9.3** Wrote diagnostic scripts: `scripts/check_b_clipped_eval.py` and `scripts/check_c_diagonal.py`.
+  Copied to TC2 via scp.
+
+- [x] **9.4** Check C — SDF diagonal cross-section (TC2, EXP-09/seed42 vs EXP-02/seed42):
+  PE model shows **14 sign changes** along diagonal toward cube corner (1,1,1) outside r>1.0;
+  no-PE model shows 0 sign changes, monotone extrapolation. Oscillation period ≈ 0.063 units
+  matches 2⁵·π ≈ 100 rad/unit exactly. These 14 zero-crossings are what marching cubes
+  picks up as phantom surfaces → all shapes fail mesh extraction.
+
+- [x] **9.5** Check B — Sphere-clipped evaluation (TC2, EXP-09/seed42, 5 airplane shapes, res=128):
+  Masking OOD corners (set SDF=+1.0 for r>1.0 before marching cubes, no retraining):
+  CD drops from **0.1926 → 0.0974 (−49%)**. NC unchanged (0.4953 → 0.4970).
+  This single change — with the same trained weights — closes half the gap to EXP-02's CD=0.054.
+
+- [x] **9.6** Documented in `experiments/experiment_log.md` (new section: "PE Failure Root Cause Analysis").
+
+- [x] **9.7** Copied `experiments/figures/check_c_sdf_crosssection.png` from TC2 to local.
+
+**Conclusion**: Root cause is **hypothesis #3 — training/inference distribution mismatch**.
+The unsupervised sampler only covers the unit sphere; eval grid queries the full cube.
+PE amplifies extrapolation errors at OOD corners into 14 sign-flipping oscillations per axis.
+No-PE extrapolates incorrectly but monotonically → valid mesh. PE extrapolates with oscillations
+→ phantom surfaces everywhere → mesh extraction fails.
+
+**Frequency (hypothesis #2) is secondary**: Check B shows clipping alone halves CD with L=6
+unchanged. The gap, not the frequency, is the root cause.
+
+**Future fix options** (not pursued in this project):
+- Extend unsupervised sampling to full [-1,1]³ cube (Eikonal covers corners, OOD gap closed)
+- Clip eval grid to inscribed sphere (no retraining, cosmetic fix)
+- Replace Fourier PE with hash encoding (localized, no OOD extrapolation by design)
+
 ---
 
 ## File Change Reference (Step 0)
