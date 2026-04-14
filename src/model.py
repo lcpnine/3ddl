@@ -52,7 +52,7 @@ class DeepSDF(nn.Module):
     Architecture follows Park et al. (CVPR 2019):
       - Layers 1-4: Linear + ReLU
       - Skip connection: layer 5 input = layer 4 output + original input
-      - Layers 5-8: Linear + ReLU (except last layer: Linear + Tanh)
+      - Layers 5-8: Linear + ReLU (except last layer: Linear, no output activation)
 
     Args:
         latent_dim: dimension of per-shape latent code

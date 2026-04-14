@@ -46,7 +46,10 @@ export PYTHONPATH=src:$PYTHONPATH
 export PYTHONUNBUFFERED=1
 
 SKIP_IOU="${SKIP_IOU:-1}"
-MC_RES="${MC_RES:-128}"
+MC_RES="${MC_RES:-256}"
+EVAL_SPLIT="${EVAL_SPLIT:-train}"
+SPHERE_CLIP="${SPHERE_CLIP:-1}"
+TTO_N_ITERS="${TTO_N_ITERS:-800}"
 
 python src/evaluate.py \
     --exp_dir "$EXP_DIR" \
@@ -54,6 +57,9 @@ python src/evaluate.py \
     --output "$EXP_DIR/results.json" \
     --voxel_res $VOXEL_RES \
     --mc_resolution $MC_RES \
+    --eval_split "$EVAL_SPLIT" \
+    --tto_n_iters $TTO_N_ITERS \
+    ${SPHERE_CLIP:+--sphere_clip} \
     ${SKIP_IOU:+--skip_iou}
 
 EXIT_CODE=$?

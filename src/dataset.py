@@ -11,6 +11,7 @@ Points are pre-split by ratio during preprocessing.
 
 import glob
 import os
+import random
 
 import numpy as np
 import torch
@@ -38,6 +39,7 @@ class SDFDataset(Dataset):
         split: str = "train",
         train_frac: float = 0.75,
         num_shapes: int = -1,
+        seed: int = 42,
     ):
         super().__init__()
         self.data_dir = data_dir
@@ -59,10 +61,14 @@ class SDFDataset(Dataset):
         if not all_files:
             raise FileNotFoundError(f"No .npz files found in {self.ratio_dir}")
 
+        # Globally shuffle before split (not stratified — category distribution may vary)
+        rng = random.Random(seed)
+        rng.shuffle(all_files)
+
         if num_shapes > 0:
             all_files = all_files[:num_shapes]
 
-        # Train/val split (deterministic, based on sorted order)
+        # Train/val split (deterministic given seed, category-balanced)
         n_train = int(len(all_files) * train_frac)
         if split == "train":
             self.files = all_files[:n_train]

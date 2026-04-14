@@ -208,3 +208,123 @@ unchanged. The gap, not the frequency, is the root cause.
 | `configs/config.yaml` | 34 | `epochs: 1000` → `epochs: 3000` |
 | `slurm/submit.sh` | ~46 | add `DATA_DIR="data/processed_shapenet"` to eval sbatch |
 | `src/evaluate.py` | 414 | `default="data/processed"` → `default="data/processed_shapenet"` |
+
+## Step 5: Evaluation Bug Fixes (2026-04-15)
+
+Two bugs identified in `src/evaluate.py` that corrupt all reported metrics. Applied fixes to existing checkpoints — no retraining needed.
+
+### Bug 1 — Unoptimized latent codes for val shapes (critical)
+
+**Root cause**: `LatentCodes` allocates `n_train + n_val` codes, but the training loop only iterates `range(n_train)`, so val-shape codes (indices `n_train..N-1`) are never updated. Evaluation used all shape indices 0..N-1, so val shapes were reconstructed from near-random latent vectors. All CD/NC numbers for val shapes (EXP-01 through EXP-09) are noise.
+
+**Fix** (`src/evaluate.py` after line 294): Restrict `shape_names` to first `n_train = int(len(shape_names) * train_split)` shapes before evaluation. This reports honest reconstruction quality on train shapes only.
+
+### Bug 2 — Marching cubes spacing off by one (minor)
+
+**Root cause**: Grid uses `np.linspace(-1, 1, resolution)` (spacing = `2/(resolution-1)`), but `marching_cubes` was called with `spacing=(2.0/resolution,)*3` — ~0.4% too small at resolution=256, shrinking all reconstructed geometry uniformly.
+
+**Fix** (`src/evaluate.py` line 112): `spacing=(2.0 / (resolution - 1),) * 3`
+
+### Next step
+
+- [ ] **5.1** Re-run evaluation on existing checkpoints (EXP-01 through EXP-09) on TC2 — **ask user before proceeding**
+- [ ] **5.2** Compare new CD/NC (train-only, corrected spacing) vs previously reported numbers
+- [ ] **5.3** Re-examine PE failure hypothesis with clean metrics
+
+### Step 5.1: Additional Evaluation Fixes (2026-04-15)
+
+Follow-up fixes from second review pass. All changes committed alongside Step 5 fixes.
+
+#### Bug 3 — Category-skewed train/val split
+
+**Root cause**: `dataset.py` used `sorted(glob.glob(...))` → alphabetical order → with 300 shapes (100 airplanes, 100 chairs, 100 tables), train = 100 airplanes + 100 chairs + 25 tables, val = 75 tables only. Val set was a single category.
+
+**Fix** (`src/dataset.py`): Added `seed` parameter; shuffle `all_files` with `random.Random(seed)` before the split. Categories now distributed proportionally. `seed` passed from `train()` in `src/train.py`.
+
+**Note**: Existing checkpoints (EXP-01–EXP-09) were trained with the old skewed split. New training runs will use the balanced split.
+
+#### Bug 4 — Checkpoint selection via unoptimized val latents
+
+**Root cause**: `evaluate_val()` (train.py:439) fetches val-shape latent codes at indices `n_train..n_train+n_val-1`. Those codes are allocated but never updated in training. `best.pt` was selected by this meaningless loss.
+
+**Fix** (`src/train.py`): Added `best_train_sdf` tracker. `best.pt` is now saved when `epoch_losses["L_sdf"]` (train reconstruction loss) improves. `evaluate_val()` is retained for monitoring only.
+
+#### Bug 5 — No fixed metric seed
+
+**Root cause**: `trimesh.sample.sample_surface()` in `chamfer_distance()` and `normal_consistency()` used system random state — CD/NC varied between re-evaluations of the same checkpoint.
+
+**Fix** (`src/evaluate.py`): Sets `np.random.seed(metric_seed + shape_idx)` before each shape's metric computation. `metric_seed` comes from `config["seed"]`.
+
+#### Bug 6 — MC_RES default 128 vs config 256
+
+**Root cause**: `slurm/job_eval.sh` defaulted `MC_RES=128`; `config.yaml` specifies `mc_resolution: 256`. All past evaluations ran at the lower resolution.
+
+**Fix** (`slurm/job_eval.sh`): Changed default to `MC_RES="${MC_RES:-256}"`.
+
+#### Enhancement — n_ok/n_total in aggregate
+
+**Fix** (`src/evaluate.py`): Aggregate now includes `n_ok`, `n_total`, `success_rate` fields alongside per-metric stats. Makes failure rate explicit in `results.json`.
+
+### Pending
+
+- [ ] **5.2** Re-evaluate existing checkpoints (EXP-01–EXP-09) on TC2 with corrected evaluate.py — **ask user before proceeding**
+- [ ] **5.3** Re-run training experiments with balanced split + train-loss checkpoint selection
+- [ ] **5.4** Compare new vs old CD/NC; re-examine PE hypothesis with clean metrics
+
+### Step 5.2: Shape-to-Latent Index Fix (2026-04-15)
+
+Third review pass identified that the shuffle fix in Step 5.1 introduced a new index-mismatch bug.
+
+#### Bug 7 — Shape→latent index mismatch after shuffle fix
+
+**Root cause**: `dataset.py` now shuffles `all_files` before splitting, so latent code index `i` corresponds to `shuffled_files[i]`, not `sorted_files[i]`. But `evaluate.py` still rebuilt `shape_names` from `sorted(os.listdir(...))` and assumed index `i` → sorted shape `i`. For any checkpoint trained after the shuffle fix, every shape was being reconstructed with the wrong latent code.
+
+**Fix**:
+- `src/train.py`: After creating `train_dataset`, saves `train_dataset.shape_names` (in shuffled latent-index order) to `{exp_dir}/train_shapes.json`
+- `src/evaluate.py`: Loads `train_shapes.json` to reconstruct exact shape→index mapping. Falls back to sorted alphabetical order with a WARNING for legacy checkpoints that predate this fix
+
+#### Bug 8 — Metric seed tied to training seed
+
+**Root cause**: `metric_seed = config.get("seed", 42)` meant that multi-seed experiments sampled different surface points for the same shape, adding evaluation noise on top of training variation.
+
+**Fix** (`src/evaluate.py`): Changed to `metric_seed = 0` — fixed constant independent of training seed.
+
+### Remaining known limitations (not code bugs)
+
+- **Reconstruction-only evaluation**: No test-time latent optimization. Reported CD/NC measure train-set reconstruction quality, not generalization. Disclose in paper.
+- **Legacy checkpoints (EXP-01–EXP-09)**: Trained with sorted split + val-loss checkpoint selection. `train_shapes.json` absent → legacy fallback (sorted order, consistent with how they were trained). Metrics are internally consistent for those runs but use the skewed category split.
+- **Sphere-vs-cube query mismatch**: Training samples concentrated near surface + unit sphere; marching cubes queries full cube. Can produce unstable geometry in outer shell, especially with PE.
+- **SKIP_IOU=1 default**: IoU is skipped in all SLURM eval jobs. Narrower protocol than config intends.
+
+### Pending
+
+- [ ] **5.3** Sync fixed code to TC2
+- [ ] **5.4** Ask user before re-evaluating existing checkpoints or retraining
+
+### Step 5.3: Protocol Disclosure (pending)
+
+Reviewer confirmed legacy checkpoint concern is withdrawn (sorted fallback matches sorted training order).
+Recommendation: do not implement test-time latent optimization. Keep current protocol with explicit disclosure.
+
+- [ ] **5.5** Update `report/conference_101719.tex` methodology section with three disclosure statements:
+  1. Metrics are training-shape reconstruction quality, not held-out generalization
+  2. Protocol is not standard DeepSDF evaluation — no test-time latent optimization is performed
+  3. EXP-01–EXP-09 best.pt was selected using validation loss computed on unoptimized val latents; results for those runs should be interpreted accordingly
+- [ ] **5.6** When re-evaluating legacy checkpoints (EXP-01–EXP-09), evaluate with `latest.pt` instead of `best.pt` to bypass biased checkpoint selection
+
+### Step 5.4: Bug Fixes (Bug 9 + Bug 10)
+
+**Bug 9 — Summary print crash** (`src/evaluate.py:443–445`)
+- **Problem**: The post-evaluation summary loop iterated `aggregate.items()` and called `stats['mean']` / `stats['std']` on every entry. The aggregate dict also contains scalar entries (`n_total`, `n_ok`, `success_rate`), causing `TypeError` on those keys. The crash happened after `results.json` was already written, so metrics were saved but the job exited non-zero and the summary was never printed.
+- **Fix**: Added `isinstance(stats, dict)` guard — dict entries print `mean ± std`, scalar entries print the raw value.
+- [x] **5.4.1** Fixed in `src/evaluate.py` lines 443–447
+
+**Bug 10 — Misleading shuffle comment** (`src/dataset.py:64`)
+- **Problem**: Comment said "Shuffle before split so all categories are represented in both train and val" — overstates what the code does. The shuffle is global (not stratified), so category distribution can still skew, especially for small datasets.
+- **Fix**: Replaced with accurate description: "Globally shuffle before split (not stratified — category distribution may vary)".
+- [x] **5.4.2** Fixed in `src/dataset.py` line 64
+
+**Reviewer items already handled (no code change needed)**
+- `train_shapes.json` index mismatch — fixed in earlier step (train.py saves mapping, evaluate.py loads it with legacy fallback)
+- Marching cubes spacing `2/(res-1)` correction — already applied
+- `best.pt` checkpoint selection bias — disclosed in Step 5.3; legacy runs use sorted fallback consistently

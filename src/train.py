@@ -16,6 +16,7 @@ Usage:
 
 import argparse
 import csv
+import json
 import os
 import sys
 import time
@@ -156,6 +157,7 @@ def train(config: dict):
         split="train",
         train_frac=config.get("train_split", 0.75),
         num_shapes=num_shapes,
+        seed=seed,
     )
     val_dataset = SDFDataset(
         data_dir=config["data_dir"],
@@ -163,11 +165,18 @@ def train(config: dict):
         split="val",
         train_frac=config.get("train_split", 0.75),
         num_shapes=num_shapes,
+        seed=seed,
     )
     n_train = len(train_dataset)
     n_val = len(val_dataset)
     print(f"Train shapes: {n_train}, Val shapes: {n_val}")
     print(f"Supervision ratio: {supervision_ratio}")
+
+    # Save train shape order so evaluate.py can reconstruct the latent-index mapping
+    train_shapes_path = os.path.join(exp_dir, "train_shapes.json")
+    with open(train_shapes_path, "w") as f:
+        json.dump(train_dataset.shape_names, f)
+    print(f"Saved train shape order to {train_shapes_path}")
 
     # Model
     model = DeepSDF(
@@ -179,7 +188,7 @@ def train(config: dict):
         pe_levels=config.get("pe_levels", 6),
     ).to(device)
 
-    total_shapes = n_train + n_val
+    total_shapes = n_train
     latent_codes = LatentCodes(
         num_shapes=total_shapes,
         latent_dim=config.get("latent_dim", 256),
@@ -242,6 +251,7 @@ def train(config: dict):
     latest_ckpt = os.path.join(exp_dir, "checkpoints", "latest.pt")
     start_epoch = 0
     best_val_loss = float("inf")
+    best_train_sdf = float("inf")
     if os.path.exists(latest_ckpt):
         print(f"Resuming from {latest_ckpt}")
         start_epoch, best_val_loss = load_checkpoint(
@@ -404,7 +414,7 @@ def train(config: dict):
                 f"[{elapsed:.1f}s]"
             )
 
-        # Validation
+        # Validation (monitoring only — not used for checkpoint selection)
         val_loss = evaluate_val(model, latent_codes, val_dataset, batch_size,
                                 device, n_train)
 
@@ -416,12 +426,15 @@ def train(config: dict):
                 epoch, best_val_loss, full_state=True,
             )
 
-        if val_loss < best_val_loss:
-            best_val_loss = val_loss
+        # best.pt selected by train L_sdf (val latents are never optimized,
+        # so val loss is not a reliable selection signal)
+        train_sdf = epoch_losses["L_sdf"]
+        if train_sdf < best_train_sdf:
+            best_train_sdf = train_sdf
             save_checkpoint(
                 os.path.join(exp_dir, "checkpoints", "best.pt"),
                 model, latent_codes,
-                epoch=epoch, best_loss=best_val_loss, full_state=False,
+                epoch=epoch, best_loss=best_train_sdf, full_state=False,
             )
 
     # Save final checkpoint
@@ -432,7 +445,7 @@ def train(config: dict):
     )
 
     log_file.close()
-    print(f"\nTraining complete. Best val L_sdf: {best_val_loss:.6f}")
+    print(f"\nTraining complete. Best train L_sdf: {best_train_sdf:.6f}")
     print(f"Checkpoints: {os.path.join(exp_dir, 'checkpoints')}")
 
 
