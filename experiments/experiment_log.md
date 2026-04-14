@@ -281,6 +281,67 @@ Single source of truth for all experiment results.
 
 Fixed a bug in `src/evaluate.py` where metric computation and mesh export shared a single `try/except` block. For PE experiments, mesh decimation failures caused valid metrics to be marked `"failed"`, producing empty aggregates despite per-shape CD/NC being computed correctly. The fix separates mesh export into its own `try/except` so metric status is independent of export success. Eval reruns submitted for all affected PE experiments (EXP-06/s123, EXP-06/s456, EXP-07, EXP-09, EXP-10, EXP-11, EXP-12). CD/NC values are expected to remain unchanged; only shape success counts and aggregate blocks will be corrected.
 
+## PE Failure Root Cause Analysis (2026-04-15)
+
+Post-hoc diagnostic to identify the exact mechanism behind the universal PE failure
+(all 7 PE experiments collapsed to CD ~0.14 regardless of supervision level or frequency).
+
+### Hypothesis tested
+Four candidate causes:
+1. Input coordinate scaling (normalization to [-1,1])
+2. PE frequency too high (L=6 or L=4)
+3. Training/inference distribution mismatch (near-surface training vs full [-1,1]³ eval)
+4. PE formula implementation detail (π factor)
+
+### Checks performed
+
+**Check A — Training point coverage** (local, parametric data, 80 shapes):
+- Supervised points: max radius = 1.0998, zero points at r > 1.5
+- Unsupervised points (Eikonal): **max radius = 1.000, zero points at r > 1.0**
+- Cube corners are at r = √3 ≈ 1.73 — never sampled during training
+- Code: `scripts/preprocess.py:125-143` uses rejection sampling inside unit sphere
+
+**Check B — Sphere-clipped evaluation** (TC2, EXP-09/seed42, 5 shapes, res=128):
+- Standard (full [-1,1]³): CD = 0.1926, NC = 0.4953
+- Clipped (r ≤ 1.0 sphere, SDF=+1.0 outside): CD = **0.0974**, NC = 0.4970
+- CD ratio = 0.506 — **49% improvement from masking OOD corners alone**
+- Per-shape: every shape improved substantially (e.g. airplane_0000: 0.207 → 0.104)
+- Script: `scripts/check_b_clipped_eval.py`
+
+**Check C — SDF cross-section along diagonal toward cube corner (1,1,1)** (TC2):
+- No-PE (EXP-02): 0 sign changes outside r>1.0, SDF monotonically negative (smooth extrapolation)
+- PE L=6 (EXP-09): **14 sign changes** outside r>1.0, SDF oscillates between ±0.02
+- Oscillation frequency ≈ 0.063 units/cycle matches 2⁵·π ≈ 100 rad/unit (highest PE frequency)
+- Plot: `experiments/figures/check_c_sdf_crosssection.png`
+- Script: `scripts/check_c_diagonal.py`
+
+**Check D — PE feature distance** (local):
+- dist(surface, cube corner) = 2.83 / max possible 8.49 for L=6
+- dist(surface, near_surface Δ=0.05) = 2.62 for L=6 — large jump for tiny coordinate change
+- PE vectors always lie on hypersphere of radius √(3L); corner features are in OOD region
+- Script: inline Python using `src/model.py:FourierPositionalEncoding`
+
+### Conclusion
+
+**Primary cause: training/inference distribution mismatch (hypothesis #3), confirmed by Check B.**
+
+The unsupervised (Eikonal) sampler fills only the unit sphere. The eval grid queries the full
+[-1,1]³ cube, including corners at r=1.73 — never seen during training. PE maps those OOD
+coordinates to feature vectors with 14 sign-flipping oscillations per diagonal axis. Marching
+cubes extracts a phantom surface at every zero-crossing → all 300 shapes fail validation.
+
+Without PE, the MLP extrapolates smoothly in raw xyz space (0 sign changes, monotone SDF).
+The no-PE model also extrapolates incorrectly at corners (negative SDF instead of large
+positive), but monotonically — no zero-crossings, no phantom surfaces, valid mesh extracted.
+
+**Hypothesis #2 (frequency) is secondary**: Check B shows clipping alone halves CD with L=6
+unchanged. High L amplifies oscillation magnitude but the distribution gap is the root cause.
+
+**Implication for future work**: PE can be rescued by one of:
+- Extending unsupervised sampling to full [-1,1]³ cube (Eikonal covers corners)
+- Clipping the eval grid to inscribed sphere (cosmetic fix, no retraining)
+- Replacing Fourier PE with hash encoding (localized, no OOD extrapolation issue)
+
 ## Next Steps (as of 2026-04-06)
 
 ### Immediate
