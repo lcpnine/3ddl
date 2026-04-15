@@ -26,7 +26,7 @@ To investigate this, I'm varying three things: the supervision ratio — from fu
 
 ## Slide 4 — Background: DeepSDF Auto-Decoder
 
-DeepSDF uses what's called an auto-decoder framework. There is no encoder. Instead, each training shape gets its own learned latent code, and a shared 8-layer MLP maps the concatenation of that code with a 3D query point to a signed distance value. The latent codes and the network weights are optimized jointly. One important detail for this project: we are evaluating train-set reconstruction only — test-time latent optimization, which would be needed for generalization to unseen shapes, is out of scope here.
+DeepSDF uses an auto-decoder framework with no encoder. Each training shape gets its own learned latent code, and a shared 8-layer MLP maps the latent together with a query point, or its positional encoding when PE is used, to a signed distance value. The latent codes and the network weights are optimized jointly. One important detail for this project: we are evaluating train-set reconstruction only — test-time latent optimization, which would be needed for generalization to unseen shapes, is out of scope here.
 
 ---
 
@@ -56,13 +56,13 @@ This second half expands the PE experiments, adding the 5% setting, the L_2nd va
 
 ## Slide 9 — Preliminary Results: No Positional Encoding
 
-These non-PE numbers are preliminary and were evaluated with the original evaluator — evaluation bugs were discovered after these runs. There was also variable mesh extraction success in some non-PE runs; exact counts are in the footnote of the next slide. Note that the warning box at the top covers both groups: cross-group CD/NC comparison between non-PE and PE results is not valid. I'll explain the evaluator issue and fix in the slides that follow.
+These non-PE numbers are preliminary and were evaluated with the original evaluator. Because the PE group was rerun with the fixed evaluator, CD and NC should not be compared directly across the non-PE and PE tables. There was also variable mesh extraction success in some non-PE runs; exact counts are in the footnote of the next slide. I'll explain the evaluator issue and fix in the slides that follow.
 
 ---
 
 ## Slide 10 — Preliminary Results: With Positional Encoding
 
-These PE results are still preliminary, but they were rerun with the corrected evaluator, unlike the non-PE table. So the main point here is within-group reporting only, not direct comparison against the non-PE results. The footnote also shows per-seed CD means for EXP-04 and EXP-06, so I'll keep seed-to-seed variation in mind in the final analysis.
+These PE results are still preliminary, but they were rerun with the corrected evaluator, unlike the non-PE table. So the main point here is within-group reporting only, not direct comparison against the non-PE results. The footnote also reports per-seed CD means for EXP-04 and EXP-06, so I'll keep seed variation in mind rather than over-reading single averages.
 
 ---
 
@@ -80,4 +80,4 @@ To make the issue concrete: the fixed evaluator now loads a `train_shapes.json` 
 
 ## Slide 13 — Current Status and Next Step
 
-To summarize where things stand: the 12-experiment design itself remains unchanged, all checkpoints already exist, and the evaluation pipeline has been corrected. Quantitative comparisons across experiments are still being re-validated, so I'm not claiming a comparative conclusion yet. The next step is to re-validate the existing checkpoints under the corrected evaluation and then report the quantitative comparison across experiments. That concludes the midterm update. Thank you — happy to take questions.
+To summarize where things stand: the 12-experiment design itself remains unchanged, all checkpoints already exist, and the evaluation pipeline has been corrected for re-validation. Quantitative comparisons across experiments are still being re-validated, so I'm not claiming a comparative conclusion yet. The next step is to re-validate the existing checkpoints under the corrected evaluation and then report the quantitative comparison across experiments. That concludes the midterm update. Thank you — happy to take questions.
