@@ -10,7 +10,7 @@
 #   EXP_DIR=experiments/EXP-01/seed42 sbatch slurm/job_eval.sh
 #===============================================================
 #SBATCH --partition=MGPU-TC2
-#SBATCH --qos=q_m1x16
+#SBATCH --qos=normal
 #SBATCH --nodes=1
 #SBATCH --mem=30G
 #SBATCH --cpus-per-task=8
@@ -50,17 +50,30 @@ MC_RES="${MC_RES:-256}"
 EVAL_SPLIT="${EVAL_SPLIT:-train}"
 SPHERE_CLIP="${SPHERE_CLIP:-1}"
 TTO_N_ITERS="${TTO_N_ITERS:-800}"
+CHECKPOINT_MODE="${CHECKPOINT_MODE:-auto}"
+OUTPUT_SUFFIX="${OUTPUT_SUFFIX:-results.json}"
+
+SKIP_IOU_ARG=""
+if [ "$SKIP_IOU" = "1" ]; then
+    SKIP_IOU_ARG="--skip_iou"
+fi
+
+SPHERE_CLIP_ARG="--sphere_clip"
+if [ "$SPHERE_CLIP" = "0" ]; then
+    SPHERE_CLIP_ARG="--no_sphere_clip"
+fi
 
 python src/evaluate.py \
     --exp_dir "$EXP_DIR" \
     --data_dir "$DATA_DIR" \
-    --output "$EXP_DIR/results.json" \
+    --output "$EXP_DIR/$OUTPUT_SUFFIX" \
     --voxel_res $VOXEL_RES \
     --mc_resolution $MC_RES \
     --eval_split "$EVAL_SPLIT" \
+    --checkpoint_mode "$CHECKPOINT_MODE" \
     --tto_n_iters $TTO_N_ITERS \
-    ${SPHERE_CLIP:+--sphere_clip} \
-    ${SKIP_IOU:+--skip_iou}
+    $SPHERE_CLIP_ARG \
+    $SKIP_IOU_ARG
 
 EXIT_CODE=$?
 echo "============================================"

@@ -328,3 +328,41 @@ Recommendation: do not implement test-time latent optimization. Keep current pro
 - `train_shapes.json` index mismatch — fixed in earlier step (train.py saves mapping, evaluate.py loads it with legacy fallback)
 - Marching cubes spacing `2/(res-1)` correction — already applied
 - `best.pt` checkpoint selection bias — disclosed in Step 5.3; legacy runs use sorted fallback consistently
+
+---
+
+## Step 10: Re-Evaluate All 16 Experiments with Fixed Evaluator (2026-04-15)
+
+**Context**: All prior eval results are unreliable due to the bugs fixed in Step 5. Goal is to
+re-evaluate all 16 experiment seeds with the corrected `src/evaluate.py` and correct checkpoint
+selection. No retraining — existing checkpoints are used.
+
+**Key facts established by TC2 diagnostic**:
+- All 16 experiments: `n_files = latent_n = 300` (ratio dirs have 300 `.npz`, checkpoints have 300 latent codes)
+- Config `train_split=0.75` was never enforced during training — all 300 shapes were trained
+- Without `train_shapes.json`, the sorted fallback truncates to `int(300 * 0.75) = 225` shapes — must not use
+- `train_shapes.json` must be reconstructed for all 16 experiments
+- `q_m1x16` QoS has a 20-minute wall time — revert to `normal` QoS for eval jobs
+
+**Checkpoint selection policy**:
+- EXP-01 to EXP-09: `latest.pt` (best.pt was selected using unoptimized val latents — biased)
+- EXP-10 to EXP-12: `best.pt` (fixed best.pt selection using train reconstruction loss)
+
+### Fixes applied
+
+- [x] **10.1** `slurm/job_eval.sh`: QoS `q_m1x16` → `normal`; fixed boolean env var handling (`if [ "$VAR" = "1" ]`); added `CHECKPOINT_MODE`, `OUTPUT_SUFFIX`, `TTO_N_ITERS` variables
+- [x] **10.2** `slurm/submit_reruns.sh`: manifest-driven submit script (reads 3-column manifest: `checkpoint_mode expected_n_total result_path`)
+- [x] **10.3** `slurm/rerun_manifest.txt`: 16 rows; `expected_n_total=300` for all (sourced from checkpoint latent count); EXP-01–09 use `latest`, EXP-10–12 use `best`
+- [x] **10.4** Synced 4 files to TC2: `src/evaluate.py`, `slurm/job_eval.sh`, `slurm/submit_reruns.sh`, `slurm/rerun_manifest.txt`
+- [x] **10.5** TC2 preflight: reconstructed `train_shapes.json` for EXP-10/11/12 (300 shapes, shuffled with experiment seed)
+- [x] **10.6** Discovered sorted fallback evaluates 225 instead of 300 shapes — reconstructed `train_shapes.json` for ALL 16 experiments (EXP-01–EXP-09 included); all verified at 300 shapes with `n_files == latent_n`
+- [x] **10.7** Fixed `q_m1x16` wall time bug (20-minute cap): synced updated `job_eval.sh` with `--qos=normal` to TC2
+- [x] **10.8** Smoke test EXP-02 (job 20985, latest): **PASS** — `ckpt=latest.pt, order=train_shapes.json, n_ok=300, n_total=300`; CD=0.265, NC=0.629
+- [ ] **10.9** Smoke test EXP-10 (job 20986, best): running — verify `ckpt=best.pt, order=train_shapes.json, n_ok=300, n_total=300`
+- [x] **10.10** Delete both smoke outputs; submitted EXP-01 (20993) and EXP-02 (20994); tmux session `reruns` on TC2 autonomously submits remaining 14 jobs via `slurm/submit_remaining.sh` (polls every 60s, respects 2-job QoS limit); log at `~/3ddl/logs/submit_remaining.log`
+- [ ] **10.11** Monitor with `squeue -u yutaek001`; validate via `sacct` — all 16 must show `COMPLETED`
+- [ ] **10.12** Harvest: verify all 16 manifest targets exist on TC2; `tar` bundle; `scp` locally
+- [ ] **10.13** Validate each JSON: `n_total==300`, `n_ok>0`, `checkpoint` matches manifest mode, `shape_order==train_shapes.json`
+- [ ] **10.14** Promote: back up existing `results.json` → `results_legacy.json`; copy rerun output to `results.json`
+- [ ] **10.15** Update `experiments/experiment_log.md` with corrected CD/NC values and evaluation provenance
+- [ ] **10.16** Update `report/conference_101719.tex` methodology section (checkpoint provenance, shape_order, n_ok/n_total)

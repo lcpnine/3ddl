@@ -26,8 +26,36 @@ from scipy.spatial import KDTree
 from skimage import measure
 
 
-def load_model_and_config(exp_dir: str, device: torch.device):
-    """Load trained model from best checkpoint."""
+def _resolve_checkpoint(exp_dir: str, mode: str = "auto") -> str:
+    """Resolve checkpoint path according to the requested selection policy."""
+    best = os.path.join(exp_dir, "checkpoints", "best.pt")
+    latest = os.path.join(exp_dir, "checkpoints", "latest.pt")
+
+    if mode == "auto":
+        if os.path.exists(best):
+            return best
+        if os.path.exists(latest):
+            return latest
+        raise FileNotFoundError(
+            f"No checkpoint found in {os.path.join(exp_dir, 'checkpoints')}"
+        )
+    if mode == "best":
+        if not os.path.exists(best):
+            raise FileNotFoundError(f"best.pt not found: {best}")
+        return best
+    if mode == "latest":
+        if not os.path.exists(latest):
+            raise FileNotFoundError(f"latest.pt not found: {latest}")
+        return latest
+    raise ValueError(f"Unknown checkpoint mode: {mode!r}")
+
+
+def load_model_and_config(
+    exp_dir: str,
+    device: torch.device,
+    checkpoint_mode: str = "auto",
+):
+    """Load trained model from the requested checkpoint."""
     # Import model classes
     sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
     from model import DeepSDF, LatentCodes
@@ -48,9 +76,7 @@ def load_model_and_config(exp_dir: str, device: torch.device):
     ).to(device)
 
     # Load checkpoint
-    ckpt_path = os.path.join(exp_dir, "checkpoints", "best.pt")
-    if not os.path.exists(ckpt_path):
-        ckpt_path = os.path.join(exp_dir, "checkpoints", "latest.pt")
+    ckpt_path = _resolve_checkpoint(exp_dir, checkpoint_mode)
     print(f"Loading checkpoint: {ckpt_path}")
 
     checkpoint = torch.load(ckpt_path, map_location=device, weights_only=False)
@@ -64,7 +90,7 @@ def load_model_and_config(exp_dir: str, device: torch.device):
     latent_codes.load_state_dict(latent_state)
     latent_codes.eval()
 
-    return model, latent_codes, config
+    return model, latent_codes, config, ckpt_path
 
 
 def test_time_optimize_latent(
@@ -344,6 +370,7 @@ def evaluate_experiment(
     skip_iou: bool = False,
     mc_resolution_override: int = None,
     eval_split: str = "train",
+    checkpoint_mode: str = "auto",
     sphere_clip: bool = True,
     tto_n_iters: int = 800,
     tto_lr: float = 5e-3,
@@ -374,7 +401,9 @@ def evaluate_experiment(
     print(f"Device: {device}")
 
     # Load model
-    model, latent_codes, config = load_model_and_config(exp_dir, device)
+    model, latent_codes, config, ckpt_path = load_model_and_config(
+        exp_dir, device, checkpoint_mode=checkpoint_mode
+    )
 
     n_eval_points = config.get("n_eval_points", 30000)
     mc_resolution = mc_resolution_override or config.get("mc_resolution", 256)
@@ -395,11 +424,13 @@ def evaluate_experiment(
     if os.path.exists(train_shapes_path):
         with open(train_shapes_path) as f:
             shape_names = json.load(f)
+        shape_order = "train_shapes.json"
         print(f"  Loaded {len(shape_names)} train shapes from train_shapes.json")
     else:
         # Fallback for legacy checkpoints trained before train_shapes.json was
         # introduced. Uses sorted alphabetical order (the old pre-shuffle behaviour).
         print("  WARNING: train_shapes.json not found — using sorted fallback for legacy run")
+        shape_order = "sorted_fallback"
         supervision_ratio = config.get("supervision_ratio", 1.0)
         ratio_str = f"ratio_{supervision_ratio:.2f}".replace(".", "p")
         ratio_dir = os.path.join(data_dir, ratio_str)
@@ -567,6 +598,8 @@ def evaluate_experiment(
         "use_pe": config.get("use_pe", False),
         "pe_levels": config.get("pe_levels", 6) if config.get("use_pe") else None,
         "diverged": diverged,
+        "checkpoint": os.path.basename(ckpt_path),
+        "shape_order": shape_order,
         "eval_split": eval_split,
         "sphere_clip": sphere_clip,
         "cd_formula": "L1",
@@ -615,6 +648,8 @@ def main():
                         help="Override marching cubes resolution (default: from config)")
     parser.add_argument("--eval_split", choices=["train", "val", "all"], default="train",
                         help="Shapes to evaluate: train (default), val (TTO), or all")
+    parser.add_argument("--checkpoint_mode", choices=["auto", "best", "latest"], default="auto",
+                        help="Checkpoint selection policy")
     parser.add_argument("--sphere_clip", action="store_true", default=True,
                         help="Clamp SDF to +1.0 outside unit sphere before marching cubes (default: on)")
     parser.add_argument("--no_sphere_clip", action="store_false", dest="sphere_clip",
@@ -635,6 +670,7 @@ def main():
         skip_iou=args.skip_iou,
         mc_resolution_override=args.mc_resolution,
         eval_split=args.eval_split,
+        checkpoint_mode=args.checkpoint_mode,
         sphere_clip=args.sphere_clip,
         tto_n_iters=args.tto_n_iters,
         tto_lr=args.tto_lr,
