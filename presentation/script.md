@@ -4,13 +4,9 @@ AI6131 · NTU MSAI · April 2026
 
 ---
 
-## Opening
+## Slide 1 — Title (Opening)
 
 Good afternoon. Today I'm presenting a midterm progress update on my project for AI6131. The work is still ongoing, so what I'll share today is a combination of completed design, preliminary results, and an honest account of an evaluation issue I identified, corrected in the pipeline, and am now using for re-validation. I'll walk through the research question, the method, the experiment design, and where things currently stand.
-
----
-
-## Slide 1 — Title
 
 The project is on semi-supervised 3D shape reconstruction using DeepSDF. The central question is whether we can reduce the amount of labeled SDF data required during training while maintaining reconstruction quality. I'll explain what that means concretely in the next few slides.
 
@@ -60,19 +56,19 @@ This second half expands the PE experiments, adding the 5% setting, the L_2nd va
 
 ## Slide 9 — Preliminary Results: No Positional Encoding
 
-These non-PE numbers are preliminary and were evaluated with the original evaluator — evaluation bugs were discovered after these runs. There was also variable mesh extraction success in some non-PE runs; exact counts are in the footnote of the next slide. Note that the warning box at the top covers both groups: cross-group CD/NC comparison between non-PE and PE results is not valid — I'll return to that on the next slide. I'll explain the evaluator issue and fix in the slides that follow.
+These non-PE numbers are preliminary and were evaluated with the original evaluator — evaluation bugs were discovered after these runs. There was also variable mesh extraction success in some non-PE runs; exact counts are in the footnote of the next slide. Note that the warning box at the top covers both groups: cross-group CD/NC comparison between non-PE and PE results is not valid. I'll explain the evaluator issue and fix in the slides that follow.
 
 ---
 
 ## Slide 10 — Preliminary Results: With Positional Encoding
 
-These PE results are still preliminary, but they were rerun with the corrected evaluator, unlike the non-PE table. So the main point here is within-group reporting only, not direct comparison against the non-PE results.
+These PE results are still preliminary, but they were rerun with the corrected evaluator, unlike the non-PE table. So the main point here is within-group reporting only, not direct comparison against the non-PE results. The footnote also shows per-seed CD means for EXP-04 and EXP-06, so I'll keep seed-to-seed variation in mind in the final analysis.
 
 ---
 
 ## Slide 11 — Evaluation Pipeline Review
 
-Before going further, I want to explain what went wrong with the evaluation. The main issue was incorrect shape-to-latent-code assignment. DeepSDF learns one latent code per training shape, indexed by training order. The evaluator was iterating shapes in sorted alphabetical order, which does not necessarily match training order. As a result, each shape was being decoded with the wrong latent code, and the CD and NC values did not reflect actual reconstruction quality. Several secondary issues were also identified and corrected — including checkpoint selection and train/validation split ordering. Under the corrected pipeline, evaluation is restricted to training shapes with the correct stored latent indices. I re-evaluated the PE runs under the corrected evaluator.
+Before going further, I want to explain what went wrong with the evaluation. The main issue was incorrect shape-to-latent-code assignment. DeepSDF learns one latent code per training shape, indexed by training order. The evaluator was iterating shapes in sorted alphabetical order, which does not necessarily match training order. As a result, shapes were being decoded with mismatched latent codes, and the CD and NC values did not reflect actual reconstruction quality. Several secondary issues were also identified and corrected — including checkpoint selection and train/validation split ordering. Under the corrected pipeline, evaluation is restricted to training shapes with the correct stored latent indices. I re-evaluated the PE runs under the corrected evaluator.
 
 ---
 
@@ -84,10 +80,4 @@ To make the issue concrete: the fixed evaluator now loads a `train_shapes.json` 
 
 ## Slide 13 — Current Status and Next Step
 
-To summarize where things stand: the 12-experiment design itself remains unchanged, all checkpoints already exist, and the evaluation pipeline has been corrected. Quantitative comparisons across experiments are still being re-validated, so I'm not claiming a comparative conclusion yet. The next step is to re-validate the existing checkpoints under the corrected evaluation and then report the quantitative comparison across experiments. That's where the project stands. Happy to take any questions.
-
----
-
-## Closing
-
-That concludes the midterm update. Thank you, and I'm happy to take questions.
+To summarize where things stand: the 12-experiment design itself remains unchanged, all checkpoints already exist, and the evaluation pipeline has been corrected. Quantitative comparisons across experiments are still being re-validated, so I'm not claiming a comparative conclusion yet. The next step is to re-validate the existing checkpoints under the corrected evaluation and then report the quantitative comparison across experiments. That concludes the midterm update. Thank you — happy to take questions.
