@@ -69,65 +69,33 @@
 
 ## Slide 7 — The Evaluation Review
 
-- Transition: *"Before drawing conclusions, we audited the evaluation pipeline — and found serious problems"*
-- **List** (high-level, one line each):
-  1. Val-set shapes evaluated with untrained latent codes
-  2. Checkpoint selected using a meaningless validation signal
-  3. Train/val split was category-skewed (sorted alphabetical order)
-  4. Marching cubes spacing off-by-one
-  5. Default MC resolution (128) mismatched config (256)
-  6. Non-reproducible metric sampling
-  7. Shape → latent index mismatch after shuffle fix
-- Point: these compound — the reported numbers reflect several independent sources of noise
+- Transition: *"Before drawing conclusions, I audited the evaluation pipeline."*
+- Short message:
+  1. The main issue was incorrect latent-code usage during evaluation
+  2. A few additional secondary evaluation issues were also identified
+  3. So the current numbers should be treated as preliminary
 
 ---
 
-## Slide 8 — Critical Bug: Unoptimized Latent Codes
+## Slide 8 — Main Evaluation Issue: Latent-Code Mapping
 
-- **Figure** (simple diagram, two columns):
-  - Left: latent array indices 0…n_train-1 (trained), n_train…N-1 (never updated — random)
-  - Right: old evaluator iterated all N shapes; val shapes were reconstructed from random latents
-- Impact: all CD/NC numbers for val-set shapes are noise, not reconstruction quality
-- Fix: evaluation now restricted to training shapes using their stored latent indices
-
----
-
-## Slide 9 — Other Key Bugs
-
-Three bugs that affect every experiment:
-
-| Bug | Impact | Fix |
-|-----|--------|-----|
-| Category-skewed split (alphabetical sort) | Val set = tables only; training set biased | Shuffle with fixed seed before split |
-| Checkpoint (best.pt) selected by val loss on random latents | Best model ≠ best reconstructor | Select by training L_sdf |
-| MC resolution 128 vs config 256 | Lower resolution geometry in all past evaluations | Changed SLURM default to 256 |
+- **Core explanation**:
+  - DeepSDF is an auto-decoder, so each training shape is associated with its own optimized latent code
+  - Reconstruction metrics are meaningful only if evaluation uses the correct trained latent for each shape
+  - If the shape-to-latent mapping is wrong, CD/NC no longer reflect actual reconstruction quality
+- **Fix**:
+  - Evaluation is now restricted to training shapes with the stored latent-index mapping
+  - These results should be described as train-set reconstruction metrics, not held-out generalization
 
 ---
 
-## Slide 10 — Fixes Applied
+## Slide 9 — Current Status / Next Step
 
-- **Summary**: 8 bugs identified across 4 review passes; all fixed in source
-- Files changed: `src/evaluate.py`, `src/train.py`, `src/dataset.py`, `slurm/job_eval.sh`
-- Key addition: `train_shapes.json` saved during training to guarantee correct shape→latent mapping at eval time
-- All fixes committed; code ready to sync to TC2
-
----
-
-## Slide 11 — What This Means for the Results
-
-- Old numbers (EXP-01–EXP-09): not directly usable — wrong latent mapping, biased checkpoint, wrong MC resolution
-- **What is still valid**:
-  - Training loss curves show the model is learning (EXP-04/06 PE failure is real signal)
-  - Pipeline end-to-end is working (meshes generated, no crashes)
-  - Experimental structure (which variables were changed) is sound
-- **Protocol note**: this project reports train-set reconstruction quality, not held-out generalization — disclosed intentionally (no test-time latent optimization; out of scope for course timeline)
-
----
-
-## Slide 12 — Plan Forward
-
-- [ ] Sync corrected code to TC2
-- [ ] Re-evaluate EXP-01–EXP-09 checkpoints with fixed evaluator (using `latest.pt` for legacy runs)
-- [ ] Re-train key experiments (EXP-04, EXP-06, EXP-07) with corrected split + checkpoint selection
-- [ ] Re-examine PE failure hypothesis with clean metrics
-- [ ] Report due: 2 weeks — corrected results will be included with explicit protocol disclosures
+- **Current status**:
+  - The training pipeline is working and the experiment structure is in place
+  - Preliminary runs already show clear differences across settings, especially with and without positional encoding
+  - The evaluation review clarified that some reported metrics need to be rerun before making final claims
+- **Next step**:
+  - Re-run evaluation with the corrected pipeline
+  - Refresh the key comparison experiments with clean metrics
+  - Use the corrected results to finalize the experimental conclusion

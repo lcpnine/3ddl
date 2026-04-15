@@ -371,3 +371,55 @@ Dataset: ShapeNet — 300 shapes (airplane / chair / table), 75% used for traini
 | EXP-12 | 5% + Eik | L=4 | 0.1400 | 0.5073 | 1 |
 
 *Lower CD is better · Higher NC is better · Non-PE group: variable MC success (EXP-02: 261/300, EXP-03: 259/300, EXP-05: 295/300; EXP-04 seed42: 263/300) · EXP-04 per-seed CD means: {0.0609, 0.0443, 0.0436}; EXP-06 per-seed CD means: {0.1443, 0.1375, 0.1380}*
+
+---
+
+<!-- Slide 7 -->
+
+# Evaluation Pipeline Review
+
+<div class="box">
+
+Before drawing conclusions from the results, I audited the evaluation pipeline. The main issue was that val-set shapes were being evaluated with untrained latent codes, making those metrics unreliable. Several secondary issues were also identified and corrected.
+
+</div>
+
+- Evaluation is now restricted to training shapes with the correct stored latent indices
+- Secondary fixes applied: checkpoint selection criterion, MC resolution, train/val split ordering
+- PE runs (EXP-06–12) have been re-evaluated with the corrected evaluator; non-PE results use the original
+
+---
+
+<!-- Slide 8 -->
+
+# Key Evaluation Issue: Latent Code Assignment
+
+<div class="box">
+
+DeepSDF is an auto-decoder: latent codes are learned directly during training, one per training shape. Val-set shapes have latent slots in `LatentCodes` that are never optimized — they stay at random initialization. If the evaluator uses those slots, the resulting metrics are not meaningful.
+
+</div>
+
+<div class="columns">
+<div>
+
+### Before
+
+- Evaluator iterated all N shapes by index position
+- Val-shape slots (indices ≥ n_train) were passed to the decoder unchanged
+- Reconstructions from random latents: CD/NC values reflect noise, not shape quality
+
+</div>
+<div>
+
+### After
+
+- Evaluator restricted to training shapes using their stored latent-index mapping
+- Val-shape slots are skipped entirely
+- Reported CD/NC reflects how well the model reconstructed its training shapes
+
+</div>
+</div>
+
+*Reported metrics are train-set reconstruction quality — held-out generalization is not evaluated here*
+
