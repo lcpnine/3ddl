@@ -306,6 +306,10 @@ $$\mathcal{L}_\text{eik} = \frac{1}{N}\sum_j \bigl(\|\nabla_\mathbf{x} f\|_2 - 1
 </div>
 </div>
 
+---
+
+# Semi-Supervised Extension
+
 ### Eikonal warmup — $\lambda(t) = \lambda_\text{eik} \cdot \min\!\bigl(1,\, t / t_\text{warmup}\bigr)$
 
 | Supervision | Warmup | Rationale |
