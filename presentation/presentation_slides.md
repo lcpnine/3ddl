@@ -89,13 +89,18 @@
 
 ---
 
-## Slide 9 — Current Status / Next Step
+## Slide 9 — Current Status and Next Step
 
-- **Current status**:
-  - The training pipeline is working and the experiment structure is in place
-  - Preliminary runs already show clear differences across settings, especially with and without positional encoding
-  - The evaluation review clarified that some reported metrics need to be rerun before making final claims
-- **Next step**:
-  - Re-run evaluation with the corrected pipeline
-  - Refresh the key comparison experiments with clean metrics
-  - Use the corrected results to finalize the experimental conclusion
+- **What is already fixed**:
+  - The 12-experiment design is fixed
+  - Training runs and checkpoints already exist for the planned matrix
+  - The evaluation code has been corrected
+
+- **What I cannot claim yet**:
+  - The reported quantitative comparisons are not yet final
+  - Final conclusions should wait for re-validation with the corrected evaluation protocol
+
+- **What happens next**:
+  - Re-evaluate completed checkpoints
+  - Update final tables and qualitative figures
+  - Finish the remaining verification runs for the report
