@@ -306,3 +306,68 @@ $$\mathcal{L}_\text{eik} = \frac{1}{N}\sum_j \bigl(\|\nabla_\mathbf{x} f\|_2 - 1
 | 100% or 50% | 100 ep | Enough supervised signal from start |
 | 10% | 150 ep | Prevent L_eik dominating sparse labels |
 | 5% | 200 ep | Maximum warmup for minimal supervision |
+
+---
+
+<!-- Slide 5 -->
+
+# Experiment Design
+
+Dataset: ShapeNet — 300 shapes (airplane / chair / table), 75% used for training (train_split=0.75) · 250K unsupervised + up to 250K supervised points per shape (supervised count = 250K × ratio) · ~6h per run on TC2
+
+| Exp | Supervision | Eikonal | Positional Enc. | Seeds |
+|-----|------------|---------|-----------------|-------|
+| EXP-01 | 100% | No | No | 1 |
+| EXP-02 | 100% | Yes | No | 1 |
+| EXP-03 | 50% | Yes | No | 1 |
+| EXP-04 | 10% | Yes | No | 3 |
+| EXP-05 | 5% | Yes | No | 1 |
+| EXP-06 | 10% | Yes | Yes (L=6) | 3 |
+| EXP-07 | 5% | Yes | Yes (L=6) | 1 |
+| EXP-08 | 10% | Yes | Yes (L=6) + $\mathcal{L}_\text{2nd}$ | 1 |
+| EXP-09 | 100% | Yes | Yes (L=6) | 1 |
+| EXP-10 | 100% | Yes | Yes (L=4) | 1 |
+| EXP-11 | 10% | Yes | Yes (L=4) | 1 |
+| EXP-12 | 5% | Yes | Yes (L=4) | 1 |
+
+<div class="box">
+
+**Primary comparisons**: EXP-01 → EXP-02 (Eikonal effect) · EXP-02 → EXP-04 → EXP-05 (label reduction) · EXP-04 vs EXP-06 (PE effect)
+
+</div>
+
+---
+
+<!-- Slide 6 -->
+
+# Preliminary Results
+
+<div class="box-red">
+
+**Preliminary** — evaluation bugs discovered after these runs; see following slides. Non-PE group: original evaluator (MC res=128). PE group: rerun with fixed evaluator (MC res=128). Cross-group CD/NC comparison is not valid.
+
+</div>
+
+### No positional encoding — original evaluator (MC res=128)
+
+| Exp | Supervision | CD mean | NC mean | Seeds |
+|-----|------------|---------|---------|-------|
+| EXP-01 | 100% | 0.0593 | 0.5522 | 1 |
+| EXP-02 | 100% + Eik | 0.0543 | 0.5920 | 1 |
+| EXP-03 | 50% + Eik | 0.0534 | 0.5924 | 1 |
+| EXP-04 | 10% + Eik | 0.0496 | 0.5987 | 3 |
+| EXP-05 | 5% + Eik | 0.0509 | 0.5766 | 1 |
+
+### With positional encoding — rerun with fixed evaluator (MC res=128)
+
+| Exp | Supervision | PE | CD mean | NC mean | Seeds |
+|-----|------------|-----|---------|---------|-------|
+| EXP-06 | 10% + Eik | L=6 | 0.1399 | 0.5080 | 3 |
+| EXP-07 | 5% + Eik | L=6 | 0.1448 | 0.5074 | 1 |
+| EXP-08 | 10% + Eik | L=6+$\mathcal{L}_\text{2nd}$ | 0.1443 | 0.5053 | 1 |
+| EXP-09 | 100% + Eik | L=6 | 0.1450 | 0.5031 | 1 |
+| EXP-10 | 100% + Eik | L=4 | 0.1401 | 0.5077 | 1 |
+| EXP-11 | 10% + Eik | L=4 | 0.1427 | 0.5071 | 1 |
+| EXP-12 | 5% + Eik | L=4 | 0.1400 | 0.5073 | 1 |
+
+*Lower CD is better · Higher NC is better · Non-PE group: variable MC success (EXP-02: 261/300, EXP-03: 259/300, EXP-05: 295/300; EXP-04 seed42: 263/300) · EXP-04 per-seed CD means: {0.0609, 0.0443, 0.0436}; EXP-06 per-seed CD means: {0.1443, 0.1375, 0.1380}*
