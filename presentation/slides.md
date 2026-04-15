@@ -423,3 +423,35 @@ DeepSDF is an auto-decoder: latent codes are learned one per training shape, ind
 
 *Reported metrics are train-set reconstruction quality — held-out generalization is not evaluated here*
 
+---
+
+<!-- Slide 9 -->
+
+# Current Status and Next Step
+
+<div class="columns">
+<div>
+
+### Established
+
+- The 12-experiment design remains unchanged
+- Checkpoints for the planned experiment matrix already exist
+- The quantitative evaluation has been corrected for re-validation
+
+</div>
+<div>
+
+### Not yet claimable
+
+- Quantitative comparisons across experiments are still being re-validated
+- No comparative conclusion is claimed until re-evaluation is complete
+
+</div>
+</div>
+
+<div class="box">
+
+**Next step**: Re-validate the existing checkpoints under the corrected evaluation, then report the quantitative comparison across experiments.
+
+</div>
+
