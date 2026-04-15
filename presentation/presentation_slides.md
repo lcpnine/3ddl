@@ -128,9 +128,3 @@ Three bugs that affect every experiment:
 - [ ] Re-train key experiments (EXP-04, EXP-06, EXP-07) with corrected split + checkpoint selection
 - [ ] Re-examine PE failure hypothesis with clean metrics
 - [ ] Report due: 2 weeks — corrected results will be included with explicit protocol disclosures
-
----
-
-## Slide 13 — Q&A
-
-- Keep experiment table (Slide 5) and bug table (Slide 9) ready as backup slides
