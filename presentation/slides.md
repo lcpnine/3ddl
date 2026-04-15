@@ -380,12 +380,12 @@ Dataset: ShapeNet — 300 shapes (airplane / chair / table), 75% used for traini
 
 <div class="box">
 
-Before drawing conclusions from the results, I audited the evaluation pipeline. The main issue was that val-set shapes were being evaluated with untrained latent codes, making those metrics unreliable. Several secondary issues were also identified and corrected.
+Before drawing conclusions from the results, I audited the evaluation pipeline. The main issue was incorrect shape→latent-index assignment: the evaluator used sorted alphabetical shape order, but training assigns latent indices in training-loop order, so each shape was decoded with the wrong latent code. Several secondary issues were also identified.
 
 </div>
 
 - Evaluation is now restricted to training shapes with the correct stored latent indices
-- Secondary fixes applied: checkpoint selection criterion, MC resolution, train/val split ordering
+- Secondary fixes applied: checkpoint selection criterion, train/val split ordering
 - PE runs (EXP-06–12) have been re-evaluated with the corrected evaluator; non-PE results use the original
 
 ---
@@ -396,7 +396,7 @@ Before drawing conclusions from the results, I audited the evaluation pipeline. 
 
 <div class="box">
 
-DeepSDF is an auto-decoder: latent codes are learned directly during training, one per training shape. Val-set shapes have latent slots in `LatentCodes` that are never optimized — they stay at random initialization. If the evaluator uses those slots, the resulting metrics are not meaningful.
+DeepSDF is an auto-decoder: latent codes are learned one per training shape, indexed by training order. The evaluator must use the same shape→latent-index mapping that training used. If it uses a different ordering, it retrieves the wrong latent for each shape and the resulting CD/NC values do not reflect reconstruction quality.
 
 </div>
 
@@ -405,18 +405,18 @@ DeepSDF is an auto-decoder: latent codes are learned directly during training, o
 
 ### Before
 
-- Evaluator iterated all N shapes by index position
-- Val-shape slots (indices ≥ n_train) were passed to the decoder unchanged
-- Reconstructions from random latents: CD/NC values reflect noise, not shape quality
+- Evaluator iterated shapes in sorted alphabetical order
+- Latent index assigned by sorted position, not training position
+- Wrong latent retrieved for each shape → CD/NC reflects ordering mismatch, not shape quality
 
 </div>
 <div>
 
 ### After
 
-- Evaluator restricted to training shapes using their stored latent-index mapping
-- Val-shape slots are skipped entirely
-- Reported CD/NC reflects how well the model reconstructed its training shapes
+- Evaluator loads `train_shapes.json` to reconstruct exact training-order index assignment
+- Val shapes have no stored latent; TTO used if val split is evaluated
+- Reported CD/NC reflects actual reconstruction of training shapes
 
 </div>
 </div>
