@@ -6,25 +6,25 @@ math: mathjax
 style: |
   section {
     font-family: 'Segoe UI', Arial, sans-serif;
-    font-size: 28px;
+    font-size: 24px;
     background: #ffffff;
     color: #1a1a2e;
     padding: 48px 60px;
   }
   h1 {
-    font-size: 2.0em;
+    font-size: 1.8em;
     color: #0f3460;
     border-bottom: 3px solid #e94560;
     padding-bottom: 10px;
     margin-bottom: 0.4em;
   }
   h2 {
-    font-size: 1.5em;
+    font-size: 1.35em;
     color: #16213e;
     margin-bottom: 0.3em;
   }
   h3 {
-    font-size: 1.1em;
+    font-size: 1.0em;
     color: #e94560;
     margin-bottom: 0.2em;
   }
@@ -171,10 +171,13 @@ style: |
   section.title-slide h1 {
     color: white;
     border-bottom-color: #e94560;
-    font-size: 1.9em;
+    font-size: 1.7em;
   }
   section.title-slide h2 { color: #a0b4d0; font-size: 1.0em; }
   section.title-slide p { color: #c8d8e8; }
+  section.small-text {
+    font-size: 22px;
+  }
 ---
 
 <!-- _class: title-slide -->
@@ -204,6 +207,10 @@ style: |
 - Generating SDF labels requires **dense normal-offset sampling** — expensive per shape
 - Unlabelled points (uniform sphere probes) need no annotation, yet constrain the field via $\mathcal{L}_\text{eik}$
 - Reducing the labelled fraction enables scaling to larger shape collections
+
+---
+
+# Research Variables
 
 ### Variables under study
 
@@ -323,6 +330,15 @@ Dataset: ShapeNet — 300 shapes (airplane / chair / table), 75% used for traini
 | EXP-04 | 10% | Yes | No | 3 |
 | EXP-05 | 5% | Yes | No | 1 |
 | EXP-06 | 10% | Yes | Yes (L=6) | 3 |
+
+---
+
+# Experiment Design
+
+Dataset: ShapeNet — 300 shapes (airplane / chair / table), 75% used for training (train_split=0.75) · 250K unsupervised + up to 250K supervised points per shape (supervised count = 250K × ratio) · ~6h per run on TC2
+
+| Exp | Supervision | Eikonal | Positional Enc. | Seeds |
+|-----|------------|---------|-----------------|-------|
 | EXP-07 | 5% | Yes | Yes (L=6) | 1 |
 | EXP-08 | 10% | Yes | Yes (L=6) + $\mathcal{L}_\text{2nd}$ | 1 |
 | EXP-09 | 100% | Yes | Yes (L=6) | 1 |
@@ -358,6 +374,10 @@ Dataset: ShapeNet — 300 shapes (airplane / chair / table), 75% used for traini
 | EXP-04 | 10% + Eik | 0.0496 | 0.5987 | 3 |
 | EXP-05 | 5% + Eik | 0.0509 | 0.5766 | 1 |
 
+---
+
+# Preliminary Results
+
 ### With positional encoding — rerun with fixed evaluator (MC res=128)
 
 | Exp | Supervision | PE | CD mean | NC mean | Seeds |
@@ -390,6 +410,7 @@ Before drawing conclusions from the results, I audited the evaluation pipeline. 
 
 ---
 
+<!-- _class: small-text -->
 <!-- Slide 8 -->
 
 # Key Evaluation Issue: Latent Code Assignment
@@ -454,4 +475,3 @@ DeepSDF is an auto-decoder: latent codes are learned one per training shape, ind
 **Next step**: Re-validate the existing checkpoints under the corrected evaluation, then report the quantitative comparison across experiments.
 
 </div>
-
