@@ -31,14 +31,14 @@
 - **L_sdf**: supervised SDF regression on labelled points
 - **L_eik**: Eikonal term `|∇f| = 1` applied to all points (labelled + unlabelled)
 - Total loss: `L = L_sdf + λ · L_eik`
-- **Figure**: diagram showing supervised points (with SDF labels) vs. unsupervised points (surface only, contribute only to L_eik)
+- **Figure**: diagram showing supervised points (near-surface offsets, approximate signed SDF labels) vs. unsupervised points (uniform unit-sphere probes, no SDF label, contribute only to L_eik)
 - Supervision ratios: 1.0, 0.5, 0.1, 0.05
 
 ---
 
 ## Slide 5 — Experiment Design
 
-- **Table**: one row per experiment group
+- **Table**: one row per experiment
 
 | Exp | Supervision | Eikonal | Positional Enc. | Seeds |
 |-----|------------|---------|-----------------|-------|
@@ -47,10 +47,13 @@
 | EXP-03 | 50% | Yes | No | 1 |
 | EXP-04 | 10% | Yes | No | 3 |
 | EXP-05 | 5% | Yes | No | 1 |
-| EXP-06 | 10% | No | No | 3 |
-| EXP-07 | 10% | Yes | Yes | 1 |
-| EXP-08 | 10% | Yes | No | 1 (large batch) |
-| EXP-09 | 10% | Yes | Yes (4 levels) | 1 |
+| EXP-06 | 10% | Yes | Yes (L=6) | 3 |
+| EXP-07 | 5% | Yes | Yes (L=6) | 1 |
+| EXP-08 | 10% | Yes | Yes (L=6) + `L_2nd` | 1 |
+| EXP-09 | 100% | Yes | Yes (L=6) | 1 |
+| EXP-10 | 100% | Yes | Yes (L=4) | 1 |
+| EXP-11 | 10% | Yes | Yes (L=4) | 1 |
+| EXP-12 | 5% | Yes | Yes (L=4) | 1 |
 
 - Dataset: ShapeNet (3 categories, 300 shapes), ~6h per training run on TC2
 
