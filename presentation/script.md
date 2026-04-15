@@ -6,7 +6,7 @@ AI6131 · NTU MSAI · April 2026
 
 ## Opening
 
-Good afternoon. Today I'm presenting a midterm progress update on my project for AI6131. The work is still ongoing, so what I'll share today is a combination of completed design, preliminary results, and an honest account of an evaluation issue I identified and corrected. I'll walk through the research question, the method, the experiment design, and where things currently stand.
+Good afternoon. Today I'm presenting a midterm progress update on my project for AI6131. The work is still ongoing, so what I'll share today is a combination of completed design, preliminary results, and an honest account of an evaluation issue I identified, corrected in the pipeline, and am now using for re-validation. I'll walk through the research question, the method, the experiment design, and where things currently stand.
 
 ---
 
@@ -60,7 +60,7 @@ This second half expands the PE experiments, adding the 5% setting, the L_2nd va
 
 ## Slide 9 — Preliminary Results: No Positional Encoding
 
-Because the non-PE and PE groups were evaluated under different evaluator versions, I'm not making cross-group comparisons here. There was also variable mesh extraction success in some non-PE runs. I'll explain the evaluator issue and fix in the following slides.
+These non-PE numbers are preliminary and were evaluated with the original evaluator — evaluation bugs were discovered after these runs. There was also variable mesh extraction success in some non-PE runs; exact counts are in the footnote of the next slide. Note that the warning box at the top covers both groups: cross-group CD/NC comparison between non-PE and PE results is not valid — I'll return to that on the next slide. I'll explain the evaluator issue and fix in the slides that follow.
 
 ---
 
@@ -72,7 +72,7 @@ These PE results are still preliminary, but they were rerun with the corrected e
 
 ## Slide 11 — Evaluation Pipeline Review
 
-Before going further, I want to explain what went wrong with the evaluation. The main issue was incorrect shape-to-latent-code assignment. DeepSDF learns one latent code per training shape, indexed by training order. The evaluator was iterating shapes in sorted alphabetical order, which does not necessarily match training order. As a result, each shape was being decoded with the wrong latent code, and the CD and NC values did not reflect actual reconstruction quality. Several secondary issues were also identified and corrected — including checkpoint selection and train/validation split ordering. Under the corrected pipeline, evaluation is restricted to training shapes with the correct stored latent indices. I re-ran the PE group under that fixed evaluator.
+Before going further, I want to explain what went wrong with the evaluation. The main issue was incorrect shape-to-latent-code assignment. DeepSDF learns one latent code per training shape, indexed by training order. The evaluator was iterating shapes in sorted alphabetical order, which does not necessarily match training order. As a result, each shape was being decoded with the wrong latent code, and the CD and NC values did not reflect actual reconstruction quality. Several secondary issues were also identified and corrected — including checkpoint selection and train/validation split ordering. Under the corrected pipeline, evaluation is restricted to training shapes with the correct stored latent indices. I re-evaluated the PE runs under the corrected evaluator.
 
 ---
 
