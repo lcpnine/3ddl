@@ -12,19 +12,19 @@ Good afternoon. Today I'm presenting a midterm progress update on my project for
 
 ## Slide 1 — Title
 
-The project is on semi-supervised 3D shape reconstruction using DeepSDF. The central question is whether we can reduce the amount of labeled SDF data required during training without significantly degrading reconstruction quality. I'll explain what that means concretely in the next few slides.
+The project is on semi-supervised 3D shape reconstruction using DeepSDF. The central question is whether we can reduce the amount of labeled SDF data required during training while maintaining reconstruction quality. I'll explain what that means concretely in the next few slides.
 
 ---
 
 ## Slide 2 — Research Question
 
-The core motivation is this: generating SDF training labels requires dense sampling around a shape's surface, which is computationally expensive per shape. If we can replace some of that labeled data with unlabeled point samples — which need no annotation — and still maintain reconstruction quality by using the Eikonal constraint to regularize the field, then the method becomes more scalable to larger shape collections. The main question is how far we can push that reduction.
+The core motivation is this: generating SDF training labels requires dense sampling around a shape's surface, which is computationally expensive per shape. If we can reduce the amount of labeled data and supplement training with unlabeled point samples that constrain the field through the Eikonal term, then the method becomes more scalable to larger shape collections. The main question is how far we can push that reduction.
 
 ---
 
 ## Slide 3 — Research Variables
 
-To investigate this, I'm varying three things: the supervision ratio — from fully labeled down to 5% — the presence or absence of Eikonal regularization, and whether positional encoding is applied to the 3D input coordinates. These three dimensions define the experiment matrix I'll describe shortly.
+To investigate this, I'm varying three things: the supervision ratio — from fully labeled down to 5% — the presence or absence of Eikonal regularization, and whether Fourier positional encoding is applied to the 3D input coordinates. These three dimensions define the experiment matrix I'll describe shortly.
 
 ---
 
@@ -36,55 +36,55 @@ DeepSDF uses what's called an auto-decoder framework. There is no encoder. Inste
 
 ## Slide 5 — Semi-Supervised Extension: Loss Formulation
 
-The task-specific loss has two main components here: the supervised SDF term and the Eikonal term. In all runs I also keep the standard DeepSDF latent regularization. The SDF loss is a mean absolute error between the predicted and approximate SDF labels, applied only to the supervised points. The Eikonal loss penalizes deviations of the gradient norm from 1, and it applies to all points including the unlabeled ones. The supervised points are sampled near the surface using normal-offset sampling. The unsupervised points are sampled uniformly inside the unit sphere and contribute only to the Eikonal term. One thing to note: the SDF labels here are approximate signed offsets, not ray-cast ground truth, which is a deliberate simplification to keep sampling tractable.
+The task-specific loss has two main components here: the supervised SDF term and the Eikonal term. In all runs I also keep the standard DeepSDF latent regularization. The SDF loss is a mean absolute error between the predicted and approximate SDF labels, applied only to the supervised points. The Eikonal loss penalizes deviations of the gradient norm from 1, and it applies to all points including the unlabeled ones. The supervised points are sampled near the surface using normal-offset sampling, and they contribute to both the SDF loss and the Eikonal loss. The unsupervised points are sampled uniformly inside the unit sphere and contribute only to the Eikonal term. One thing to note: the SDF labels here are approximate signed offsets from normal-offset sampling, not ray-cast ground truth.
 
 ---
 
 ## Slide 6 — Semi-Supervised Extension: Eikonal Warmup
 
-At this stage, I also introduce a linear warmup for the Eikonal weight. The rationale is that with very few supervised points, a strong Eikonal penalty early in training can dominate and prevent the network from fitting the shape signal. So for 10% supervision I extend the warmup to 150 epochs, and for 5% I extend it to 200. This is a heuristic, but it follows a reasonable principle: the sparser the supervision, the more carefully you need to ramp up the unsupervised regularizer.
+At this stage, I also introduce a linear warmup for the Eikonal weight. For 100% and 50% supervision, I keep the warmup at 100 epochs, since there is enough supervised signal from the start. So for 10% supervision I extend the warmup to 150 epochs, and for 5% to 200, to prevent L_eik dominating sparse labels.
 
 ---
 
 ## Slide 7 — Experiment Design (EXP-01 to EXP-06)
 
-The experiment matrix covers 12 runs in total. The dataset is ShapeNet, 300 shapes across three categories, with 75% used for training. Each shape sees up to 250K supervised and 250K unsupervised points per epoch, and each run takes roughly 6 hours on the cluster. The primary comparisons are: EXP-01 versus EXP-02 to isolate the Eikonal effect; EXP-02, EXP-04, and EXP-05 to track what happens as we reduce supervision; and EXP-04 versus EXP-06 to test whether positional encoding helps at low supervision.
+This first half of the matrix covers EXP-01 through EXP-06, including the first positional-encoding condition in EXP-06. The dataset is ShapeNet, 300 shapes across three categories, with 75% used for training. Each shape is associated with 250K unsupervised points and up to 250K supervised points depending on the supervision ratio, and each run takes roughly 6 hours on the cluster. I'll summarize the primary comparisons after the next slide.
 
 ---
 
 ## Slide 8 — Experiment Design (EXP-07 to EXP-12)
 
-The second half of the matrix extends into the positional encoding regime, testing different encoding frequencies and one additional regularization variant — EXP-08, which adds a second-order smoothness term. EXP-09 and EXP-10 serve as fully-supervised baselines with PE, providing reference points for the low-supervision PE runs. All 12 training runs have produced checkpoints — the remaining work is corrected evaluation, which I'll explain.
+This second half expands the PE experiments, adding the 5% setting, the L_2nd variant, and the L=4 comparisons. EXP-09 and EXP-10 are the 100% supervision PE settings in this matrix. Across the full matrix there are 12 experiment settings, with multiple seeds for some conditions. The primary comparisons are: EXP-01 versus EXP-02 to isolate the Eikonal effect; EXP-02, EXP-04, and EXP-05 to track how performance changes as supervision drops; and EXP-04 versus EXP-06 to test whether positional encoding helps at low supervision.
 
 ---
 
 ## Slide 9 — Preliminary Results: No Positional Encoding
 
-These are the preliminary numbers from the non-PE group, evaluated using the original evaluator. The original non-PE numbers show an unexpected pattern, but because they were produced before the evaluator fix, I'm treating them only as provisional and not interpreting them. I'll explain the fix in the next two slides.
+Because the non-PE and PE groups were evaluated under different evaluator versions, I'm not making cross-group comparisons here. There was also variable mesh extraction success in some non-PE runs. I'll explain the evaluator issue and fix in the following slides.
 
 ---
 
 ## Slide 10 — Preliminary Results: With Positional Encoding
 
-The PE group reflects the corrected pipeline. One limitation is that the non-PE and PE groups cannot be directly compared numerically — they were produced under different evaluator versions. Within the PE group, the results are fairly close across supervision levels, with CD values clustering around 0.14. Cross-experiment conclusions will be drawn once the non-PE group is also re-evaluated.
+These PE results are still preliminary, but they were rerun with the corrected evaluator, unlike the non-PE table. So the main point here is within-group reporting only, not direct comparison against the non-PE results.
 
 ---
 
 ## Slide 11 — Evaluation Pipeline Review
 
-Before going further, I want to explain what went wrong with the evaluation. The main issue was incorrect shape-to-latent-code assignment. DeepSDF learns one latent code per training shape, indexed by training order. The evaluator was iterating shapes in sorted alphabetical order, which does not necessarily match training order. As a result, each shape was being decoded with the wrong latent code, and the CD and NC values did not reflect actual reconstruction quality. Several secondary issues were also identified and corrected — including checkpoint selection and train/validation split ordering. This bug invalidated the earlier metrics, so I corrected the evaluator before making any cross-experiment claim.
+Before going further, I want to explain what went wrong with the evaluation. The main issue was incorrect shape-to-latent-code assignment. DeepSDF learns one latent code per training shape, indexed by training order. The evaluator was iterating shapes in sorted alphabetical order, which does not necessarily match training order. As a result, each shape was being decoded with the wrong latent code, and the CD and NC values did not reflect actual reconstruction quality. Several secondary issues were also identified and corrected — including checkpoint selection and train/validation split ordering. Under the corrected pipeline, evaluation is restricted to training shapes with the correct stored latent indices. I re-ran the PE group under that fixed evaluator.
 
 ---
 
 ## Slide 12 — Key Evaluation Issue: Latent Code Assignment
 
-To make the issue concrete: the fixed evaluator now loads a `train_shapes.json` file that records the exact order in which shapes were seen during training. This guarantees that each shape is decoded with the correct latent code. For the non-PE group, re-evaluation using this corrected pipeline is the immediate next task. The metrics reported for the PE group already reflect this fix. It's also worth noting that all reported metrics measure train-set reconstruction — held-out generalization is not part of the current scope.
+To make the issue concrete: the fixed evaluator now loads a `train_shapes.json` file that records the exact order in which shapes were seen during training. The evaluator now reconstructs the exact training-order mapping from that file, so each training shape is decoded with its intended latent code. Validation shapes do not have stored latent codes, so evaluating them would require test-time latent optimization, which is outside the current scope. The PE metrics already reflect this corrected mapping. I'll return to the remaining re-validation status on the final slide.
 
 ---
 
 ## Slide 13 — Current Status and Next Step
 
-To summarize where things stand: the full experiment matrix is in place, all checkpoints exist, and the evaluation pipeline has been corrected. What is not yet claimable is any quantitative conclusion across experiments — the non-PE group still needs to go through the fixed evaluator. Once that is done, I'll be in a position to report a valid cross-experiment comparison. That's where the project stands. Happy to take any questions.
+To summarize where things stand: the 12-experiment design itself remains unchanged, all checkpoints already exist, and the evaluation pipeline has been corrected. Quantitative comparisons across experiments are still being re-validated, so I'm not claiming a comparative conclusion yet. The next step is to re-validate the existing checkpoints under the corrected evaluation and then report the quantitative comparison across experiments. That's where the project stands. Happy to take any questions.
 
 ---
 
