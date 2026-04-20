@@ -1,0 +1,16 @@
+EXP-01	42	supervision_ratio=1.0 use_eikonal=false use_pe=false
+EXP-02	42	supervision_ratio=1.0 use_eikonal=true use_pe=false
+EXP-03	42	supervision_ratio=0.5 use_eikonal=true use_pe=false
+EXP-04	42	supervision_ratio=0.1 use_eikonal=true use_pe=false
+EXP-04	123	supervision_ratio=0.1 use_eikonal=true use_pe=false
+EXP-04	456	supervision_ratio=0.1 use_eikonal=true use_pe=false
+EXP-05	42	supervision_ratio=0.05 use_eikonal=true use_pe=false
+EXP-06	42	supervision_ratio=0.1 use_eikonal=true use_pe=true pe_levels=6
+EXP-06	123	supervision_ratio=0.1 use_eikonal=true use_pe=true pe_levels=6
+EXP-06	456	supervision_ratio=0.1 use_eikonal=true use_pe=true pe_levels=6
+EXP-07	42	supervision_ratio=0.05 use_eikonal=true use_pe=true pe_levels=6
+EXP-08	42	supervision_ratio=0.1 use_eikonal=true use_pe=true pe_levels=6 lambda_2nd=0.01 batch_size=8192
+EXP-09	42	supervision_ratio=1.0 use_eikonal=true use_pe=true pe_levels=6
+EXP-10	42	supervision_ratio=1.0 use_eikonal=true use_pe=true pe_levels=4
+EXP-11	42	supervision_ratio=0.1 use_eikonal=true use_pe=true pe_levels=4
+EXP-12	42	supervision_ratio=0.05 use_eikonal=true use_pe=true pe_levels=4
