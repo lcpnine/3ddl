@@ -47,9 +47,10 @@ while IFS=$'\t' read -r EXP_ID SEED OVERRIDES; do
         sleep 60
     done
 
-    echo "[$(date +%H:%M:%S)] Submitting EVAL $EXP_DIR" | tee -a "$LOG"
+    echo "[$(date +%H:%M:%S)] Submitting EVAL $EXP_DIR (MC_RES=${MC_RES:-96})" | tee -a "$LOG"
     eval_job=$(EXP_DIR="$EXP_DIR" \
         DATA_DIR="data/processed_shapenet" \
+        MC_RES="${MC_RES:-96}" \
         sbatch --parsable \
             --job-name="${EXP_ID}_s${SEED}_eval" \
             slurm/job_eval.sh)
