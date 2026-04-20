@@ -175,21 +175,17 @@ def generate_label_efficiency(rows: list[ResultRow], outdir: Path) -> Path:
     line(pe_l4, "Eikonal + PE (L=4)", "#c84c09", "s")
     line(pe_l6, "Eikonal + PE (L=6)", "#8b1e3f", "^")
 
-    ax.annotate(
-        "PE remains harmful\nat every tested ratio",
-        xy=(positions[2], pe_l4[10].cd_mean),
-        xytext=(1.35, 0.116),
-        arrowprops={"arrowstyle": "->", "color": "#444"},
-        fontsize=10,
-        color="#333",
-    )
-
     ax.set_xticks(positions)
     ax.set_xticklabels(["100%", "50%", "10%", "5%"])
     ax.set_xlabel("Supervision Ratio")
     ax.set_ylabel("Chamfer Distance (lower is better)")
     ax.set_title("Label Efficiency With and Without Fourier PE")
-    ax.set_ylim(0.035, 0.19)
+    # Dynamic y-range so the chart works across broken/fixed preprocessing regimes
+    all_cd = [r.cd_mean for r in [*no_pe.values(), *pe_l4.values(), *pe_l6.values()] if r.cd_mean is not None]
+    if all_cd:
+        lo, hi = min(all_cd), max(all_cd)
+        pad = (hi - lo) * 0.2 or 0.01
+        ax.set_ylim(max(0, lo - pad), hi + pad)
     ax.legend(frameon=True)
 
     path = outdir / "label_efficiency_cd.png"
@@ -272,14 +268,6 @@ def generate_pe_frequency(rows: list[ResultRow], outdir: Path) -> Path:
     ax.set_ylabel("Chamfer Distance")
     ax.set_title("PE Frequency Ablation")
     ax.legend(frameon=True)
-    ax.annotate(
-        "L=4 and L=6 both collapse\ninto the same poor regime",
-        xy=(1.0, get_row(rows, "EXP-11", "42").cd_mean),
-        xytext=(0.15, 0.118),
-        arrowprops={"arrowstyle": "->", "color": "#444"},
-        fontsize=10,
-        color="#333",
-    )
 
     path = outdir / "pe_frequency_ablation_cd.png"
     save(fig, path)
@@ -291,10 +279,11 @@ def generate_summary(rows: list[ResultRow], outdir: Path) -> Path:
     lines = [
         "Generated from experiments/experiment_log.md",
         "",
-        "Key takeaways:",
-        f"- 10% + Eikonal beats the full-supervision baseline: CD {get_row(rows, 'EXP-04', '3-seed').cd_mean:.4f} vs {get_row(rows, 'EXP-01', '42').cd_mean:.4f}",
-        f"- PE L=6 at 10% is catastrophic: CD {get_row(rows, 'EXP-06', '3-seed').cd_mean:.4f}",
-        f"- PE L=4 at 10% remains catastrophic: CD {get_row(rows, 'EXP-11', '42').cd_mean:.4f}",
+        "Key values:",
+        f"- Baseline (EXP-01, no Eik, no PE, 100%): CD {get_row(rows, 'EXP-01', '42').cd_mean:.4f}  NC {get_row(rows, 'EXP-01', '42').nc_mean:.4f}",
+        f"- 10% + Eikonal (no PE, 3-seed): CD {get_row(rows, 'EXP-04', '3-seed').cd_mean:.4f}  NC {get_row(rows, 'EXP-04', '3-seed').nc_mean:.4f}",
+        f"- PE L=6 at 10% (3-seed): CD {get_row(rows, 'EXP-06', '3-seed').cd_mean:.4f}  NC {get_row(rows, 'EXP-06', '3-seed').nc_mean:.4f}",
+        f"- PE L=4 at 10%: CD {get_row(rows, 'EXP-11', '42').cd_mean:.4f}  NC {get_row(rows, 'EXP-11', '42').nc_mean:.4f}",
     ]
     path.write_text("\n".join(lines) + "\n")
     return path
