@@ -151,13 +151,15 @@ def train(config: dict):
     supervision_ratio = config.get("supervision_ratio", 1.0)
     num_shapes = config.get("num_shapes", -1)
 
+    # Use dataset.py default seed=42 so multi-seed runs share the same shape
+    # order (only model/optimizer init differ across seeds). This also lets
+    # train_shapes.json be reconstructed post-hoc if missing.
     train_dataset = SDFDataset(
         data_dir=config["data_dir"],
         supervision_ratio=supervision_ratio,
         split="train",
         train_frac=config.get("train_split", 0.75),
         num_shapes=num_shapes,
-        seed=seed,
     )
     val_dataset = SDFDataset(
         data_dir=config["data_dir"],
@@ -165,7 +167,6 @@ def train(config: dict):
         split="val",
         train_frac=config.get("train_split", 0.75),
         num_shapes=num_shapes,
-        seed=seed,
     )
     n_train = len(train_dataset)
     n_val = len(val_dataset)

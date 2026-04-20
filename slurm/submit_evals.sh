@@ -40,6 +40,28 @@ while IFS=$'\t' read -r EXP_ID SEED OVERRIDES; do
         continue
     fi
 
+    # Older train.py did not save train_shapes.json. Reconstruct it using the
+    # same sorted+shuffle logic so evaluate.py doesn't fall back to mismatched
+    # sorted order. Uses dataset.py's default seed=42 (the only behavior old
+    # train.py could trigger — it never passed seed= to SDFDataset).
+    if [ ! -f "$EXP_DIR/train_shapes.json" ]; then
+        echo "[$(date +%H:%M:%S)] Reconstructing train_shapes.json for $EXP_DIR" | tee -a "$LOG"
+        python -c "
+import glob, os, random, json, yaml
+cfg = yaml.safe_load(open('$EXP_DIR/config.yaml'))
+ratio = cfg.get('supervision_ratio', 1.0)
+ratio_str = f'ratio_{ratio:.2f}'.replace('.', 'p')
+all_files = sorted(glob.glob(f'data/processed_shapenet/{ratio_str}/*.npz'))
+# dataset.py SDFDataset default seed=42; old train.py never passed seed=
+rng = random.Random(42)
+rng.shuffle(all_files)
+names = [os.path.splitext(os.path.basename(f))[0] for f in all_files]
+with open('$EXP_DIR/train_shapes.json', 'w') as f:
+    json.dump(names, f)
+print(f'  wrote {len(names)} shapes')
+"
+    fi
+
     while true; do
         count=$(squeue -u yutaek001 -h 2>/dev/null | wc -l | awk '{print $1}')
         if [ "$count" -lt "$MAX_JOBS" ]; then break; fi
