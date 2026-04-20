@@ -48,12 +48,15 @@ tail -n +$((SKIP_LINES + 1)) "$MANIFEST" | while IFS=$'\t' read -r EXP_ID SEED O
         sleep 60
     done
 
-    echo "[$(date +%H:%M:%S)] Submitting $EXP_ID seed=$SEED  OVERRIDES=\"$OVERRIDES\"" | tee -a "$LOG"
-    # slurm/submit.sh prints the two job IDs; capture them
-    out=$(bash slurm/submit.sh "$EXP_ID" "$SEED" "$OVERRIDES" 2>&1 | tee -a "$LOG")
-    train_job=$(echo "$out" | grep -oE 'Training job submitted: [0-9]+' | awk '{print $NF}' | head -1)
-    eval_job=$(echo "$out" | grep -oE 'Evaluation job submitted: [0-9]+' | awk '{print $NF}' | head -1)
-    echo "$train_job $eval_job $EXP_ID $SEED" >> "$JOB_IDS_FILE"
+    echo "[$(date +%H:%M:%S)] Submitting TRAIN $EXP_ID seed=$SEED  OVERRIDES=\"$OVERRIDES\"" | tee -a "$LOG"
+
+    ALL_OVERRIDES="exp_name=$EXP_ID seed=$SEED $OVERRIDES"
+    train_job=$(OVERRIDES="$ALL_OVERRIDES" \
+        sbatch --parsable \
+            --job-name="${EXP_ID}_s${SEED}_train" \
+            slurm/job_train.sh)
+    echo "  train_job=$train_job" | tee -a "$LOG"
+    echo "$train_job $EXP_ID $SEED" >> "$JOB_IDS_FILE"
 done
 
 echo "[$(date +%H:%M:%S)] All rows submitted." | tee -a "$LOG"
