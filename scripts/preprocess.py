@@ -16,6 +16,8 @@ import argparse
 import glob
 import os
 import json
+from multiprocessing import Pool
+from functools import partial
 
 import numpy as np
 import trimesh
@@ -163,8 +165,14 @@ def process_single_mesh(
     output_dir: str,
     n_sup_points: int = DEFAULT_SUP_POINTS,
     n_unsup_points: int = DEFAULT_UNSUP_POINTS,
+    seed: int | None = None,
 ) -> dict:
     """Process a single mesh file into .npz files at all supervision ratios.
+
+    If ``seed`` is provided, set numpy's global RNG so that the outputs are
+    reproducible under parallel workers. When not given, uses whatever global
+    seeding the caller established. Deterministic seeding is derived from the
+    mesh name so each mesh's samples are stable regardless of worker order.
 
     Supervised samples are a union of near-surface multi-scale offsets (fine
     detail) and far-field uniform-in-sphere samples with exact signed
@@ -185,6 +193,11 @@ def process_single_mesh(
     """
     mesh_name = os.path.splitext(os.path.basename(mesh_path))[0]
     info = {"name": mesh_name, "path": mesh_path}
+
+    # Per-mesh deterministic seed so parallel workers produce reproducible output.
+    if seed is not None:
+        per_mesh_seed = (seed * 1_000_003 + (hash(mesh_name) & 0x7FFFFFFF)) & 0x7FFFFFFF
+        np.random.seed(per_mesh_seed)
 
     # Load mesh
     try:
@@ -227,14 +240,15 @@ def process_single_mesh(
     # 100k-face meshes takes minutes per mesh and would blow the TC2 budget.
     # At 10k-face decimation, sign-flip rate is <1% for points with |sdf|>0.1.
     far_points = sample_unsupervised_points(n_far)
+    sdf_mesh = mesh
+    info["sdf_mesh_decimated"] = False
     if len(mesh.faces) > SDF_DECIMATE_THRESHOLD:
-        sdf_mesh = mesh.simplify_quadric_decimation(face_count=SDF_DECIMATE_TARGET)
-        info["sdf_mesh_decimated"] = True
-        info["sdf_mesh_faces"] = int(len(sdf_mesh.faces))
-    else:
-        sdf_mesh = mesh
-        info["sdf_mesh_decimated"] = False
-        info["sdf_mesh_faces"] = int(len(sdf_mesh.faces))
+        try:
+            sdf_mesh = mesh.simplify_quadric_decimation(face_count=SDF_DECIMATE_TARGET)
+            info["sdf_mesh_decimated"] = True
+        except Exception as e:
+            info["sdf_mesh_decimate_error"] = str(e)
+    info["sdf_mesh_faces"] = int(len(sdf_mesh.faces))
     far_sdf = (-signed_distance(sdf_mesh, far_points)).astype(np.float32)
 
     # Merge and shuffle so batches mix near and far
@@ -385,6 +399,10 @@ def main():
                         help="Number of unsupervised points per shape")
     parser.add_argument("--seed", type=int, default=42,
                         help="Random seed for reproducibility")
+    parser.add_argument("--n_workers", type=int, default=1,
+                        help="Number of parallel worker processes (default 1 = serial)")
+    parser.add_argument("--skip_existing", action="store_true",
+                        help="Skip meshes that already have all ratio npz files")
     args = parser.parse_args()
 
     np.random.seed(args.seed)
@@ -397,6 +415,20 @@ def main():
         mesh_files.extend(glob.glob(os.path.join(args.mesh_dir, ext)))
     mesh_files.sort()
 
+    # Optionally skip meshes that already have all SUPERVISION_RATIOS outputs
+    if args.skip_existing:
+        def all_ratios_exist(mp):
+            name = os.path.splitext(os.path.basename(mp))[0]
+            for ratio in SUPERVISION_RATIOS:
+                ratio_str = f"ratio_{ratio:.2f}".replace(".", "p")
+                if not os.path.exists(os.path.join(args.output_dir, ratio_str, f"{name}.npz")):
+                    return False
+            return True
+        before = len(mesh_files)
+        mesh_files = [mp for mp in mesh_files if not all_ratios_exist(mp)]
+        print(f"skip_existing: {before - len(mesh_files)} meshes already processed, "
+              f"{len(mesh_files)} remaining")
+
     if not mesh_files:
         print(f"No mesh files found in {args.mesh_dir}")
         print(f"Supported formats: {extensions}")
@@ -408,15 +440,26 @@ def main():
     print(f"Supervision ratios: {SUPERVISION_RATIOS}")
     print(f"Epsilon scales: {EPSILON_SCALES}, Offsets: {OFFSET_MULTIPLIERS}\n")
 
+    worker = partial(
+        process_single_mesh,
+        output_dir=args.output_dir,
+        n_sup_points=args.n_sup_points,
+        n_unsup_points=args.n_unsup_points,
+        seed=args.seed,
+    )
+
     audit_results = []
-    for i, mesh_path in enumerate(mesh_files):
-        print(f"[{i+1}/{len(mesh_files)}] Processing {os.path.basename(mesh_path)}...")
-        info = process_single_mesh(
-            mesh_path, args.output_dir,
-            n_sup_points=args.n_sup_points,
-            n_unsup_points=args.n_unsup_points,
-        )
-        audit_results.append(info)
+    if args.n_workers > 1:
+        print(f"Using {args.n_workers} worker processes")
+        with Pool(args.n_workers) as pool:
+            for i, info in enumerate(pool.imap_unordered(worker, mesh_files)):
+                audit_results.append(info)
+                print(f"[{i+1}/{len(mesh_files)}] done: {info.get('name', '?')}", flush=True)
+    else:
+        for i, mesh_path in enumerate(mesh_files):
+            print(f"[{i+1}/{len(mesh_files)}] Processing {os.path.basename(mesh_path)}...",
+                  flush=True)
+            audit_results.append(worker(mesh_path))
 
     # Write audit
     audit_path = os.path.join(args.output_dir, "data_audit.md")
