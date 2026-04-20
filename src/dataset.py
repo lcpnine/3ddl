@@ -75,10 +75,12 @@ class SDFDataset(Dataset):
         else:
             self.files = all_files[n_train:]
 
-        if not self.files:
+        # Allow empty val when train_frac=1.0 (full-data training). Train split
+        # must still be non-empty.
+        if split == "train" and not self.files:
             raise ValueError(
-                f"No files for split '{split}': "
-                f"{len(all_files)} total, {n_train} train"
+                f"No files for split 'train': {len(all_files)} total, "
+                f"{n_train} train"
             )
 
         # Extract shape names for identification
