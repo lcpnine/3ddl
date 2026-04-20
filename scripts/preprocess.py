@@ -19,6 +19,7 @@ import json
 
 import numpy as np
 import trimesh
+from trimesh.proximity import signed_distance
 
 
 # Multi-scale offset parameters
@@ -31,6 +32,20 @@ SUPERVISION_RATIOS = [1.0, 0.5, 0.1, 0.05]
 # Default sample counts
 DEFAULT_SUP_POINTS = 250_000
 DEFAULT_UNSUP_POINTS = 250_000
+
+# Fraction of the supervised budget spent on far-field (uniform-in-sphere)
+# samples with exact point-to-mesh signed distance. The rest stays on the
+# near-surface multi-scale offsets. Far-field supervision is what prevents
+# the decoder from collapsing to SDF~=0 everywhere.
+FAR_FIELD_FRACTION = 0.2
+
+# Meshes with more than this many faces are decimated before signed_distance
+# queries. trimesh.proximity.signed_distance is O(F*N) in the worst case; some
+# ShapeNet meshes have >100K faces, which makes uniform-in-sphere queries
+# take minutes per mesh. Decimating to ~10K faces brings a ~10x speedup with
+# <1% sign-flip rate at |sdf|>0.1 (measured on airplane_0000, 101k faces).
+SDF_DECIMATE_THRESHOLD = 15_000
+SDF_DECIMATE_TARGET = 10_000
 
 
 def normalize_mesh(mesh: trimesh.Trimesh) -> trimesh.Trimesh:
@@ -151,6 +166,14 @@ def process_single_mesh(
 ) -> dict:
     """Process a single mesh file into .npz files at all supervision ratios.
 
+    Supervised samples are a union of near-surface multi-scale offsets (fine
+    detail) and far-field uniform-in-sphere samples with exact signed
+    distances (prevents the decoder from collapsing to SDF~=0 everywhere).
+
+    Sign convention in the saved npz: positive = outside, negative = inside.
+    trimesh.proximity.signed_distance uses the opposite sign (+inside/-outside),
+    so far-field distances are negated before concatenation.
+
     Args:
         mesh_path: path to input mesh file
         output_dir: base output directory
@@ -158,7 +181,7 @@ def process_single_mesh(
         n_unsup_points: number of unsupervised points
 
     Returns:
-        dict with processing info (name, watertight status, sample counts)
+        dict with processing info (name, watertight status, sample counts, sdf stats)
     """
     mesh_name = os.path.splitext(os.path.basename(mesh_path))[0]
     info = {"name": mesh_name, "path": mesh_path}
@@ -184,15 +207,67 @@ def process_single_mesh(
     info["n_vertices"] = len(mesh.vertices)
     info["n_faces"] = len(mesh.faces)
 
-    # Sample surface points
-    surface_points, surface_normals = sample_surface_points(mesh, n_sup_points)
+    # Split budget: near-surface multi-scale + far-field signed distance
+    n_far = int(round(n_sup_points * FAR_FIELD_FRACTION))
+    n_near = n_sup_points - n_far
 
-    # Generate multi-scale SDF samples
-    sup_points, sup_sdf = generate_multiscale_sdf_samples(
-        surface_points, surface_normals, n_sup_points
+    # Sample surface points (for near-surface offsets)
+    surface_points, surface_normals = sample_surface_points(mesh, n_near)
+
+    # Near-surface multi-scale offsets (positive = outside by construction)
+    near_points, near_sdf = generate_multiscale_sdf_samples(
+        surface_points, surface_normals, n_near
     )
 
-    # Generate unsupervised points
+    # Far-field uniform-in-sphere + signed distance.
+    # trimesh returns +inside/-outside; project convention is +outside/-inside,
+    # so negate.
+    #
+    # Decimate heavy meshes before the signed_distance call; exact SDF on
+    # 100k-face meshes takes minutes per mesh and would blow the TC2 budget.
+    # At 10k-face decimation, sign-flip rate is <1% for points with |sdf|>0.1.
+    far_points = sample_unsupervised_points(n_far)
+    if len(mesh.faces) > SDF_DECIMATE_THRESHOLD:
+        sdf_mesh = mesh.simplify_quadric_decimation(face_count=SDF_DECIMATE_TARGET)
+        info["sdf_mesh_decimated"] = True
+        info["sdf_mesh_faces"] = int(len(sdf_mesh.faces))
+    else:
+        sdf_mesh = mesh
+        info["sdf_mesh_decimated"] = False
+        info["sdf_mesh_faces"] = int(len(sdf_mesh.faces))
+    far_sdf = (-signed_distance(sdf_mesh, far_points)).astype(np.float32)
+
+    # Merge and shuffle so batches mix near and far
+    sup_points = np.concatenate([near_points, far_points], axis=0)
+    sup_sdf = np.concatenate([near_sdf, far_sdf], axis=0)
+    perm = np.random.permutation(len(sup_points))
+    sup_points = sup_points[perm].astype(np.float32)
+    sup_sdf = sup_sdf[perm].astype(np.float32)
+
+    # Audit stats — per-slice so the bug that motivated this rewrite is
+    # easy to spot in logs if it ever regresses
+    info["n_near"] = int(n_near)
+    info["n_far"] = int(n_far)
+    info["far_backend"] = "trimesh.proximity.signed_distance"
+    info["far_sign_inverted"] = True
+    info["sdf_stats_all"] = {
+        "min": float(sup_sdf.min()),
+        "max": float(sup_sdf.max()),
+        "mean_abs": float(np.abs(sup_sdf).mean()),
+    }
+    info["sdf_stats_near"] = {
+        "min": float(near_sdf.min()),
+        "max": float(near_sdf.max()),
+        "mean_abs": float(np.abs(near_sdf).mean()),
+    }
+    info["sdf_stats_far"] = {
+        "min": float(far_sdf.min()),
+        "max": float(far_sdf.max()),
+        "mean_abs": float(np.abs(far_sdf).mean()),
+        "frac_positive": float((far_sdf > 0).mean()),
+    }
+
+    # Generate unsupervised points (Eikonal)
     unsup_points = sample_unsupervised_points(n_unsup_points)
 
     # Save GT mesh (normalized) for evaluation
@@ -232,24 +307,51 @@ def write_data_audit(audit_results: list, output_path: str):
     total = len(audit_results)
     watertight = sum(1 for r in audit_results if r.get("watertight", False)
                      or r.get("watertight_after_repair", False))
+    non_watertight_after_repair = sum(
+        1 for r in audit_results
+        if r.get("watertight") is False
+        and r.get("watertight_after_repair") is False
+    )
     errors = sum(1 for r in audit_results if "error" in r)
+
+    # Aggregate SDF stats (only over shapes with far-field samples)
+    shapes_with_stats = [r for r in audit_results if "sdf_stats_all" in r]
+    if shapes_with_stats:
+        all_mins = [r["sdf_stats_all"]["min"] for r in shapes_with_stats]
+        all_maxs = [r["sdf_stats_all"]["max"] for r in shapes_with_stats]
+        all_abs_means = [r["sdf_stats_all"]["mean_abs"] for r in shapes_with_stats]
+        far_frac_pos = [r["sdf_stats_far"]["frac_positive"] for r in shapes_with_stats]
 
     with open(output_path, "w") as f:
         f.write("# Data Preprocessing Audit\n\n")
         f.write(f"- **Total meshes processed:** {total}\n")
         f.write(f"- **Watertight (original or repaired):** {watertight}\n")
+        f.write(f"- **Non-watertight after repair:** {non_watertight_after_repair}\n")
         f.write(f"- **Errors:** {errors}\n")
         f.write(f"- **Supervision ratios:** {SUPERVISION_RATIOS}\n")
         f.write(f"- **Epsilon scales:** {EPSILON_SCALES}\n")
-        f.write(f"- **Offset multipliers:** {OFFSET_MULTIPLIERS}\n\n")
+        f.write(f"- **Offset multipliers:** {OFFSET_MULTIPLIERS}\n")
+        f.write(f"- **Far-field fraction:** {FAR_FIELD_FRACTION}\n")
+        f.write("- **Far-field backend:** trimesh.proximity.signed_distance "
+                "(negated to match +outside/-inside convention)\n\n")
+
+        if shapes_with_stats:
+            f.write("## Supervised SDF Statistics (100% split, aggregate across shapes)\n\n")
+            f.write(f"- min over shapes: {min(all_mins):+.4f}\n")
+            f.write(f"- max over shapes: {max(all_maxs):+.4f}\n")
+            f.write(f"- mean |sdf| range: [{min(all_abs_means):.4f}, {max(all_abs_means):.4f}]\n")
+            f.write(f"- far-field positive fraction range: "
+                    f"[{min(far_frac_pos):.3f}, {max(far_frac_pos):.3f}]\n\n")
 
         f.write("## Per-Mesh Details\n\n")
-        f.write("| Mesh | Vertices | Faces | Watertight | Sup Points (100%) | Unsup Points |\n")
-        f.write("|------|----------|-------|------------|--------------------|--------------|\n")
+        f.write("| Mesh | Vertices | Faces | Watertight | Sup Points (100%) "
+                "| Unsup Points | SDF min | SDF max | Far +% |\n")
+        f.write("|------|----------|-------|------------|--------------------"
+                "|--------------|---------|---------|--------|\n")
 
         for r in audit_results:
             if "error" in r:
-                f.write(f"| {r['name']} | ERROR | - | - | - | - |\n")
+                f.write(f"| {r['name']} | ERROR | - | - | - | - | - | - | - |\n")
                 continue
 
             wt = r.get("watertight", False) or r.get("watertight_after_repair", False)
@@ -259,8 +361,14 @@ def write_data_audit(audit_results: list, output_path: str):
 
             n_sup = r.get("n_sup_ratio_1p00", "?")
             n_unsup = r.get("n_unsup", "?")
+            stats = r.get("sdf_stats_all", {})
+            far_stats = r.get("sdf_stats_far", {})
+            sdf_min = f"{stats.get('min', 0):+.3f}" if stats else "?"
+            sdf_max = f"{stats.get('max', 0):+.3f}" if stats else "?"
+            far_pos = f"{far_stats.get('frac_positive', 0):.2f}" if far_stats else "?"
             f.write(f"| {r['name']} | {r['n_vertices']} | {r['n_faces']} "
-                    f"| {wt_str} | {n_sup} | {n_unsup} |\n")
+                    f"| {wt_str} | {n_sup} | {n_unsup} "
+                    f"| {sdf_min} | {sdf_max} | {far_pos} |\n")
 
     print(f"\nAudit written to {output_path}")
 
