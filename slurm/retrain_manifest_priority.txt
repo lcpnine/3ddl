@@ -1,0 +1,9 @@
+EXP-04	42	train_split=1.0 supervision_ratio=0.1 use_eikonal=true use_pe=false epochs=1500
+EXP-04	123	train_split=1.0 supervision_ratio=0.1 use_eikonal=true use_pe=false epochs=1500
+EXP-04	456	train_split=1.0 supervision_ratio=0.1 use_eikonal=true use_pe=false epochs=1500
+EXP-05	42	train_split=1.0 supervision_ratio=0.05 use_eikonal=true use_pe=false epochs=1500
+EXP-06	42	train_split=1.0 supervision_ratio=0.1 use_eikonal=true use_pe=true pe_levels=6 epochs=1500
+EXP-06	123	train_split=1.0 supervision_ratio=0.1 use_eikonal=true use_pe=true pe_levels=6 epochs=1500
+EXP-06	456	train_split=1.0 supervision_ratio=0.1 use_eikonal=true use_pe=true pe_levels=6 epochs=1500
+EXP-11	42	train_split=1.0 supervision_ratio=0.1 use_eikonal=true use_pe=true pe_levels=4 epochs=1500
+EXP-03	42	train_split=1.0 supervision_ratio=0.5 use_eikonal=true use_pe=false epochs=1500
