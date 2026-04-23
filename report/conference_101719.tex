@@ -346,6 +346,33 @@ worse on CD without eliminating the NC loss.
     \label{fig:pe_freq}
 \end{figure}
 
+\subsection{Per-Category Breakdown}
+\label{sec:per_category}
+
+Fig.~\ref{fig:per_category} breaks down every post-fix run into per-shape
+CD and NC distributions by ShapeNet category. Each box pools all successful
+per-shape evaluations for that configuration (3\,289 points total across
+the 10 runs; 299 shapes $\times$ 1 or 3 seeds per experiment). Three
+observations reinforce the aggregate numbers. (i)~Category difficulty is
+consistent: airplanes are the easiest and tables the hardest on CD across
+nearly every run, matching the intuitive geometric-complexity ordering.
+(ii)~Eikonal regularization compresses the category spread on both CD and NC
+(EXP-02 and EXP-03), i.e.\ its benefit is broadly distributed rather than
+concentrated in one category. (iii)~The NC collapse under Fourier PE
+(EXP-06, EXP-11) is uniform across categories---no category escapes the
+loss---confirming that the PE effect is a property of the decoder's
+gradient field, not of any one category's geometry.
+
+\begin{figure*}[t]
+    \centering
+    \includegraphics[width=\textwidth]{figures/per_category_cd_nc.png}
+    \caption{Per-shape CD and NC distributions broken down by ShapeNet
+    category (airplane / chair / table) across the 10 post-fix runs.
+    Boxes show quartiles; whiskers are $1.5\times$IQR, outliers suppressed.
+    Multi-seed configurations (EXP-04, EXP-06) pool all three seeds.}
+    \label{fig:per_category}
+\end{figure*}
+
 \subsection{Multi-Seed Validation}
 
 We validated our two 10\%-supervision workhorse experiments with 3 seeds each
