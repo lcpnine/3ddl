@@ -296,6 +296,27 @@ reconstructions visually resemble the ground truth.
     \label{fig:qualitative}
 \end{figure}
 
+\begin{figure*}[t]
+    \centering
+    \includegraphics[width=\textwidth]{figures/mesh_comparison.png}
+    \caption{One representative shape per category (rows) reconstructed by
+    every post-fix experiment (columns, seed 42), shown alongside the ground
+    truth. Meshes are extracted by sphere-clipped marching cubes at $128^3$
+    directly from each trained checkpoint; the only processing is
+    unit-sphere normalization for visual consistency. Two qualitative
+    trends match the aggregate metrics: (i)~the vanilla baseline (EXP-01)
+    is slightly softer/blobbier than the Eikonal runs across all three
+    categories, while EXP-02 through EXP-05 produce comparable
+    category-specific geometry even as supervision drops from 100\% to 5\%;
+    (ii)~Fourier PE changes surface character without changing the level
+    set much---EXP-06 ($L=6$) oversmooths thin features (note the
+    disappearing airplane tail and the rounded chair) while EXP-11 ($L=4$)
+    introduces high-frequency ``pebbled'' artifacts on every surface, most
+    visible on the table top. The PE mesh behavior is the qualitative
+    complement to the NC collapse in Table~\ref{tab:results}.}
+    \label{fig:mesh_comparison}
+\end{figure*}
+
 \subsection{Fourier PE: CD Neutral, NC Negative}
 \label{sec:pe_results}
 
