@@ -220,10 +220,12 @@ discussed separately in Section~\ref{sec:preprocess_bug}.
 
 Table~\ref{tab:results} presents the main quantitative results. The vanilla
 DeepSDF baseline (EXP-01, 100\% supervision, no Eikonal) achieves CD = 0.0361
-and NC = 0.729 across all 299 training shapes. Adding Eikonal while keeping
-100\% labels has not yet produced a measurable CD change in our data (EXP-02
-training was ongoing at the report deadline; we discuss the 10\%/50\%/5\%
-Eikonal comparisons below).
+and NC = 0.729 across all 299 training shapes. EXP-02 (100\%
++ Eikonal) finished training to 3\,000 epochs with terminal
+$\mathcal{L}_{\text{sdf}} \approx 0.034$, but its post-fix eval was still
+queued at the report deadline and is therefore marked pending in
+Table~\ref{tab:results}; we draw our label-efficiency claims from the
+10\%/50\%/5\% Eikonal rows below.
 
 \begin{table}[t]
 \centering
@@ -245,7 +247,7 @@ ID & Config & CD ($\downarrow$) & NC ($\uparrow$) \\
 \midrule
 \multicolumn{4}{@{}l}{\textit{Without Positional Encoding}} \\
 01 & 100\%, no Eik & 0.0361 & 0.729 \\
-02 & 100\% + Eik & (training in progress) & -- \\
+02 & 100\% + Eik & (post-fix eval pending) & -- \\
 03 & 50\% + Eik & 0.0288 & 0.748 \\
 04 & 10\% + Eik (3-seed) & \textbf{0.0315}{\scriptsize$\pm$0.0015} & 0.729{\scriptsize$\pm$0.003} \\
 05 & 5\% + Eik & 0.0344 & 0.724 \\
