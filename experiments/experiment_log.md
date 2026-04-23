@@ -33,7 +33,7 @@ dropped due to degenerate geometry that hung signed_distance).
 | ID | Seeds | CD (mean +/- std) | NC (mean +/- std) | IoU@128 | IoU@256 | Status |
 |----|-------|-------------------|--------------------|---------|---------|--------|
 | EXP-01 | 42 | 0.0361 +/- 0.0143 | 0.7288 +/- 0.0667 | skipped | skipped | done (299/299, 0 failures) |
-| EXP-02 | 42 | pending | pending | — | — | eval queued, EXP-02 training in progress |
+| EXP-02 | 42 | 0.0295 +/- 0.0107 | 0.7208 +/- 0.0694 | skipped | skipped | done (299/299, 0 failures) |
 | EXP-03 | 42 | 0.0288 +/- 0.0108 | 0.7480 +/- 0.0739 | skipped | skipped | done (priority, 1500 epochs) |
 | EXP-04 | 42 | 0.0297 +/- 0.0101 | 0.7260 +/- 0.0742 | skipped | skipped | done (priority, 1500 epochs) |
 | EXP-04 | 123 | 0.0322 +/- 0.0120 | 0.7283 +/- 0.0742 | skipped | skipped | done (priority, 1500 epochs) |
