@@ -97,11 +97,13 @@ def parse_results_table(log_path: Path) -> list[ResultRow]:
     return rows
 
 
-def get_row(rows: list[ResultRow], exp_id: str, seed_label: str) -> ResultRow:
+def get_row(rows: list[ResultRow], exp_id: str, seed_label: str) -> ResultRow | None:
     for row in rows:
         if row.exp_id == exp_id and row.seed_label == seed_label:
+            if row.cd_mean is None:
+                return None  # pending/missing values
             return row
-    raise KeyError(f"Missing row for {exp_id} / {seed_label}")
+    return None
 
 
 def setup_style() -> None:
@@ -151,16 +153,22 @@ def generate_label_efficiency(rows: list[ResultRow], outdir: Path) -> Path:
 
     fig, ax = plt.subplots(figsize=(8.6, 5.2))
 
-    def line(series: dict[int, ResultRow], label: str, color: str, marker: str) -> None:
+    def line(series: dict[int, ResultRow | None], label: str, color: str, marker: str) -> None:
+        pos_valid = []
         ys = []
         yerr = []
-        for ratio in ratios:
+        for pos, ratio in zip(positions, ratios):
             row = series.get(ratio)
-            ys.append(np.nan if row is None else row.cd_mean)
-            yerr.append(np.nan if row is None or row.cd_std is None else row.cd_std)
+            if row is None:
+                continue
+            pos_valid.append(pos)
+            ys.append(row.cd_mean)
+            yerr.append(0.0 if row.cd_std is None else row.cd_std)
 
+        if not ys:
+            return
         ax.errorbar(
-            positions,
+            pos_valid,
             ys,
             yerr=yerr,
             label=label,
@@ -181,7 +189,8 @@ def generate_label_efficiency(rows: list[ResultRow], outdir: Path) -> Path:
     ax.set_ylabel("Chamfer Distance (lower is better)")
     ax.set_title("Label Efficiency With and Without Fourier PE")
     # Dynamic y-range so the chart works across broken/fixed preprocessing regimes
-    all_cd = [r.cd_mean for r in [*no_pe.values(), *pe_l4.values(), *pe_l6.values()] if r.cd_mean is not None]
+    all_cd = [r.cd_mean for r in [*no_pe.values(), *pe_l4.values(), *pe_l6.values()]
+              if r is not None and r.cd_mean is not None]
     if all_cd:
         lo, hi = min(all_cd), max(all_cd)
         pad = (hi - lo) * 0.2 or 0.01
@@ -197,31 +206,35 @@ def generate_ablation(rows: list[ResultRow], outdir: Path) -> Path:
     selected = [
         ("EXP-01", "42", "100%\nbase"),
         ("EXP-02", "42", "100%\n+Eik"),
+        ("EXP-03", "42", "50%\n+Eik"),
         ("EXP-04", "3-seed", "10%\n+Eik"),
         ("EXP-05", "42", "5%\n+Eik"),
         ("EXP-06", "3-seed", "10%\n+Eik+PE6"),
-        ("EXP-08", "42", "10%\n+PE6+L2"),
-        ("EXP-10", "42", "100%\n+Eik+PE4"),
         ("EXP-11", "42", "10%\n+Eik+PE4"),
-        ("EXP-12", "42", "5%\n+Eik+PE4"),
     ]
-    rows_sel = [get_row(rows, exp_id, seed) for exp_id, seed, _ in selected]
-    labels = [label for _, _, label in selected]
+    rows_sel_all = [(lbl, get_row(rows, exp_id, seed)) for exp_id, seed, lbl in selected]
+    rows_sel = [(lbl, r) for lbl, r in rows_sel_all if r is not None]
+    labels = [lbl for lbl, _ in rows_sel]
+    rows_only = [r for _, r in rows_sel]
     x = np.arange(len(labels))
     width = 0.38
 
-    cd_vals = [row.cd_mean for row in rows_sel]
-    nc_vals = [row.nc_mean for row in rows_sel]
+    cd_vals = [row.cd_mean for row in rows_only]
+    nc_vals = [row.nc_mean for row in rows_only]
 
     fig, axes = plt.subplots(2, 1, figsize=(10.5, 7.4), sharex=True)
 
-    cd_err = [0.0 if row.cd_std is None else row.cd_std for row in rows_sel]
-    nc_err = [0.0 if row.nc_std is None else row.nc_std for row in rows_sel]
+    cd_err = [0.0 if row.cd_std is None else row.cd_std for row in rows_only]
+    nc_err = [0.0 if row.nc_std is None else row.nc_std for row in rows_only]
 
     axes[0].bar(x, cd_vals, yerr=cd_err, capsize=3, color="#1f6f8b", width=width)
     axes[0].set_ylabel("Chamfer Distance")
     axes[0].set_title("Core Experiment Ablations")
-    axes[0].axhline(get_row(rows, "EXP-02", "42").cd_mean, color="#666", linestyle="--", linewidth=1)
+    baseline = get_row(rows, "EXP-01", "42")
+    if baseline:
+        axes[0].axhline(baseline.cd_mean, color="#666", linestyle="--", linewidth=1,
+                        label=f"EXP-01 baseline = {baseline.cd_mean:.4f}")
+        axes[0].legend(loc="upper right", fontsize=9)
 
     axes[1].bar(x, nc_vals, yerr=nc_err, capsize=3, color="#d98c10", width=width)
     axes[1].set_ylabel("Normal Consistency")
@@ -257,10 +270,13 @@ def generate_pe_frequency(rows: list[ResultRow], outdir: Path) -> Path:
     x = np.arange(len(ratios))
     width = 0.24
 
+    def vals(lst):
+        return [r.cd_mean if r is not None else np.nan for r in lst]
+
     fig, ax = plt.subplots(figsize=(8.8, 5.3))
-    ax.bar(x - width, [r.cd_mean for r in no_pe], width=width, label="No PE", color="#146356")
-    ax.bar(x, [r.cd_mean for r in pe_l4], width=width, label="PE L=4", color="#c84c09")
-    ax.bar(x + width, [r.cd_mean for r in pe_l6], width=width, label="PE L=6", color="#8b1e3f")
+    ax.bar(x - width, vals(no_pe), width=width, label="No PE", color="#146356")
+    ax.bar(x, vals(pe_l4), width=width, label="PE L=4", color="#c84c09")
+    ax.bar(x + width, vals(pe_l6), width=width, label="PE L=6", color="#8b1e3f")
 
     ax.set_xticks(x)
     ax.set_xticklabels(ratios)
@@ -276,15 +292,18 @@ def generate_pe_frequency(rows: list[ResultRow], outdir: Path) -> Path:
 
 def generate_summary(rows: list[ResultRow], outdir: Path) -> Path:
     path = outdir / "figure_manifest.txt"
-    lines = [
-        "Generated from experiments/experiment_log.md",
-        "",
-        "Key values:",
-        f"- Baseline (EXP-01, no Eik, no PE, 100%): CD {get_row(rows, 'EXP-01', '42').cd_mean:.4f}  NC {get_row(rows, 'EXP-01', '42').nc_mean:.4f}",
-        f"- 10% + Eikonal (no PE, 3-seed): CD {get_row(rows, 'EXP-04', '3-seed').cd_mean:.4f}  NC {get_row(rows, 'EXP-04', '3-seed').nc_mean:.4f}",
-        f"- PE L=6 at 10% (3-seed): CD {get_row(rows, 'EXP-06', '3-seed').cd_mean:.4f}  NC {get_row(rows, 'EXP-06', '3-seed').nc_mean:.4f}",
-        f"- PE L=4 at 10%: CD {get_row(rows, 'EXP-11', '42').cd_mean:.4f}  NC {get_row(rows, 'EXP-11', '42').nc_mean:.4f}",
-    ]
+    lines = ["Generated from experiments/experiment_log.md", "", "Key values:"]
+    for exp, seed, label in [
+        ("EXP-01", "42", "Baseline (no Eik, no PE, 100%)"),
+        ("EXP-04", "3-seed", "10% + Eikonal (3-seed)"),
+        ("EXP-06", "3-seed", "PE L=6 at 10% (3-seed)"),
+        ("EXP-11", "42", "PE L=4 at 10%"),
+    ]:
+        r = get_row(rows, exp, seed)
+        if r is not None:
+            lines.append(f"- {label}: CD {r.cd_mean:.4f}  NC {r.nc_mean:.4f}")
+        else:
+            lines.append(f"- {label}: pending")
     path.write_text("\n".join(lines) + "\n")
     return path
 

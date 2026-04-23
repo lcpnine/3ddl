@@ -1,0 +1,2148 @@
+{
+  "experiment": "EXP-01",
+  "seed": 42,
+  "supervision_ratio": 1.0,
+  "use_eikonal": false,
+  "use_pe": false,
+  "pe_levels": null,
+  "diverged": false,
+  "checkpoint": "latest.pt",
+  "shape_order": "train_shapes.json",
+  "eval_split": "train",
+  "sphere_clip": true,
+  "cd_formula": "L1",
+  "tto_n_iters": null,
+  "n_shapes_evaluated": 299,
+  "n_shapes_failed": 0,
+  "mc_resolution": 96,
+  "n_eval_points": 30000,
+  "aggregate": {
+    "n_ok": 299,
+    "chamfer_distance": {
+      "mean": 0.03614586862666726,
+      "std": 0.014333900559800522,
+      "min": 0.016130702487008368,
+      "max": 0.11065967028898724
+    },
+    "normal_consistency": {
+      "mean": 0.7287979840143307,
+      "std": 0.06668187434755782,
+      "min": 0.594607595262605,
+      "max": 0.9149819140342035
+    },
+    "n_total": 299,
+    "success_rate": 1.0
+  },
+  "aggregate_by_split": {
+    "train": {
+      "n_ok": 299,
+      "chamfer_distance": {
+        "mean": 0.03614586862666726,
+        "std": 0.014333900559800522,
+        "min": 0.016130702487008368,
+        "max": 0.11065967028898724
+      },
+      "normal_consistency": {
+        "mean": 0.7287979840143307,
+        "std": 0.06668187434755782,
+        "min": 0.594607595262605,
+        "max": 0.9149819140342035
+      }
+    }
+  },
+  "per_shape": [
+    {
+      "shape": "table_0045",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.04555416945850454,
+      "normal_consistency": 0.6949087485346758
+    },
+    {
+      "shape": "airplane_0073",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.029205272705923317,
+      "normal_consistency": 0.726965201403018
+    },
+    {
+      "shape": "table_0044",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.0396160999978013,
+      "normal_consistency": 0.6595124164587086
+    },
+    {
+      "shape": "table_0020",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.06732850836422255,
+      "normal_consistency": 0.6033005363159312
+    },
+    {
+      "shape": "chair_0021",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.043427956007685495,
+      "normal_consistency": 0.7769325536506096
+    },
+    {
+      "shape": "chair_0032",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.029051619516871907,
+      "normal_consistency": 0.8382985534881537
+    },
+    {
+      "shape": "chair_0016",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.04087660989742298,
+      "normal_consistency": 0.6863365922607338
+    },
+    {
+      "shape": "chair_0039",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.05280899876343022,
+      "normal_consistency": 0.6430508150395374
+    },
+    {
+      "shape": "airplane_0065",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.028869774218168477,
+      "normal_consistency": 0.679025374319628
+    },
+    {
+      "shape": "chair_0089",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.039303624207447825,
+      "normal_consistency": 0.8007418605431676
+    },
+    {
+      "shape": "table_0038",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03952251197904074,
+      "normal_consistency": 0.6666163354818689
+    },
+    {
+      "shape": "chair_0006",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03285487508384614,
+      "normal_consistency": 0.7326766928635807
+    },
+    {
+      "shape": "airplane_0019",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.0227381443404343,
+      "normal_consistency": 0.666524470111444
+    },
+    {
+      "shape": "airplane_0061",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03810696909630692,
+      "normal_consistency": 0.7868495167234847
+    },
+    {
+      "shape": "table_0047",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03346185179208441,
+      "normal_consistency": 0.7290857046326701
+    },
+    {
+      "shape": "airplane_0079",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.02598127500526091,
+      "normal_consistency": 0.7078871918830096
+    },
+    {
+      "shape": "table_0095",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03676295136704007,
+      "normal_consistency": 0.8268569519244037
+    },
+    {
+      "shape": "table_0040",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.05586679400463977,
+      "normal_consistency": 0.6973337327102697
+    },
+    {
+      "shape": "airplane_0001",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.031116278424126433,
+      "normal_consistency": 0.7394794738843777
+    },
+    {
+      "shape": "airplane_0037",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.024958430609371397,
+      "normal_consistency": 0.7410270416610579
+    },
+    {
+      "shape": "airplane_0090",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.0403959824287493,
+      "normal_consistency": 0.7223112791381276
+    },
+    {
+      "shape": "airplane_0024",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.023321260274457793,
+      "normal_consistency": 0.7187900291984132
+    },
+    {
+      "shape": "airplane_0097",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.042122232930038445,
+      "normal_consistency": 0.7128577744394086
+    },
+    {
+      "shape": "chair_0055",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.036984777180783926,
+      "normal_consistency": 0.8273496419897773
+    },
+    {
+      "shape": "table_0023",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03008662152560571,
+      "normal_consistency": 0.7989289987064864
+    },
+    {
+      "shape": "table_0000",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.023548050202716185,
+      "normal_consistency": 0.8028348450687216
+    },
+    {
+      "shape": "airplane_0005",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.024282675018819574,
+      "normal_consistency": 0.7254331082027328
+    },
+    {
+      "shape": "table_0081",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.025586474726315832,
+      "normal_consistency": 0.8515221754146389
+    },
+    {
+      "shape": "chair_0008",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.018371351407694615,
+      "normal_consistency": 0.8649231152035701
+    },
+    {
+      "shape": "chair_0088",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.061673361844107905,
+      "normal_consistency": 0.7078841217230467
+    },
+    {
+      "shape": "table_0046",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.0382052207356763,
+      "normal_consistency": 0.8634842621391363
+    },
+    {
+      "shape": "airplane_0032",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03485743971311851,
+      "normal_consistency": 0.6831895267739714
+    },
+    {
+      "shape": "airplane_0048",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.022432968203894385,
+      "normal_consistency": 0.7132051479506026
+    },
+    {
+      "shape": "table_0068",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.032921869948168314,
+      "normal_consistency": 0.6756658428064924
+    },
+    {
+      "shape": "airplane_0038",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.037903073836756465,
+      "normal_consistency": 0.6883201352577032
+    },
+    {
+      "shape": "chair_0000",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.04697598207831439,
+      "normal_consistency": 0.7876792117234858
+    },
+    {
+      "shape": "airplane_0092",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03982374231614248,
+      "normal_consistency": 0.6148974409318582
+    },
+    {
+      "shape": "table_0052",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.04099508561996988,
+      "normal_consistency": 0.8253582104619547
+    },
+    {
+      "shape": "table_0049",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.025552800606478198,
+      "normal_consistency": 0.7769677859519116
+    },
+    {
+      "shape": "table_0076",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.02612108020352058,
+      "normal_consistency": 0.7617318078471358
+    },
+    {
+      "shape": "chair_0045",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.036405781599486466,
+      "normal_consistency": 0.7587487796804784
+    },
+    {
+      "shape": "table_0048",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.018401627776467425,
+      "normal_consistency": 0.7536190214164072
+    },
+    {
+      "shape": "table_0091",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.04277288157319254,
+      "normal_consistency": 0.662590533696774
+    },
+    {
+      "shape": "table_0061",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.02227214869304222,
+      "normal_consistency": 0.7798168470290027
+    },
+    {
+      "shape": "table_0028",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03773289168411903,
+      "normal_consistency": 0.7050593685361891
+    },
+    {
+      "shape": "table_0070",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.06015802961372256,
+      "normal_consistency": 0.6992415374790133
+    },
+    {
+      "shape": "airplane_0087",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.02799166793513683,
+      "normal_consistency": 0.7217389013809956
+    },
+    {
+      "shape": "airplane_0006",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.02901998499995122,
+      "normal_consistency": 0.7349035641830804
+    },
+    {
+      "shape": "chair_0067",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.036001316996266894,
+      "normal_consistency": 0.8742598366325127
+    },
+    {
+      "shape": "airplane_0026",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.024080025187968014,
+      "normal_consistency": 0.6990902578106363
+    },
+    {
+      "shape": "table_0026",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.030107851266894102,
+      "normal_consistency": 0.6743848950002065
+    },
+    {
+      "shape": "chair_0034",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.048387069889589136,
+      "normal_consistency": 0.7637200480144947
+    },
+    {
+      "shape": "chair_0040",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.02163471224629564,
+      "normal_consistency": 0.8223565985021853
+    },
+    {
+      "shape": "chair_0054",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.046375428477810274,
+      "normal_consistency": 0.7615340068379178
+    },
+    {
+      "shape": "airplane_0055",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.047589187443606726,
+      "normal_consistency": 0.7951214041405306
+    },
+    {
+      "shape": "chair_0092",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.034133785427618274,
+      "normal_consistency": 0.8286728484883794
+    },
+    {
+      "shape": "table_0069",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.05539414375141145,
+      "normal_consistency": 0.7291549464820294
+    },
+    {
+      "shape": "chair_0024",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.04034090443670825,
+      "normal_consistency": 0.8472828425186311
+    },
+    {
+      "shape": "chair_0022",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.11065967028898724,
+      "normal_consistency": 0.6795592832576193
+    },
+    {
+      "shape": "airplane_0034",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.02835977542433029,
+      "normal_consistency": 0.7361935440912388
+    },
+    {
+      "shape": "table_0083",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03203319931604143,
+      "normal_consistency": 0.8028999313952597
+    },
+    {
+      "shape": "table_0075",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.04170663995247294,
+      "normal_consistency": 0.8252449136311545
+    },
+    {
+      "shape": "chair_0074",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.039687619060579285,
+      "normal_consistency": 0.6714760159211097
+    },
+    {
+      "shape": "chair_0071",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.0398643258902312,
+      "normal_consistency": 0.688137717835548
+    },
+    {
+      "shape": "table_0007",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.02219438132051282,
+      "normal_consistency": 0.70499636077392
+    },
+    {
+      "shape": "table_0034",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.02644113986783513,
+      "normal_consistency": 0.7187376318371238
+    },
+    {
+      "shape": "airplane_0042",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03058468000895699,
+      "normal_consistency": 0.6781888685587413
+    },
+    {
+      "shape": "airplane_0004",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03451863246594197,
+      "normal_consistency": 0.6575695906261779
+    },
+    {
+      "shape": "table_0071",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.02492433303987956,
+      "normal_consistency": 0.7990576490524638
+    },
+    {
+      "shape": "table_0041",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.027172389314516435,
+      "normal_consistency": 0.6795887500680585
+    },
+    {
+      "shape": "chair_0085",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03616659312000553,
+      "normal_consistency": 0.7117808233617509
+    },
+    {
+      "shape": "airplane_0009",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.02229555608824928,
+      "normal_consistency": 0.7478211039734491
+    },
+    {
+      "shape": "chair_0035",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.04201695803444765,
+      "normal_consistency": 0.7604392593682601
+    },
+    {
+      "shape": "chair_0091",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03527313476746066,
+      "normal_consistency": 0.7846854673150886
+    },
+    {
+      "shape": "table_0056",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.050358105772905774,
+      "normal_consistency": 0.6855864482625463
+    },
+    {
+      "shape": "chair_0001",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.032169810055457146,
+      "normal_consistency": 0.7507679483399438
+    },
+    {
+      "shape": "chair_0093",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.104376293605585,
+      "normal_consistency": 0.7791974917265283
+    },
+    {
+      "shape": "chair_0069",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.021046479549814312,
+      "normal_consistency": 0.8619501539103978
+    },
+    {
+      "shape": "table_0074",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.04565322076820815,
+      "normal_consistency": 0.6147934475038751
+    },
+    {
+      "shape": "chair_0062",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.04673132258653109,
+      "normal_consistency": 0.7198919654016276
+    },
+    {
+      "shape": "chair_0047",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.035161582056678756,
+      "normal_consistency": 0.7289728116654469
+    },
+    {
+      "shape": "airplane_0031",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.034779697487239455,
+      "normal_consistency": 0.6986247029454401
+    },
+    {
+      "shape": "table_0088",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03252446503960815,
+      "normal_consistency": 0.7828209817683172
+    },
+    {
+      "shape": "table_0099",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03450930379387955,
+      "normal_consistency": 0.6510858106725703
+    },
+    {
+      "shape": "airplane_0066",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.031591086362582524,
+      "normal_consistency": 0.6662152865796821
+    },
+    {
+      "shape": "table_0025",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.044789925206981815,
+      "normal_consistency": 0.8598842776568153
+    },
+    {
+      "shape": "table_0067",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.027807364671871962,
+      "normal_consistency": 0.8462176573587143
+    },
+    {
+      "shape": "table_0004",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.02928198358823686,
+      "normal_consistency": 0.7704971029382812
+    },
+    {
+      "shape": "airplane_0086",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.025603977005083857,
+      "normal_consistency": 0.7006118519279417
+    },
+    {
+      "shape": "airplane_0051",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03223755888643576,
+      "normal_consistency": 0.6914859888523983
+    },
+    {
+      "shape": "table_0039",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.02107845484487321,
+      "normal_consistency": 0.7483545401682282
+    },
+    {
+      "shape": "table_0060",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.06874002866213033,
+      "normal_consistency": 0.6088012606931812
+    },
+    {
+      "shape": "airplane_0089",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.02886783054520108,
+      "normal_consistency": 0.7752285859790289
+    },
+    {
+      "shape": "table_0010",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03586048463607865,
+      "normal_consistency": 0.7668037909907627
+    },
+    {
+      "shape": "table_0016",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.032180966821447714,
+      "normal_consistency": 0.7696213736362797
+    },
+    {
+      "shape": "chair_0090",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.05604512813106161,
+      "normal_consistency": 0.6541340303292416
+    },
+    {
+      "shape": "airplane_0078",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.027566221872987594,
+      "normal_consistency": 0.6203003766930132
+    },
+    {
+      "shape": "table_0097",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.024693570553812813,
+      "normal_consistency": 0.7254886157858939
+    },
+    {
+      "shape": "airplane_0033",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.030885996987949943,
+      "normal_consistency": 0.6450903467165354
+    },
+    {
+      "shape": "airplane_0021",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.027880344944498092,
+      "normal_consistency": 0.7314472092171764
+    },
+    {
+      "shape": "airplane_0070",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.025645036621047213,
+      "normal_consistency": 0.6898834291262628
+    },
+    {
+      "shape": "airplane_0060",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.027645950279592213,
+      "normal_consistency": 0.7212824116654571
+    },
+    {
+      "shape": "airplane_0085",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.04148500485962683,
+      "normal_consistency": 0.6159756801216701
+    },
+    {
+      "shape": "table_0005",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03349367545163415,
+      "normal_consistency": 0.6568383283920991
+    },
+    {
+      "shape": "chair_0060",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.02987503739761771,
+      "normal_consistency": 0.6679204776697502
+    },
+    {
+      "shape": "table_0053",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03331291682897493,
+      "normal_consistency": 0.821068502302255
+    },
+    {
+      "shape": "chair_0049",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.04836069055662245,
+      "normal_consistency": 0.6643264413471716
+    },
+    {
+      "shape": "chair_0058",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03786821012050205,
+      "normal_consistency": 0.761211620129902
+    },
+    {
+      "shape": "table_0002",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.037586376437336304,
+      "normal_consistency": 0.6572718076627891
+    },
+    {
+      "shape": "chair_0005",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.044424519214364196,
+      "normal_consistency": 0.6197621664331594
+    },
+    {
+      "shape": "table_0031",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.019375052211169086,
+      "normal_consistency": 0.8397343611080875
+    },
+    {
+      "shape": "table_0078",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03275588877650068,
+      "normal_consistency": 0.8206545268167599
+    },
+    {
+      "shape": "chair_0014",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.02966886861026794,
+      "normal_consistency": 0.6692295042726601
+    },
+    {
+      "shape": "airplane_0010",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.02716714706238976,
+      "normal_consistency": 0.7233706233448594
+    },
+    {
+      "shape": "airplane_0072",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.025441436996644966,
+      "normal_consistency": 0.7235251259997878
+    },
+    {
+      "shape": "chair_0023",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.04787261578361716,
+      "normal_consistency": 0.7720895846727241
+    },
+    {
+      "shape": "chair_0025",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03892943970240119,
+      "normal_consistency": 0.599995549363442
+    },
+    {
+      "shape": "airplane_0007",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.04271841573884272,
+      "normal_consistency": 0.6734548932460868
+    },
+    {
+      "shape": "airplane_0030",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.026387158946902786,
+      "normal_consistency": 0.6328550320370243
+    },
+    {
+      "shape": "chair_0033",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.09066544601402934,
+      "normal_consistency": 0.6216813163438779
+    },
+    {
+      "shape": "chair_0004",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.030130403791056276,
+      "normal_consistency": 0.8177085127130211
+    },
+    {
+      "shape": "chair_0007",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03294951180812017,
+      "normal_consistency": 0.7737625253435976
+    },
+    {
+      "shape": "table_0079",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03406237239189067,
+      "normal_consistency": 0.7368628121501417
+    },
+    {
+      "shape": "airplane_0046",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.02103447684737167,
+      "normal_consistency": 0.7053682809466156
+    },
+    {
+      "shape": "table_0012",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.01663112716598892,
+      "normal_consistency": 0.7788945255365531
+    },
+    {
+      "shape": "table_0001",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.0217719427985616,
+      "normal_consistency": 0.743781351454078
+    },
+    {
+      "shape": "chair_0052",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03539979440335067,
+      "normal_consistency": 0.761476504765265
+    },
+    {
+      "shape": "table_0096",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.02891654798308583,
+      "normal_consistency": 0.8668181769793276
+    },
+    {
+      "shape": "airplane_0083",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03063191481530314,
+      "normal_consistency": 0.6923209022773722
+    },
+    {
+      "shape": "chair_0057",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.04354222363795158,
+      "normal_consistency": 0.6752791963404471
+    },
+    {
+      "shape": "table_0055",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.031792473718436284,
+      "normal_consistency": 0.7945605151734566
+    },
+    {
+      "shape": "airplane_0096",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.025345067309478383,
+      "normal_consistency": 0.7321926957875192
+    },
+    {
+      "shape": "chair_0086",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.06359355164612074,
+      "normal_consistency": 0.7018373758069587
+    },
+    {
+      "shape": "airplane_0050",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.029912721968821596,
+      "normal_consistency": 0.7104982764260239
+    },
+    {
+      "shape": "table_0037",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.0418777302343471,
+      "normal_consistency": 0.7866817011928319
+    },
+    {
+      "shape": "airplane_0076",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.019838617134048865,
+      "normal_consistency": 0.7181366076275032
+    },
+    {
+      "shape": "airplane_0027",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.050254147634269025,
+      "normal_consistency": 0.594607595262605
+    },
+    {
+      "shape": "chair_0030",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.04439529113199078,
+      "normal_consistency": 0.752628802133197
+    },
+    {
+      "shape": "airplane_0045",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.028431045802738114,
+      "normal_consistency": 0.6802151347669683
+    },
+    {
+      "shape": "chair_0029",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.05535785073101496,
+      "normal_consistency": 0.7774908088632357
+    },
+    {
+      "shape": "chair_0078",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.05053052620007649,
+      "normal_consistency": 0.7242546432399002
+    },
+    {
+      "shape": "airplane_0000",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.029930622794552046,
+      "normal_consistency": 0.7359458969251106
+    },
+    {
+      "shape": "table_0033",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.026539948745106685,
+      "normal_consistency": 0.7384769731876301
+    },
+    {
+      "shape": "table_0018",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.02979585519624428,
+      "normal_consistency": 0.746942840689664
+    },
+    {
+      "shape": "table_0086",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03895340212596705,
+      "normal_consistency": 0.6688952129365029
+    },
+    {
+      "shape": "airplane_0075",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.016457431798254925,
+      "normal_consistency": 0.7468307024355636
+    },
+    {
+      "shape": "table_0051",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.0395554307687965,
+      "normal_consistency": 0.6199584933238655
+    },
+    {
+      "shape": "airplane_0088",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.028722869126327304,
+      "normal_consistency": 0.7240056098541204
+    },
+    {
+      "shape": "chair_0096",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.035463848002722745,
+      "normal_consistency": 0.6745038048867379
+    },
+    {
+      "shape": "chair_0079",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.05222639090822579,
+      "normal_consistency": 0.6414476082095693
+    },
+    {
+      "shape": "airplane_0029",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.0189312285563862,
+      "normal_consistency": 0.6686476891754332
+    },
+    {
+      "shape": "airplane_0002",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.02720410051777547,
+      "normal_consistency": 0.7280375469305967
+    },
+    {
+      "shape": "chair_0042",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.09091467310740375,
+      "normal_consistency": 0.782820914398538
+    },
+    {
+      "shape": "airplane_0064",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.029644894200605298,
+      "normal_consistency": 0.7009281135803719
+    },
+    {
+      "shape": "table_0062",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03415266802544056,
+      "normal_consistency": 0.7013567029425658
+    },
+    {
+      "shape": "table_0085",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.021356156788214585,
+      "normal_consistency": 0.8403182344499502
+    },
+    {
+      "shape": "table_0009",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03796792961489798,
+      "normal_consistency": 0.7425386372641368
+    },
+    {
+      "shape": "table_0011",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.030251808975316333,
+      "normal_consistency": 0.7138503123484847
+    },
+    {
+      "shape": "airplane_0099",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.026441664697770973,
+      "normal_consistency": 0.7134389696229109
+    },
+    {
+      "shape": "table_0066",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.022756672743666363,
+      "normal_consistency": 0.8558544137183969
+    },
+    {
+      "shape": "chair_0053",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.025527343738975992,
+      "normal_consistency": 0.79770223983957
+    },
+    {
+      "shape": "chair_0009",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03898550575860637,
+      "normal_consistency": 0.6935515839899629
+    },
+    {
+      "shape": "table_0057",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.025340411175867966,
+      "normal_consistency": 0.7983023439842823
+    },
+    {
+      "shape": "table_0054",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.020393894096208422,
+      "normal_consistency": 0.8873160243119084
+    },
+    {
+      "shape": "airplane_0039",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.01956658567359222,
+      "normal_consistency": 0.7045577892995929
+    },
+    {
+      "shape": "airplane_0028",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.022067901895907266,
+      "normal_consistency": 0.7229325679925694
+    },
+    {
+      "shape": "table_0098",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.036940866648586285,
+      "normal_consistency": 0.7334356424547255
+    },
+    {
+      "shape": "airplane_0023",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.021476221759837613,
+      "normal_consistency": 0.7536858277628692
+    },
+    {
+      "shape": "chair_0027",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.04540946751950961,
+      "normal_consistency": 0.6570160587187854
+    },
+    {
+      "shape": "chair_0031",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.041343188582453366,
+      "normal_consistency": 0.6834671194193379
+    },
+    {
+      "shape": "chair_0082",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03365286325198377,
+      "normal_consistency": 0.6492276633007268
+    },
+    {
+      "shape": "table_0006",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03206693094710955,
+      "normal_consistency": 0.9149819140342035
+    },
+    {
+      "shape": "table_0050",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03702186906096661,
+      "normal_consistency": 0.6082129421215486
+    },
+    {
+      "shape": "table_0003",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03288275300694186,
+      "normal_consistency": 0.772776879028425
+    },
+    {
+      "shape": "table_0008",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.04191191266285367,
+      "normal_consistency": 0.6313508194136239
+    },
+    {
+      "shape": "chair_0010",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.05902847911315354,
+      "normal_consistency": 0.6192072162259497
+    },
+    {
+      "shape": "chair_0050",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.06299610268137011,
+      "normal_consistency": 0.6327252616011486
+    },
+    {
+      "shape": "chair_0083",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.037077452371225526,
+      "normal_consistency": 0.6873003639091338
+    },
+    {
+      "shape": "chair_0038",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.04698862333277389,
+      "normal_consistency": 0.737127565915528
+    },
+    {
+      "shape": "chair_0044",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.05307851081130249,
+      "normal_consistency": 0.7190958067983024
+    },
+    {
+      "shape": "table_0084",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.0435793157987969,
+      "normal_consistency": 0.7215810829383265
+    },
+    {
+      "shape": "airplane_0035",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.023023778459258074,
+      "normal_consistency": 0.6986577119396172
+    },
+    {
+      "shape": "airplane_0067",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.018301348379306134,
+      "normal_consistency": 0.7334762173524423
+    },
+    {
+      "shape": "airplane_0036",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.026164059015685616,
+      "normal_consistency": 0.6947883017871764
+    },
+    {
+      "shape": "chair_0018",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.02912348310192807,
+      "normal_consistency": 0.8372275528180602
+    },
+    {
+      "shape": "chair_0065",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.036500615448735986,
+      "normal_consistency": 0.7780040648559312
+    },
+    {
+      "shape": "table_0082",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.036906990707933345,
+      "normal_consistency": 0.7076429331410163
+    },
+    {
+      "shape": "chair_0028",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03582804368296874,
+      "normal_consistency": 0.7141376753441947
+    },
+    {
+      "shape": "chair_0068",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03524049418557676,
+      "normal_consistency": 0.8326489627044387
+    },
+    {
+      "shape": "table_0058",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.026168912434385565,
+      "normal_consistency": 0.655742193001417
+    },
+    {
+      "shape": "table_0042",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03644754036241514,
+      "normal_consistency": 0.6830932250501878
+    },
+    {
+      "shape": "table_0064",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.033058980640360634,
+      "normal_consistency": 0.7906513839803632
+    },
+    {
+      "shape": "chair_0046",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.023350685384349035,
+      "normal_consistency": 0.7916683715221334
+    },
+    {
+      "shape": "airplane_0054",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.02335112141122058,
+      "normal_consistency": 0.7010842665378695
+    },
+    {
+      "shape": "table_0089",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03919503677330993,
+      "normal_consistency": 0.8645393247255165
+    },
+    {
+      "shape": "table_0024",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.02296370152495908,
+      "normal_consistency": 0.7888422373404084
+    },
+    {
+      "shape": "chair_0003",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.07173776357753726,
+      "normal_consistency": 0.7896312067568838
+    },
+    {
+      "shape": "airplane_0081",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.01994070371399822,
+      "normal_consistency": 0.7053790137424443
+    },
+    {
+      "shape": "airplane_0008",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.0354609412475055,
+      "normal_consistency": 0.6437563208586615
+    },
+    {
+      "shape": "table_0043",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.04136457598798116,
+      "normal_consistency": 0.7805943208493817
+    },
+    {
+      "shape": "airplane_0014",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.025149563058172328,
+      "normal_consistency": 0.7200083386275385
+    },
+    {
+      "shape": "chair_0099",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.04860905043753326,
+      "normal_consistency": 0.6388197400692988
+    },
+    {
+      "shape": "chair_0097",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.050761588116027975,
+      "normal_consistency": 0.720164720255437
+    },
+    {
+      "shape": "airplane_0084",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.029048289323791082,
+      "normal_consistency": 0.7473205844608393
+    },
+    {
+      "shape": "chair_0076",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.04175098381351362,
+      "normal_consistency": 0.6740586629448965
+    },
+    {
+      "shape": "airplane_0056",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03639825195552819,
+      "normal_consistency": 0.6247388121748894
+    },
+    {
+      "shape": "table_0072",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03231332706194689,
+      "normal_consistency": 0.739307194638587
+    },
+    {
+      "shape": "table_0063",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.023627653894052577,
+      "normal_consistency": 0.8574692616669529
+    },
+    {
+      "shape": "chair_0064",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.042277726991030884,
+      "normal_consistency": 0.7700884340564597
+    },
+    {
+      "shape": "airplane_0069",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.025161957075169744,
+      "normal_consistency": 0.6566507368019546
+    },
+    {
+      "shape": "table_0035",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03024448829617807,
+      "normal_consistency": 0.7372400304180379
+    },
+    {
+      "shape": "chair_0019",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.059992584262074176,
+      "normal_consistency": 0.6967122029115473
+    },
+    {
+      "shape": "table_0029",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.024500509319226343,
+      "normal_consistency": 0.72778918123114
+    },
+    {
+      "shape": "airplane_0062",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.022452797326227753,
+      "normal_consistency": 0.7238066332063163
+    },
+    {
+      "shape": "chair_0087",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03539251443558585,
+      "normal_consistency": 0.7694709881348257
+    },
+    {
+      "shape": "chair_0037",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03284986833625162,
+      "normal_consistency": 0.671478837130409
+    },
+    {
+      "shape": "airplane_0043",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03232019155440756,
+      "normal_consistency": 0.6559109546857865
+    },
+    {
+      "shape": "table_0032",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03680306571291176,
+      "normal_consistency": 0.8755289305488606
+    },
+    {
+      "shape": "chair_0056",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.04490426840928689,
+      "normal_consistency": 0.6968351314796064
+    },
+    {
+      "shape": "airplane_0018",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.0384813450984585,
+      "normal_consistency": 0.8245934192623328
+    },
+    {
+      "shape": "chair_0066",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.04372755917371983,
+      "normal_consistency": 0.6736449290595823
+    },
+    {
+      "shape": "table_0073",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.04386565292637683,
+      "normal_consistency": 0.6921765075570224
+    },
+    {
+      "shape": "chair_0080",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03709370300689237,
+      "normal_consistency": 0.8030192337332586
+    },
+    {
+      "shape": "airplane_0068",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.0299820304755185,
+      "normal_consistency": 0.7116102855227853
+    },
+    {
+      "shape": "chair_0072",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.059177506713942236,
+      "normal_consistency": 0.6246376217330878
+    },
+    {
+      "shape": "airplane_0053",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.028302887551672096,
+      "normal_consistency": 0.6879516436433366
+    },
+    {
+      "shape": "airplane_0091",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.02601895935485342,
+      "normal_consistency": 0.675971713320653
+    },
+    {
+      "shape": "airplane_0095",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.0210355883050316,
+      "normal_consistency": 0.6943983146209102
+    },
+    {
+      "shape": "airplane_0041",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.016130702487008368,
+      "normal_consistency": 0.7755650596869931
+    },
+    {
+      "shape": "airplane_0094",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.026355478844501394,
+      "normal_consistency": 0.7649633923844795
+    },
+    {
+      "shape": "table_0014",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.026191463886730538,
+      "normal_consistency": 0.7290130145683088
+    },
+    {
+      "shape": "chair_0063",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.029846288603122557,
+      "normal_consistency": 0.7783348313199606
+    },
+    {
+      "shape": "chair_0017",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.030650364195082276,
+      "normal_consistency": 0.7971027435293474
+    },
+    {
+      "shape": "table_0094",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.041035290849752784,
+      "normal_consistency": 0.7779953488672364
+    },
+    {
+      "shape": "airplane_0098",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.027877565823759,
+      "normal_consistency": 0.6562632164247494
+    },
+    {
+      "shape": "airplane_0025",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.029146160088635138,
+      "normal_consistency": 0.8220964608390559
+    },
+    {
+      "shape": "table_0022",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03401746987183187,
+      "normal_consistency": 0.7888281395160275
+    },
+    {
+      "shape": "airplane_0059",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.0328918970771444,
+      "normal_consistency": 0.6677674908344219
+    },
+    {
+      "shape": "table_0019",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03634126138928017,
+      "normal_consistency": 0.6627798494105028
+    },
+    {
+      "shape": "airplane_0020",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.027791992516228874,
+      "normal_consistency": 0.6398451798166597
+    },
+    {
+      "shape": "airplane_0074",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03277322230297396,
+      "normal_consistency": 0.7270458587580848
+    },
+    {
+      "shape": "chair_0098",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.038206900794756304,
+      "normal_consistency": 0.7901120294908195
+    },
+    {
+      "shape": "airplane_0058",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.02079369180729214,
+      "normal_consistency": 0.7187040082024946
+    },
+    {
+      "shape": "chair_0070",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.0872131415230726,
+      "normal_consistency": 0.8390568866916583
+    },
+    {
+      "shape": "airplane_0011",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03299013471327581,
+      "normal_consistency": 0.6980277362293685
+    },
+    {
+      "shape": "airplane_0017",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.0345531580837248,
+      "normal_consistency": 0.7124016532653612
+    },
+    {
+      "shape": "chair_0081",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.0363704913812568,
+      "normal_consistency": 0.8034612707567409
+    },
+    {
+      "shape": "table_0065",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.0214076347816764,
+      "normal_consistency": 0.7855475984327897
+    },
+    {
+      "shape": "chair_0048",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.04633300757129595,
+      "normal_consistency": 0.7105509266410662
+    },
+    {
+      "shape": "airplane_0093",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.046683360457155376,
+      "normal_consistency": 0.7825855120332096
+    },
+    {
+      "shape": "table_0021",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.020279655070114828,
+      "normal_consistency": 0.8743861060785868
+    },
+    {
+      "shape": "table_0027",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03861491604530623,
+      "normal_consistency": 0.6916120267231205
+    },
+    {
+      "shape": "chair_0059",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.08334043251054175,
+      "normal_consistency": 0.6963135097070432
+    },
+    {
+      "shape": "chair_0061",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.037367403967733706,
+      "normal_consistency": 0.7668760141445001
+    },
+    {
+      "shape": "table_0013",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.047339483788676,
+      "normal_consistency": 0.6119216594817072
+    },
+    {
+      "shape": "chair_0051",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.0366940362725084,
+      "normal_consistency": 0.6118517853822691
+    },
+    {
+      "shape": "airplane_0040",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.026882243899235644,
+      "normal_consistency": 0.8075444937629916
+    },
+    {
+      "shape": "chair_0094",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.024075948714450856,
+      "normal_consistency": 0.8404800584503741
+    },
+    {
+      "shape": "airplane_0063",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.029801088315741575,
+      "normal_consistency": 0.6573285972172823
+    },
+    {
+      "shape": "table_0036",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.029025630201658662,
+      "normal_consistency": 0.7273159069667705
+    },
+    {
+      "shape": "airplane_0022",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.048833435551381255,
+      "normal_consistency": 0.6191311490916788
+    },
+    {
+      "shape": "chair_0036",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03224032156654559,
+      "normal_consistency": 0.700097190571352
+    },
+    {
+      "shape": "chair_0077",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.04919698116421359,
+      "normal_consistency": 0.7668631650562565
+    },
+    {
+      "shape": "chair_0084",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.058146321256690246,
+      "normal_consistency": 0.6752326425562434
+    },
+    {
+      "shape": "airplane_0049",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.026827373954616637,
+      "normal_consistency": 0.7857795131518371
+    },
+    {
+      "shape": "chair_0095",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.06042474257425939,
+      "normal_consistency": 0.6799799529824202
+    },
+    {
+      "shape": "table_0087",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.02817345409119671,
+      "normal_consistency": 0.7372896141984652
+    },
+    {
+      "shape": "table_0093",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.017483327527052592,
+      "normal_consistency": 0.8354215675861265
+    },
+    {
+      "shape": "chair_0073",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03804845219498702,
+      "normal_consistency": 0.6613142728879524
+    },
+    {
+      "shape": "chair_0011",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03486504377438471,
+      "normal_consistency": 0.8173885275033341
+    },
+    {
+      "shape": "airplane_0080",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.030257606447745992,
+      "normal_consistency": 0.6539830241770668
+    },
+    {
+      "shape": "table_0077",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.02996233240880007,
+      "normal_consistency": 0.6399515077124227
+    },
+    {
+      "shape": "chair_0075",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.028382296075973517,
+      "normal_consistency": 0.6591653051313504
+    },
+    {
+      "shape": "table_0090",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.0459264287917789,
+      "normal_consistency": 0.7621313113918557
+    },
+    {
+      "shape": "airplane_0082",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.02114683119157084,
+      "normal_consistency": 0.6942343252244356
+    },
+    {
+      "shape": "airplane_0003",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.028098500381632675,
+      "normal_consistency": 0.6913750949656016
+    },
+    {
+      "shape": "chair_0043",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.04863351016419277,
+      "normal_consistency": 0.6503609246963766
+    },
+    {
+      "shape": "table_0030",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.033429654580931376,
+      "normal_consistency": 0.8032136873403998
+    },
+    {
+      "shape": "chair_0013",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.019495385187269364,
+      "normal_consistency": 0.7751787660700828
+    },
+    {
+      "shape": "table_0015",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.02875943683446663,
+      "normal_consistency": 0.830518565778541
+    },
+    {
+      "shape": "table_0092",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.09702338616200001,
+      "normal_consistency": 0.7427435211489744
+    },
+    {
+      "shape": "chair_0002",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.04018656735744875,
+      "normal_consistency": 0.7188444313344803
+    },
+    {
+      "shape": "airplane_0013",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03174094410356198,
+      "normal_consistency": 0.7234436014306435
+    },
+    {
+      "shape": "table_0059",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03261386918100378,
+      "normal_consistency": 0.7410386810759946
+    },
+    {
+      "shape": "chair_0020",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.05264736745384384,
+      "normal_consistency": 0.7239372858832934
+    },
+    {
+      "shape": "chair_0012",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.03290992988260605,
+      "normal_consistency": 0.8733623304085727
+    },
+    {
+      "shape": "airplane_0047",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.030568289372511957,
+      "normal_consistency": 0.7291149639921821
+    },
+    {
+      "shape": "airplane_0015",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.022156366046368968,
+      "normal_consistency": 0.7747277369511235
+    },
+    {
+      "shape": "airplane_0016",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.026080067968099776,
+      "normal_consistency": 0.6635484288878266
+    },
+    {
+      "shape": "table_0017",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.07393197399277399,
+      "normal_consistency": 0.6359998414208025
+    },
+    {
+      "shape": "airplane_0044",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.02078383688196955,
+      "normal_consistency": 0.7186995359828331
+    },
+    {
+      "shape": "table_0080",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.02900276534669374,
+      "normal_consistency": 0.647883958467821
+    },
+    {
+      "shape": "airplane_0052",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.019598243768909986,
+      "normal_consistency": 0.763176343891289
+    },
+    {
+      "shape": "airplane_0071",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.035021729124956366,
+      "normal_consistency": 0.6335268810857747
+    },
+    {
+      "shape": "chair_0015",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.08016051534253552,
+      "normal_consistency": 0.6686698714926812
+    },
+    {
+      "shape": "chair_0026",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.045984433987038435,
+      "normal_consistency": 0.7350625565866965
+    },
+    {
+      "shape": "chair_0041",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.05796532385310923,
+      "normal_consistency": 0.6855830739945579
+    },
+    {
+      "shape": "airplane_0012",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.04231001183809942,
+      "normal_consistency": 0.6693186193652775
+    },
+    {
+      "shape": "airplane_0057",
+      "split": "train",
+      "status": "ok",
+      "chamfer_distance": 0.026826995746327045,
+      "normal_consistency": 0.6405056067728888
+    }
+  ]
+}

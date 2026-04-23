@@ -21,26 +21,31 @@ Single source of truth for all experiment results.
 
 ## Results
 
+All values below are **post-fix** — retrained on regenerated data (80% near-surface
+multi-scale offsets + 20% far-field signed-distance samples), evaluated with the
+fixed evaluator (sphere-clip, L1 Chamfer, independent mesh-export). The old
+broken-preprocessing numbers are archived in `results_legacy_*.json`.
+
+Experiments marked `priority` were retrained at `epochs=1500`; EXP-01 and EXP-02
+kept their original `epochs=3000` budget. 299 shapes trained (airplane_0077
+dropped due to degenerate geometry that hung signed_distance).
+
 | ID | Seeds | CD (mean +/- std) | NC (mean +/- std) | IoU@128 | IoU@256 | Status |
 |----|-------|-------------------|--------------------|---------|---------|--------|
-| EXP-01 | 42 | 0.0593 +/- 0.0464 | 0.5522 +/- 0.1057 | skipped | skipped | done (ShapeNet baseline) |
-| EXP-02 | 42 | 0.0543 +/- 0.0416 | 0.5920 +/- 0.1321 | skipped | skipped | done (261/300 shapes, 39 failures) |
-| EXP-03 | 42 | 0.0534 +/- 0.0400 | 0.5924 +/- 0.1334 | skipped | skipped | done (259/300 shapes, 41 failures) |
-| EXP-04 | 42 | 0.0609 +/- 0.0469 | 0.5805 +/- 0.1406 | skipped | skipped | done (263/300 shapes, 37 failures) |
-| EXP-04 | 123 | 0.0443 +/- 0.0228 | 0.6202 +/- 0.0982 | skipped | skipped | done (300/300 shapes, 0 failures) |
-| EXP-04 | 456 | 0.0436 +/- 0.0214 | 0.5954 +/- 0.1156 | skipped | skipped | done (300/300 shapes, 0 failures) |
-| EXP-04 | **3-seed** | **0.0496 +/- 0.0098** | **0.5987 +/- 0.0201** | — | — | **CV(CD)=0.197 < 0.2 ✓** |
-| EXP-05 | 42 | 0.0509 +/- 0.0385 | 0.5766 +/- 0.1271 | skipped | skipped | done (295/300 shapes, 5 failures) |
-| EXP-06 | 42 | 0.1443 +/- 0.0448 | 0.5055 +/- 0.0109 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator) |
-| EXP-06 | 123 | 0.1375 +/- 0.0433 | 0.5087 +/- 0.0110 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator) |
-| EXP-06 | 456 | 0.1380 +/- 0.0425 | 0.5097 +/- 0.0113 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator) |
-| EXP-06 | **3-seed** | **0.1399 +/- 0.0031** | **0.5080 +/- 0.0022** | — | — | **CV(CD)=0.022 < 0.2 ✓** |
-| EXP-07 | 42 | 0.1448 +/- 0.0449 | 0.5074 +/- 0.0106 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator) |
-| EXP-08 | 42 | 0.1443 +/- 0.0447 | 0.5053 +/- 0.0119 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator; L_2nd didn't save PE) |
-| EXP-09 | 42 | 0.1450 +/- 0.0450 | 0.5031 +/- 0.0116 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator) |
-| EXP-10 | 42 | 0.1401 +/- 0.0420 | 0.5077 +/- 0.0211 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator) |
-| EXP-11 | 42 | 0.1427 +/- 0.0440 | 0.5071 +/- 0.0194 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator) |
-| EXP-12 | 42 | 0.1400 +/- 0.0425 | 0.5073 +/- 0.0178 | skipped | skipped | done (300/300 shapes, 0 failures — eval rerun with fixed evaluator) |
+| EXP-01 | 42 | 0.0361 +/- 0.0143 | 0.7288 +/- 0.0667 | skipped | skipped | done (299/299, 0 failures) |
+| EXP-02 | 42 | pending | pending | — | — | eval queued, EXP-02 training in progress |
+| EXP-03 | 42 | 0.0288 +/- 0.0108 | 0.7480 +/- 0.0739 | skipped | skipped | done (priority, 1500 epochs) |
+| EXP-04 | 42 | 0.0297 +/- 0.0101 | 0.7260 +/- 0.0742 | skipped | skipped | done (priority, 1500 epochs) |
+| EXP-04 | 123 | 0.0322 +/- 0.0120 | 0.7283 +/- 0.0742 | skipped | skipped | done (priority, 1500 epochs) |
+| EXP-04 | 456 | 0.0327 +/- 0.0114 | 0.7321 +/- 0.0714 | skipped | skipped | done (priority, 1500 epochs) |
+| EXP-04 | **3-seed** | **0.0315 +/- 0.0015** | **0.7288 +/- 0.0032** | — | — | **CV(CD)=0.047 < 0.2 ✓** |
+| EXP-05 | 42 | 0.0344 +/- 0.0117 | 0.7236 +/- 0.0745 | skipped | skipped | done (priority, 1500 epochs) |
+| EXP-06 | 42 | 0.0320 +/- 0.0138 | 0.5246 +/- 0.0405 | skipped | skipped | done (priority, 1500 epochs) |
+| EXP-06 | 123 | 0.0307 +/- 0.0131 | 0.5134 +/- 0.0508 | skipped | skipped | done (priority, 1500 epochs) |
+| EXP-06 | 456 | 0.0297 +/- 0.0126 | 0.5132 +/- 0.0505 | skipped | skipped | done (priority, 1500 epochs) |
+| EXP-06 | **3-seed** | **0.0308 +/- 0.0012** | **0.5171 +/- 0.0066** | — | — | **CV(CD)=0.040 < 0.2 ✓** |
+| EXP-11 | 42 | 0.0432 +/- 0.0158 | 0.6090 +/- 0.0791 | skipped | skipped | done (priority, 1500 epochs) |
+| EXP-07, 08, 09, 10, 12 | — | not run (QoS budget) | — | — | — | skipped to stay within Apr 23 QoS |
 
 ## Detailed Results
 
