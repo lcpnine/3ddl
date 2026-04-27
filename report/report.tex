@@ -82,6 +82,7 @@ While Fourier features are standard in radiance field methods, their application
 
 %% ============================================================
 \section{Method}
+\label{sec:method}
 %% ============================================================
 
 \subsection{Problem Formulation}
@@ -202,7 +203,7 @@ ID & $r$ & Eik & PE & Seeds & Purpose \\
 \!}
 \end{table}
 
-All experiments were trained on a single NVIDIA A40 GPU in the NTU TC2 cluster. EXP-01 and EXP-02 used 3{,}000 epochs; the post-fix priority retrains (EXP-03/04/05/06/11) used 1{,}500 epochs to fit the TC2 QoS budget. Hyperparameters are otherwise shared across runs: $\lambda_{\text{eik}}=0.1$, $\lambda_z = 10^{-4}$, batch size 16{,}384, Adam with learning rate $5 \times 10^{-4}$, gradient clipping at $\max\_\text{norm}=1.0$, and the ratio-dependent Eikonal warmup from Section~II.
+All experiments were trained on a single NVIDIA A40 GPU in the NTU TC2 cluster. EXP-01 and EXP-02 used 3{,}000 epochs; the post-fix priority retrains (EXP-03/04/05/06/11) used 1{,}500 epochs to fit the TC2 QoS budget. Hyperparameters are otherwise shared across runs: $\lambda_{\text{eik}}=0.1$, $\lambda_z = 10^{-4}$, batch size 16{,}384, Adam with learning rate $5 \times 10^{-4}$, gradient clipping at $\max\_\text{norm}=1.0$, and the ratio-dependent Eikonal warmup from Section~\ref{sec:method}.
 
 %% ============================================================
 \section{Results}
@@ -260,16 +261,6 @@ reliably preserves the original object structure. For the final written claim,
 we therefore treat 50\% + Eikonal as the clearest supported label-efficiency
 result, and 10\% + Eikonal as promising but visually weaker.
 
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=\columnwidth]{figures/label_efficiency_cd.png}
-    \caption{CD vs.\ supervision ratio for the no-PE subset and the early
-    10\% PE follow-up. This plot is retained as a subset visualization only;
-    the authoritative final numbers for the full corrected experiment matrix
-    are reported in Table~\ref{tab:results}.}
-    \label{fig:label_efficiency}
-\end{figure}
-
 Qualitative inspection (Figs.~\ref{fig:qualitative} and
 \ref{fig:mesh_comparison}) changes the emphasis of the story. The 50\% Eikonal
 run preserves the original structure clearly across categories, whereas the 10\%
@@ -303,25 +294,11 @@ Post-fix PE evidence is restricted to the 10\% supervision slice: EXP-06 at $L=6
 
 Within the 10\% slice, the dominant effect of PE is on normal consistency rather than chamfer distance. EXP-06 reaches CD = 0.0308 $\pm$ 0.0012 across three seeds, almost identical to the no-PE EXP-04 value of 0.0315 $\pm$ 0.0015, while NC drops from 0.7288 $\pm$ 0.0032 (EXP-04) to 0.5171 $\pm$ 0.0066. EXP-11 with the lower PE frequency $L=4$ reaches CD = 0.0432 and NC = 0.6090, partially recovering NC at a modest CD cost. The PE-induced NC drop is reproducible across all three EXP-06 seeds (CV(NC) $\approx$ 0.013).
 
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=\columnwidth]{figures/ablation_cd_nc.png}
-    \caption{Subset ablation plot retained for context; the authoritative post-fix PE numbers used in the conclusion are in Table~\ref{tab:results}.}
-    \label{fig:ablation}
-\end{figure}
-
 This is a narrower claim than the pre-fix draft suggested. We cannot state from corrected data that PE collapses CD across supervision ratios; we can state that, at 10\% supervision, PE primarily degrades the gradient field of the learned SDF (NC) rather than the surface localization itself (CD).
 
 \subsection{PE Frequency Ablation at 10\% Supervision}
 
 Within the post-fix 10\% slice, lowering the PE frequency from $L=6$ to $L=4$ partially recovers NC at the cost of higher CD. EXP-11 ($L=4$) achieves CD = 0.0432 and NC = 0.6090 against EXP-06's CD = 0.0308 $\pm$ 0.0012 and NC = 0.5171 $\pm$ 0.0066. So lowering $L$ moves the operating point toward the no-PE baseline on NC but away from it on CD, rather than producing a uniformly better PE configuration. The $L=4$ counterparts at 5\% and 100\% supervision were not retrained under the post-fix budget, so we cannot generalize this trend across supervision ratios.
-
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=\columnwidth]{figures/pe_frequency_ablation_cd.png}
-    \caption{10\% PE-frequency subset plot retained for context only.}
-    \label{fig:pe_freq}
-\end{figure}
 
 \subsection{Per-Category Breakdown}
 \label{sec:per_category}
@@ -400,11 +377,10 @@ Several limitations of the post-fix study should be stated plainly.
 
 \textbf{Training set evaluation only.} All CD/NC numbers are computed on the 299-shape training set rather than a held-out test split. The post-fix retrains used \texttt{train\_split}~=~1.0 because the study is scoped around the interaction between Eikonal regularization, Fourier PE, and supervision ratio on the training objective; generalization to unseen shapes is a separate question that we do not address.
 
-\textbf{Uneven training budgets across phases.} EXP-01/02 and the later PE
-follow-up runs used 3{,}000 epochs, while the early corrected no-PE subset
-(EXP-03/04/05/06) was retrained under a tighter priority budget. This does not
-invalidate the observed trends, but it does make the matrix less uniform than an
-ideal final benchmark suite.
+\textbf{Uneven training budgets across phases.} EXP-01/02 used 3{,}000 epochs,
+while the post-fix priority retrains (EXP-03/04/05/06/11) used 1{,}500 epochs
+to fit the TC2 QoS budget. This does not invalidate the observed trends, but it
+does make the matrix less uniform than an ideal final benchmark suite.
 
 \textbf{Single dataset and small dataset scale.} We train on 299 shapes across three ShapeNet categories. Both the label-efficiency and PE-trade-off claims may behave differently at larger scale, with more categories, or on non-ShapeNet geometry.
 
