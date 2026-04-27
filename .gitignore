@@ -114,3 +114,6 @@ report/figures/**/*
 *.tgz
 *.tar
 *.zip
+
+# ── 3D mesh files (large, regeneratable) ──
+*.obj
