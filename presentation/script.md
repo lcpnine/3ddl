@@ -6,7 +6,7 @@ AI6131 · NTU MSAI · April 2026
 
 ## Slide 1 — Title (Opening)
 
-Good afternoon. Today I'm presenting a midterm progress update on my project for AI6131. The work is still ongoing, so what I'll share today is a combination of completed design, preliminary results, and an honest account of an evaluation issue I identified, corrected in the pipeline, and am now using for re-validation. I'll walk through the research question, the method, the experiment design, and where things currently stand.
+Good afternoon. Today I'm presenting a midterm progress update on my project for AI6131. The work is still ongoing, so what I'll share today is the completed design, the experiment setup, and then an honest account of an evaluation issue I identified, corrected in the pipeline, and am now using for re-validation. For this one-to-one discussion, I'll keep the focus on the evaluation issue rather than over-discussing preliminary tables that are not reliable for interpretation.
 
 The project is on semi-supervised 3D shape reconstruction using DeepSDF. The central question is whether we can reduce the amount of labeled SDF data required during training while maintaining reconstruction quality. I'll explain what that means concretely in the next few slides.
 
@@ -22,17 +22,23 @@ The core motivation is this: generating SDF training labels requires dense sampl
 
 To investigate this, I'm varying three things: the supervision ratio — from fully labeled down to 5% — the presence or absence of Eikonal regularization, and whether Fourier positional encoding is applied to the 3D input coordinates. These three dimensions define the experiment matrix I'll describe shortly.
 
+Speaker note: here, "supervision ratio" means the fraction of labeled SDF samples retained, not a reduction in geometric access to the full shape.
+
 ---
 
 ## Slide 4 — Background: DeepSDF Auto-Decoder
 
 DeepSDF uses an auto-decoder framework with no encoder. Each training shape gets its own learned latent code, and a shared 8-layer MLP maps the latent together with a query point, or its positional encoding when PE is used, to a signed distance value. The latent codes and the network weights are optimized jointly. One important detail for this project: we are evaluating train-set reconstruction only — test-time latent optimization, which would be needed for generalization to unseen shapes, is out of scope here.
 
+Speaker note: "shared MLP" means there is one common decoder for all shapes; shape identity is provided by the per-shape latent code `z_i`.
+
 ---
 
 ## Slide 5 — Semi-Supervised Extension: Loss Formulation
 
 The task-specific loss has two main components here: the supervised SDF term and the Eikonal term. In all runs I also keep the standard DeepSDF latent regularization. The SDF loss is a mean absolute error between the predicted and approximate SDF labels, applied only to the supervised points. The Eikonal loss penalizes deviations of the gradient norm from 1, and it applies to all points including the unlabeled ones. The supervised points are sampled near the surface using normal-offset sampling, and they contribute to both the SDF loss and the Eikonal loss. The unsupervised points are sampled uniformly inside the unit sphere and contribute only to the Eikonal term. One thing to note: the SDF labels here are approximate signed offsets from normal-offset sampling, not ray-cast ground truth.
+
+Speaker note: the unit sphere is defined after normalizing each full mesh into an object-centered unit sphere. So this setup reduces SDF supervision, not geometric access to the shape itself.
 
 ---
 
@@ -46,23 +52,27 @@ At this stage, I also introduce a linear warmup for the Eikonal weight. For 100%
 
 This first half of the matrix covers EXP-01 through EXP-06, including the first positional-encoding condition in EXP-06. The dataset is ShapeNet, 300 shapes across three categories, with 75% used for training. Each shape is associated with 250K unsupervised points and up to 250K supervised points depending on the supervision ratio, and each run takes roughly 6 hours on the cluster. I'll summarize the primary comparisons after the next slide.
 
+Speaker note: "Seeds" in the table means the number of independent runs with different random initializations. Multi-seed settings are the key comparison settings where I wanted to assess variance, not just a single-run outcome.
+
 ---
 
 ## Slide 8 — Experiment Design (EXP-07 to EXP-12)
 
 This second half expands the PE experiments, adding the 5% setting, the L_2nd variant, and the L=4 comparisons. EXP-09 and EXP-10 are the 100% supervision PE settings in this matrix. Across the full matrix there are 12 experiment settings, with multiple seeds for some conditions. The primary comparisons are: EXP-01 versus EXP-02 to isolate the Eikonal effect; EXP-02, EXP-04, and EXP-05 to track how performance changes as supervision drops; and EXP-04 versus EXP-06 to test whether positional encoding helps at low supervision.
 
+Speaker note: in PE, `L` is the number of Fourier frequency levels. `L=6` is a stronger, higher-frequency encoding than `L=4`. The `L_2nd` variant is a second-order smoothness regularizer, not standard L2 weight decay.
+
 ---
 
 ## Slide 9 — Preliminary Results: No Positional Encoding
 
-These non-PE numbers are preliminary and were evaluated with the original evaluator. Because the PE group was rerun with the fixed evaluator, CD and NC should not be compared directly across the non-PE and PE tables. There was also variable mesh extraction success in some non-PE runs; exact counts are in the footnote of the next slide. I'll explain the evaluator issue and fix in the slides that follow.
+For the one-to-one discussion, I'm going to skip detailed interpretation of this table. After generating these numbers, I found an evaluation bug, so the more useful discussion is what went wrong in evaluation and how I corrected it.
 
 ---
 
 ## Slide 10 — Preliminary Results: With Positional Encoding
 
-These PE results are still preliminary, but they were rerun with the corrected evaluator, unlike the non-PE table. So the main point here is within-group reporting only, not direct comparison against the non-PE results. The footnote also reports per-seed CD means for EXP-04 and EXP-06, so I'll keep seed variation in mind rather than over-reading single averages.
+I’ll also skip detailed discussion of this table for the same reason. Even though the PE group was rerun with the corrected evaluator, I think it is cleaner to first explain the evaluation fault and the corrected pipeline before talking about any numbers.
 
 ---
 

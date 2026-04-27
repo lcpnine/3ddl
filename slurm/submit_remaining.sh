@@ -8,7 +8,7 @@ cd "$HOME/3ddl"
 
 MANIFEST=slurm/rerun_manifest.txt
 JOB_IDS_FILE=slurm/rerun_job_ids.txt
-SKIP_LINES=2   # EXP-01 and EXP-02 already submitted (20993, 20994)
+SKIP_LINES=3   # EXP-01/02/03 already done
 MAX_JOBS=2     # QoS limit
 
 log() { echo "[$(date +%H:%M:%S)] $*"; }

@@ -22,14 +22,15 @@ BACKUP = ROOT / "tc2_backup"
 GT_DIR = BACKUP / "data_processed_shapenet" / "gt_meshes"
 OUTDIR = ROOT / "report" / "figures"
 
-# Pick one shape per category that exists in all experiments
-# EXP-04 has 263 shapes, so pick shapes that are likely present
+# Pick one shape per category. Meshes are produced by scripts/export_qualitative_meshes.py
+# (sphere-clipped marching cubes with the fixed evaluator).
 SHAPES = ["airplane_0001", "chair_0001", "table_0001"]
 EXPERIMENTS = [
     ("GT", None),
-    ("EXP-01\n(baseline)", "EXP-01"),
-    ("EXP-02\n(100%+Eik)", "EXP-02"),
-    ("EXP-04\n(10%+Eik)", "EXP-04"),
+    ("EXP-01\n(100% base)", "EXP-01"),
+    ("EXP-04\n(10% +Eik)", "EXP-04"),
+    ("EXP-11\n(10% +Eik+PE L=4)", "EXP-11"),
+    ("EXP-06\n(10% +Eik+PE L=6)", "EXP-06"),
 ]
 
 
@@ -37,6 +38,15 @@ def render_mesh_to_image(mesh: trimesh.Trimesh):
     """Render a mesh to a 2D image using matplotlib 3D projection."""
     import io
     from PIL import Image
+
+    # Decimate heavy meshes (PE extraction produces >1M faces) so structure is
+    # preserved instead of destroyed by random face subsampling.
+    max_faces = 40000
+    if len(mesh.faces) > max_faces:
+        try:
+            mesh = mesh.simplify_quadric_decimation(max_faces)
+        except Exception:
+            pass
 
     fig = plt.figure(figsize=(4, 4), dpi=100)
     ax = fig.add_subplot(111, projection="3d")
@@ -49,11 +59,6 @@ def render_mesh_to_image(mesh: trimesh.Trimesh):
 
     faces = np.array(mesh.faces)
 
-    # Subsample for rendering speed if mesh is large
-    if len(faces) > 50000:
-        indices = np.random.choice(len(faces), 50000, replace=False)
-        faces = faces[indices]
-
     # Plot with light shading
     ax.plot_trisurf(
         vertices[:, 0],
@@ -62,7 +67,7 @@ def render_mesh_to_image(mesh: trimesh.Trimesh):
         triangles=faces,
         color="#6ba3d6",
         edgecolor="none",
-        alpha=0.9,
+        alpha=0.95,
         shade=True,
     )
 
@@ -71,6 +76,7 @@ def render_mesh_to_image(mesh: trimesh.Trimesh):
     ax.set_xlim(-0.6, 0.6)
     ax.set_ylim(-0.6, 0.6)
     ax.set_zlim(-0.6, 0.6)
+    ax.set_box_aspect([1, 1, 1])
     ax.axis("off")
     fig.subplots_adjust(left=0, right=1, top=1, bottom=0)
 
@@ -181,7 +187,7 @@ def main():
                 ax.yaxis.label.set_visible(True)
 
     fig.suptitle(
-        "Qualitative Reconstruction Comparison (Non-PE Experiments)",
+        "Qualitative Reconstruction Comparison (fixed evaluator, sphere-clipped)",
         fontsize=14,
         fontweight="bold",
         y=1.02,

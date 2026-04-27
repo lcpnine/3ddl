@@ -15,6 +15,7 @@ import argparse
 import gc
 import json
 import os
+import shutil
 import sys
 import time
 
@@ -616,6 +617,12 @@ def evaluate_experiment(
     # Save results
     with open(output_path, "w") as f:
         json.dump(report, f, indent=2)
+
+    # Clean up reconstruction meshes (large, not needed after metrics are saved)
+    recon_dir = os.path.join(exp_dir, f"reconstructions_{eval_split}")
+    if os.path.exists(recon_dir):
+        shutil.rmtree(recon_dir)
+        print(f"Cleaned up {recon_dir}")
 
     print(f"\n{'='*60}")
     print(f"EVALUATION SUMMARY")

@@ -10,10 +10,10 @@
 #   EXP_DIR=experiments/EXP-01/seed42 sbatch slurm/job_eval.sh
 #===============================================================
 #SBATCH --partition=MGPU-TC2
-#SBATCH --qos=normal
+#SBATCH --qos=q_m1x16
 #SBATCH --nodes=1
 #SBATCH --mem=30G
-#SBATCH --cpus-per-task=8
+#SBATCH --cpus-per-task=4
 #SBATCH --time=04:00:00
 #SBATCH --job-name=yt3dl_eval
 #SBATCH --output=/home/msai/yutaek001/3ddl/logs/output_%x_%j.out
@@ -46,7 +46,7 @@ export PYTHONPATH=src:$PYTHONPATH
 export PYTHONUNBUFFERED=1
 
 SKIP_IOU="${SKIP_IOU:-1}"
-MC_RES="${MC_RES:-256}"
+MC_RES="${MC_RES:-128}"
 EVAL_SPLIT="${EVAL_SPLIT:-train}"
 SPHERE_CLIP="${SPHERE_CLIP:-1}"
 TTO_N_ITERS="${TTO_N_ITERS:-800}"

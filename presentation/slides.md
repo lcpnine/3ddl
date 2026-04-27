@@ -205,7 +205,6 @@ style: |
 ### Motivation
 
 - Generating SDF labels requires **dense normal-offset sampling** — expensive per shape
-- Unlabelled points (uniform sphere probes) need no annotation, yet constrain the field via $\mathcal{L}_\text{eik}$
 - Reducing the labelled fraction enables scaling to larger shape collections
 
 ---

@@ -29,8 +29,11 @@ def main() -> None:
     p = argparse.ArgumentParser()
     p.add_argument("--exp_dir", required=True,
                    help="e.g. experiments/EXP-04/seed42")
-    p.add_argument("--shapes", nargs="+", required=True,
-                   help="Shape names, e.g. airplane_0001 chair_0001 table_0001")
+    p.add_argument("--shapes", nargs="*", default=None,
+                   help="Shape names, e.g. airplane_0001 chair_0001 table_0001. "
+                        "If omitted with --all_shapes, every shape in train_shapes.json is processed.")
+    p.add_argument("--all_shapes", action="store_true",
+                   help="Process every shape in train_shapes.json (overrides --shapes)")
     p.add_argument("--mc_resolution", type=int, default=128)
     p.add_argument("--out_subdir", default="sample_reconstructions")
     p.add_argument("--sphere_clip", action="store_true", default=True)
@@ -58,10 +61,23 @@ def main() -> None:
     out_dir = Path(args.exp_dir) / args.out_subdir
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    for shape in args.shapes:
+    if args.all_shapes:
+        target_shapes = sorted(name_to_idx.keys())
+    elif args.shapes:
+        target_shapes = list(args.shapes)
+    else:
+        raise SystemExit("Pass either --shapes or --all_shapes")
+
+    n_ok = n_fail = n_skip = 0
+    for shape in target_shapes:
         if shape not in name_to_idx:
             print(f"[skip] {shape} not in train_shapes.json")
+            n_skip += 1
             continue
+        out_path = out_dir / f"{shape}.obj"
+        if out_path.exists() and out_path.stat().st_size > 0:
+            n_ok += 1
+            continue  # already extracted, allow resume
         idx = name_to_idx[shape]
         z = latent_codes.embedding.weight[idx].detach().unsqueeze(0)
         try:
@@ -71,10 +87,17 @@ def main() -> None:
             )
         except Exception as e:
             print(f"[fail] {shape}: {e}")
+            n_fail += 1
             continue
-        out_path = out_dir / f"{shape}.obj"
+        if mesh is None or len(mesh.faces) == 0:
+            print(f"[fail] {shape}: empty mesh")
+            n_fail += 1
+            continue
         mesh.export(out_path)
-        print(f"[ok] {shape}: {out_path}  ({len(mesh.faces)} faces)")
+        n_ok += 1
+        if n_ok % 25 == 0:
+            print(f"[progress] {n_ok}/{len(target_shapes)} ok")
+    print(f"[summary] ok={n_ok} fail={n_fail} skip={n_skip}")
 
 
 if __name__ == "__main__":

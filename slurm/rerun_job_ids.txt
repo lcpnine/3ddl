@@ -1,0 +1,13 @@
+21119 EXP-04_seed42 experiments/EXP-04/seed42 latest 300
+21120 EXP-04_seed123 experiments/EXP-04/seed123 latest 300
+21121 EXP-04_seed456 experiments/EXP-04/seed456 latest 300
+21131 EXP-05_seed42 experiments/EXP-05/seed42 latest 300
+21135 EXP-06_seed42 experiments/EXP-06/seed42 latest 300
+21160 EXP-06_seed123 experiments/EXP-06/seed123 latest 300
+21182 EXP-06_seed456 experiments/EXP-06/seed456 latest 300
+21202 EXP-07_seed42 experiments/EXP-07/seed42 latest 300
+21208 EXP-08_seed42 experiments/EXP-08/seed42 latest 300
+21222 EXP-09_seed42 experiments/EXP-09/seed42 latest 300
+21232 EXP-10_seed42 experiments/EXP-10/seed42 best 300
+21235 EXP-11_seed42 experiments/EXP-11/seed42 best 300
+21236 EXP-12_seed42 experiments/EXP-12/seed42 best 300
