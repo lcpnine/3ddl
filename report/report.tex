@@ -28,7 +28,7 @@ yutaek001@e.ntu.edu.sg}
 \maketitle
 
 \begin{abstract}
-Neural implicit representations such as DeepSDF learn continuous signed distance functions for 3D shape reconstruction, but require dense signed distance supervision for every training point. We investigate whether Eikonal regularization can compensate for reduced supervision, and whether Fourier positional encoding (PE) helps or hurts in this regime. Using the corrected post-fix pipeline, we train on 299 ShapeNet shapes (airplane, chair, table) at supervision ratios from 5\% to 100\% and evaluate with Chamfer Distance (CD) and Normal Consistency (NC) on the training-set reconstructions. The main result is that Eikonal regularization improves CD-based label efficiency, but the strongest reduced-label operating point in the corrected matrix is 50\% supervision: EXP-03 reaches CD = 0.0288 and NC = 0.748, while remaining visually competitive in representative reconstructions. At 10\% supervision, the 3-seed no-PE run remains numerically competitive (CD = 0.0315 $\pm$ 0.0015, NC = 0.7288 $\pm$ 0.0032), but qualitative inspection is less reliable than the metrics alone suggest. In contrast, Fourier PE is harmful at the 10\% supervision slice that we were able to retrain on the corrected pipeline: PE primarily collapses normal consistency (EXP-06 with $L=6$: NC = 0.5171 $\pm$ 0.0066; EXP-11 with $L=4$: NC = 0.6090) while leaving CD broadly comparable to the no-PE 10\% baseline. Lowering the encoding frequency from $L=6$ to $L=4$ partially recovers NC at a clear CD cost. The originally-planned PE points at 5\% and 100\% supervision (and the second-order regularizer ablation) were not retrained under the post-fix QoS budget, so we restrict the PE conclusion to the 10\% supervision slice. We therefore conclude that Eikonal regularization is the useful ingredient for reducing signed-distance labels in this DeepSDF setup, whereas Fourier PE is not recommended at 10\% supervision.
+Neural implicit representations such as DeepSDF learn continuous signed distance functions for 3D shape reconstruction, but require dense signed distance supervision for every training point. We investigate whether Eikonal regularization can compensate for reduced supervision, and whether Fourier positional encoding (PE) helps or hurts in this regime. Using a corrected preprocessing pipeline, we train on 299 ShapeNet shapes (airplane, chair, table) at supervision ratios from 5\% to 100\% and evaluate with Chamfer Distance (CD) and Normal Consistency (NC) on training-set reconstructions. The main result is that Eikonal regularization improves CD-based label efficiency, with the strongest reduced-label operating point at 50\% supervision (EXP-03: CD = 0.0288, NC = 0.748), while a 3-seed 10\% run remains numerically competitive but visually less reliable. In contrast, Fourier PE primarily collapses normal consistency at the 10\% supervision slice we were able to retrain, while leaving CD broadly comparable to the no-PE baseline; lowering the encoding frequency from $L=6$ to $L=4$ partially recovers NC at a clear CD cost. We therefore conclude that Eikonal regularization is the useful ingredient for reducing signed-distance labels in this DeepSDF setup, whereas Fourier PE is not recommended at 10\% supervision.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -53,11 +53,11 @@ In this work, we systematically investigate two questions:
     \item Does Fourier positional encoding help or hurt reconstruction quality in this semi-supervised SDF setting?
 \end{enumerate}
 
-We report only the corrected post-fix experiments on 299 ShapeNet shapes (airplane, chair, table). Earlier runs produced under-informative supervision because the preprocessing pipeline sampled labels only inside a thin $\pm 0.1$ surface band; those runs are excluded from all tables and conclusions in this paper. After regenerating supervision with an 80/20 mix of near-surface multi-scale offsets and far-field signed-distance samples, the final experiment matrix becomes interpretable. Our key findings are:
+We report only the corrected post-fix experiments on 299 ShapeNet shapes (airplane, chair, table); earlier runs used a thin near-surface-only sampling band and are excluded throughout. Our key findings are:
 \begin{itemize}
-    \item \textbf{Eikonal regularization improves CD-based label efficiency}: relative to the non-Eikonal baseline (EXP-01, CD = 0.0361, NC = 0.729), Eikonal improves full-label CD (EXP-02, CD = 0.0295) while slightly reducing NC, gives the strongest overall no-PE result at 50\% supervision (EXP-03, CD = 0.0288, NC = 0.748), and keeps 10\% and 5\% supervision numerically competitive. Across matched comparisons, the NC effect is neutral to slightly negative except for the 50\% point.
-    \item \textbf{The 10\% no-PE regime is mixed rather than definitive}: EXP-04 (10\% supervision, 3 seeds) achieves CD = 0.0315 $\pm$ 0.0015 and NC = 0.7288 $\pm$ 0.0032, but qualitative inspection is less convincing than the metrics alone suggest, so we do not treat 10\% supervision as the strongest visual operating point.
-    \item \textbf{Fourier PE degrades NC at 10\% supervision}: post-fix EXP-06 ($L=6$, 3 seeds) achieves CD = 0.0308 $\pm$ 0.0012 and NC = 0.5171 $\pm$ 0.0066, and post-fix EXP-11 ($L=4$, single seed) achieves CD = 0.0432 and NC = 0.6090. CD remains close to the no-PE 10\% baseline; NC drops noticeably; lowering the PE frequency from $L=6$ to $L=4$ partially recovers NC at a clear CD cost. PE at 5\% and 100\% supervision was not retrained under the post-fix QoS budget, so the PE conclusion in this paper is restricted to 10\% supervision.
+    \item \textbf{Eikonal regularization improves CD-based label efficiency}: relative to the non-Eikonal baseline (EXP-01, CD = 0.0361, NC = 0.729), Eikonal improves full-label CD (EXP-02, CD = 0.0295) while slightly reducing NC, and keeps 50\%, 10\% and 5\% supervision numerically competitive.
+    \item \textbf{The 10\% no-PE regime is mixed rather than definitive}: the 3-seed run is numerically competitive but qualitative inspection is less convincing than the metrics alone suggest, so we do not treat 10\% supervision as the strongest visual operating point.
+    \item \textbf{Fourier PE degrades NC at 10\% supervision} while leaving CD close to the no-PE baseline; lowering $L$ from 6 to 4 partially recovers NC at a clear CD cost.
 \end{itemize}
 
 %% ============================================================
@@ -112,8 +112,6 @@ The total training loss combines four terms:
 \begin{equation}
     \mathcal{L} = \mathcal{L}_{\text{sdf}} + \lambda_{\text{eik}}(t) \cdot \mathcal{L}_{\text{eik}} + \lambda_z \cdot \mathcal{L}_z + \lambda_{\text{2nd}} \cdot \mathcal{L}_{\text{2nd}}
 \end{equation}
-
-In these equations, $N_s$ and $N_u$ denote the supervised and unsupervised counts in the current minibatch, not the full preprocessed point pools.
 
 \textbf{SDF loss} ($\mathcal{L}_{\text{sdf}}$): L1 regression on supervised minibatch points only:
 \begin{equation}
@@ -184,7 +182,7 @@ Volumetric IoU and Eikonal Deviation were part of the original plan but were not
 
 \subsection{Experiment Design}
 
-Table~\ref{tab:experiments} summarizes the final corrected post-fix experiment matrix used in this report. We vary supervision ratio ($r \in \{5\%, 10\%, 50\%, 100\%\}$), Eikonal regularization, and Fourier PE frequency ($L \in \{4, 6\}$). Key comparisons are EXP-03 vs.\ EXP-01/02 (label reduction without PE), EXP-04 vs.\ EXP-03 (what is lost when supervision drops from 50\% to 10\%), EXP-06 vs.\ EXP-04 (PE effect at 10\% supervision), and EXP-11 vs.\ EXP-06 (PE frequency follow-up at 10\% supervision). Two configurations were multi-seeded (seeds 42, 123, 456): EXP-04 and EXP-06. Their coefficients of variation remain below the project threshold of 0.2, so no seed expansion was required. The originally-planned PE points at 100\% and 5\% supervision (EXP-09/EXP-07/EXP-10/EXP-12) and the second-order regularizer ablation (EXP-08) were not retrained under the post-fix compute budget; pre-fix exploratory results for those slots are not reported as final numbers.
+Table~\ref{tab:experiments} summarizes the final corrected post-fix experiment matrix used in this report. We vary supervision ratio ($r \in \{5\%, 10\%, 50\%, 100\%\}$), Eikonal regularization, and Fourier PE frequency ($L \in \{4, 6\}$). Key comparisons are EXP-03 vs.\ EXP-01/02 (label reduction without PE), EXP-04 vs.\ EXP-03 (what is lost when supervision drops from 50\% to 10\%), EXP-06 vs.\ EXP-04 (PE effect at 10\% supervision), and EXP-11 vs.\ EXP-06 (PE frequency follow-up at 10\% supervision). Two configurations were multi-seeded (seeds 42, 123, 456): EXP-04 and EXP-06. Their coefficients of variation remain below the project threshold of 0.2, so no seed expansion was required.
 
 \begin{table}[t]
 \centering
@@ -209,17 +207,13 @@ ID & $r$ & Eik & PE & Seeds & Purpose \\
 \!}
 \end{table}
 
-All experiments were trained on a single NVIDIA A40 GPU in the NTU TC2 cluster. EXP-01 and EXP-02 used 3{,}000 epochs; the post-fix priority retrains (EXP-03/04/05/06/11) used 1{,}500 epochs to fit the TC2 QoS budget. Hyperparameters are otherwise shared across runs: $\lambda_{\text{eik}}=0.1$, $\lambda_z = 10^{-4}$, batch size 16{,}384, Adam with learning rate $5 \times 10^{-4}$, gradient clipping at \texttt{max\_norm}~=~1.0, and the ratio-dependent Eikonal warmup from Section~\ref{sec:method}.
+All experiments were trained on a single NVIDIA A40 GPU in the NTU TC2 cluster. Hyperparameters are shared across runs as specified in Section~\ref{sec:method}.
 
 %% ============================================================
 \section{Results}
 %% ============================================================
 
-All numbers in this section are from the corrected post-fix pipeline: all
-reported runs were retrained on regenerated data with 80\% near-surface
-multi-scale offsets plus 20\% far-field signed-distance samples, and were
-evaluated on 299 training shapes. Earlier wrong-pipeline runs are excluded
-from every table and conclusion in this paper.
+All numbers in this section are from the corrected pipeline (Section~\ref{sec:dataset}) and evaluated on 299 training shapes.
 
 \subsection{Eikonal Improves Label Efficiency, but 50\% Is the Clearest Operating Point}
 \label{sec:eikonal_results}
@@ -229,12 +223,11 @@ non-PE progression is favorable overall: the vanilla baseline (EXP-01) reaches
 CD = 0.0361 and NC = 0.729, while adding Eikonal at full supervision (EXP-02)
 improves CD to 0.0295 but slightly lowers NC to 0.721. The strongest no-PE operating point is EXP-03 at 50\%
 supervision, which attains the best CD/NC pair among the non-PE runs
-(0.0288 / 0.748). In the representative mesh comparison, this configuration remains visually competitive, although the examples should be read as illustration rather than proof of uniform qualitative superiority.
-Because EXP-03 was trained for 1{,}500 epochs while EXP-02 used 3{,}000 epochs,
+(0.0288 / 0.748). Because EXP-03 was trained for 1{,}500 epochs while EXP-02 used 3{,}000 epochs,
 the small quantitative gap between the 50\% and 100\% Eikonal runs should not
 be interpreted as a controlled proof that 50\% supervision is intrinsically
 better; the stronger claim is that 50\% supervision remains competitive and
-visually reliable under the post-fix budget.
+visually reliable.
 
 \begin{table}[t]
 \centering
@@ -264,12 +257,7 @@ ID & Config & CD ($\downarrow$) & NC ($\uparrow$) \\
 
 The no-PE label-efficiency trend is therefore positive but not monotone in the
 way one might have expected before examining the meshes. At 10\% supervision,
-EXP-04 remains numerically competitive with EXP-01 and shows healthy seed
-stability, but the per-shape comparisons reveal mixed visual quality. For the
-final written claim, we therefore treat 50\% + Eikonal as the clearest supported
-metric result, and 10\% + Eikonal as promising but visually less reliable.
-
-Qualitative inspection (Fig.~\ref{fig:mesh_comparison}) changes the emphasis of the story. The 50\% Eikonal run is competitive in the shown examples, but it is not uniformly better than every lower-label or non-Eikonal reconstruction on every shape. This is exactly why the final conclusion is more conservative than a metric-only reading of EXP-04.
+EXP-04 (3 seeds) remains numerically competitive with EXP-01 and is seed-stable (CV(CD)~=~0.047), but qualitative inspection (Fig.~\ref{fig:mesh_comparison}) reveals mixed visual quality, with the 50\% Eikonal run not uniformly better than every lower-label or non-Eikonal reconstruction on every shape. We therefore treat 50\% + Eikonal as the clearest supported metric result, and 10\% + Eikonal as promising but visually less reliable.
 
 \begin{figure*}[t]
     \centering
@@ -286,15 +274,7 @@ Qualitative inspection (Fig.~\ref{fig:mesh_comparison}) changes the emphasis of 
 \subsection{Fourier PE Degrades Normal Consistency at 10\% Supervision}
 \label{sec:pe_results}
 
-Post-fix PE evidence is restricted to the 10\% supervision slice: EXP-06 at $L=6$ (3 seeds) and EXP-11 at $L=4$ (single seed). The originally-planned PE points at 5\% and 100\% supervision (EXP-07/EXP-09/EXP-10/EXP-12) and the second-order regularizer ablation (EXP-08) were not retrained on the corrected pipeline within the TC2 QoS budget; pre-fix exploratory results for those slots are kept in the experiment log for provenance only and are not used here.
-
-Within the 10\% slice, the dominant effect of PE is on normal consistency rather than chamfer distance. EXP-06 reaches CD = 0.0308 $\pm$ 0.0012 across three seeds, almost identical to the no-PE EXP-04 value of 0.0315 $\pm$ 0.0015, while NC drops from 0.7288 $\pm$ 0.0032 (EXP-04) to 0.5171 $\pm$ 0.0066. EXP-11 with the lower PE frequency $L=4$ reaches CD = 0.0432 and NC = 0.6090, partially recovering NC at a modest CD cost. The PE-induced NC drop is reproducible across all three EXP-06 seeds (CV(NC) $\approx$ 0.013).
-
-This is a narrower claim than the pre-fix draft suggested. We cannot state from corrected data that PE collapses CD across supervision ratios; we can state that, at 10\% supervision, PE primarily degrades the gradient field of the learned SDF (NC) rather than the surface localization itself (CD).
-
-\subsection{PE Frequency Ablation at 10\% Supervision}
-
-Within the post-fix 10\% slice, lowering the PE frequency from $L=6$ to $L=4$ partially recovers NC at the cost of higher CD. EXP-11 ($L=4$) achieves CD = 0.0432 and NC = 0.6090 against EXP-06's CD = 0.0308 $\pm$ 0.0012 and NC = 0.5171 $\pm$ 0.0066. So lowering $L$ moves the operating point toward the no-PE baseline on NC but away from it on CD, rather than producing a uniformly better PE configuration. The $L=4$ counterparts at 5\% and 100\% supervision were not retrained under the post-fix budget, so we cannot generalize this trend across supervision ratios.
+Within the 10\% slice (Table~\ref{tab:results}), the dominant effect of PE is on normal consistency rather than chamfer distance: EXP-06 ($L=6$) matches the no-PE EXP-04 on CD but its NC drops from 0.729 to 0.517, reproducible across all three seeds (CV(NC) $\approx$ 0.013). EXP-11 ($L=4$) partially recovers NC to 0.609 at the cost of CD rising to 0.0432, moving the operating point toward the no-PE baseline on NC but away from it on CD rather than producing a uniformly better PE configuration. We cannot state from corrected data that PE collapses CD across supervision ratios; we can state that, at 10\% supervision, PE primarily degrades the gradient field of the learned SDF (NC) rather than the surface localization itself (CD).
 
 \subsection{Per-Category Breakdown}
 \label{sec:per_category}
@@ -309,32 +289,6 @@ Fig.~\ref{fig:per_category} breaks down the post-fix no-PE subset and the 10\% P
     authoritative source for the full experiment matrix.}
     \label{fig:per_category}
 \end{figure*}
-
-\subsection{Multi-Seed Validation}
-
-We validated the two 10\%-supervision workhorse configurations with 3 seeds each (Table~\ref{tab:multiseed}). Both configurations are seed-stable (CV $<$ 0.05). EXP-06's NC drop relative to EXP-04 is reproducible across all three seeds, indicating that PE's effect on the gradient field is not driven by a single unlucky initialization.
-
-\begin{table}[t]
-\centering
-\caption{Multi-seed validation (seeds 42, 123, 456). CV = coefficient of variation on CD.}
-\label{tab:multiseed}
-\renewcommand{\arraystretch}{1.1}
-\footnotesize
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}lcccc@{}}
-\toprule
-Experiment & CD mean & CD std & CV(CD) & NC mean \\
-\midrule
-04: 10\% + Eik & 0.0315 & 0.0015 & 0.047 & 0.7288 \\
-06: 10\% + Eik + PE $L=6$ & 0.0308 & 0.0012 & 0.040 & 0.5171 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\subsection{Excluded Early Pipeline}
-\label{sec:preprocess_bug}
-
-An early version of the pipeline sampled supervised SDF labels only inside a thin near-surface band, which made those results unsuitable for final interpretation. The final report therefore excludes all wrong-pipeline numbers. EXP-01 through EXP-06 and EXP-11 were retrained from scratch on the regenerated 80/20 near-surface plus far-field supervision and re-evaluated with the fixed evaluator. The originally-planned slots EXP-07 (5\% + PE $L=6$), EXP-08 (10\% + PE + $\mathcal{L}_{\text{2nd}}$), EXP-09 (100\% + PE $L=6$), EXP-10 (100\% + PE $L=4$), and EXP-12 (5\% + PE $L=4$) were not retrained under the post-fix QoS budget. Their pre-fix archived numbers are kept in the experiment log for provenance only and are not used in any table, figure, or conclusion in this paper.
 
 %% ============================================================
 \section{Discussion}
@@ -362,11 +316,7 @@ although we did not run a clean ablation on warmup itself.
 \subsection{Why Fourier PE Costs Normal Consistency}
 \label{sec:why_pe}
 
-The post-fix evidence at 10\% supervision is that Fourier PE primarily degrades the gradient field of the learned SDF. CD remains close to the no-PE baseline (EXP-06: 0.0308 vs EXP-04: 0.0315), but NC drops substantially (0.5171 vs 0.7288 at $L=6$). The NC drop is reproducible across three seeds (CV(NC) $\approx$ 0.013), so it is not seed-driven.
-
-The most plausible explanation is that Fourier PE interacts badly with the training/evaluation geometry of this setup. Post-fix marching cubes is clipped to the unit sphere, so the remaining failure is not the pre-fix cube-corner extrapolation problem. Instead, PE appears to induce oscillatory gradients within the evaluated unit-sphere region: the zero level set can remain close enough for CD to survive, while the surface-normal direction becomes unreliable enough for NC to degrade.
-
-Lowering the PE frequency from $L=6$ to $L=4$ partially mitigates the NC drop (EXP-11: NC = 0.6090) at the cost of a modestly higher CD (0.0432 vs 0.0308). We do not have post-fix evidence for whether this trade-off becomes more or less favorable at 5\% or 100\% supervision, and we therefore restrict the PE conclusion to the 10\% slice.
+The post-fix evidence at 10\% supervision is that Fourier PE primarily degrades the gradient field of the learned SDF rather than surface localization. The most plausible explanation is that PE interacts badly with the training/evaluation geometry of this setup: marching cubes is clipped to the unit sphere, so the remaining failure is not cube-corner extrapolation. Instead, PE appears to induce oscillatory gradients within the evaluated unit-sphere region: the zero level set can remain close enough for CD to survive, while the surface-normal direction becomes unreliable enough for NC to degrade. Lowering the frequency from $L=6$ to $L=4$ partially mitigates the NC drop at the cost of higher CD; we cannot generalize this trade-off to 5\% or 100\% supervision from the post-fix data.
 
 \subsection{Limitations}
 \label{sec:limitations}
@@ -396,12 +346,9 @@ encoding helps or hurts in that low-label regime. Using only the corrected
 post-fix experiments, three conclusions are now clear. First, Eikonal
 regularization is useful: it improves the full-label baseline on CD and enables strong
 performance at reduced supervision. Second, the most convincing label-efficiency
-result is 50\% supervision with Eikonal, which gives the best no-PE metrics
-and remains visually competitive in representative reconstructions. Third, 10\% supervision with Eikonal
-is promising numerically but should be described more cautiously because its
-qualitative structure is less reliable than the 50\% case.
+result is 50\% supervision with Eikonal, which gives the best no-PE metrics; 10\% supervision is numerically competitive but qualitatively less reliable. Third, Fourier PE is not recommended at the 10\% slice we could test, with both $L=6$ and $L=4$ degrading NC relative to the no-PE Eikonal baseline.
 
-Fourier PE, by contrast, is not recommended at the supervision level we could test post-fix. At 10\% supervision, both PE configurations we retrained on the corrected pipeline (EXP-06 with $L=6$ and EXP-11 with $L=4$) degrade NC relative to the no-PE Eikonal baseline, with $L=4$ partially recovering NC at the cost of higher CD. The originally-planned PE points at 100\% and 5\% supervision (and the second-order regularizer ablation) were not retrained under the post-fix QoS budget, so we cannot generalize the PE finding across supervision ratios. The most natural next steps are therefore (i)~closing the post-fix PE matrix at 100\% and 5\% supervision and (ii)~exploring alternative high-frequency representations such as multi-resolution hash encodings~\cite{instantngp} or revised sampling strategies that reduce the observed mismatch between training support and reconstruction queries.
+The most natural next steps are therefore (i)~closing the PE matrix at 100\% and 5\% supervision and (ii)~exploring alternative high-frequency representations such as multi-resolution hash encodings~\cite{instantngp} or revised sampling strategies that reduce the observed mismatch between training support and reconstruction queries.
 
 \begin{thebibliography}{00}
 \bibitem{deepsdf} J.~J.~Park, P.~Florence, J.~Straub, R.~Newcombe, and S.~Lovegrove, ``DeepSDF: Learning continuous signed distance functions for shape representation,'' in \textit{Proc. IEEE/CVF CVPR}, 2019, pp.~165--174.

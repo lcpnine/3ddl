@@ -1,0 +1,72 @@
+\relax 
+\citation{deepsdf}
+\citation{deepsdf}
+\citation{igr}
+\citation{nerf,fourierfeatures}
+\citation{occnet}
+\citation{deepsdf}
+\citation{marchingcubes}
+\@writefile{toc}{\contentsline {section}{\numberline {I}Introduction}{1}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {II}Related Work}{1}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-A}}Neural Implicit Representations}{1}{}\protected@file@percent }
+\citation{igr}
+\citation{volsdf,neus}
+\citation{siren}
+\citation{nerf}
+\citation{spectralbias}
+\citation{fourierfeatures}
+\citation{deepsdf}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-B}}Geometric Regularization}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-C}}Positional Encoding}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {III}Method}{2}{}\protected@file@percent }
+\newlabel{sec:method}{{III}{2}{}{section.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}Problem Formulation}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-B}}Architecture}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-C}}Loss Functions}{2}{}\protected@file@percent }
+\citation{shapenet}
+\citation{marchingcubes}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-D}}Eikonal Warmup Schedule}{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-E}}Training Procedure}{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {IV}Experiments}{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-A}}Dataset}{3}{}\protected@file@percent }
+\newlabel{sec:dataset}{{\mbox  {IV-A}}{3}{}{subsection.4.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Final corrected post-fix experiment set actually used in this paper. All experiments use Eikonal regularization except EXP-01. Originally-planned slots EXP-07/08/09/10/12 were not retrained under the post-fix QoS budget and are excluded from all tables, figures, and conclusions.}}{3}{}\protected@file@percent }
+\newlabel{tab:experiments}{{I}{3}{}{table.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-B}}Evaluation Metrics}{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-C}}Experiment Design}{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {V}Results}{3}{}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Final corrected post-fix results. Values are reported exactly as used in the final report narrative: single-seed rows are per-shape means over 299 training shapes; multi-seed rows are means of per-seed means.}}{4}{}\protected@file@percent }
+\newlabel{tab:results}{{II}{4}{}{table.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}Eikonal Improves Label Efficiency, but 50\% Is the Clearest Operating Point}{4}{}\protected@file@percent }
+\newlabel{sec:eikonal_results}{{\mbox  {V-A}}{4}{}{subsection.5.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}Fourier PE Degrades Normal Consistency at 10\% Supervision}{4}{}\protected@file@percent }
+\newlabel{sec:pe_results}{{\mbox  {V-B}}{4}{}{subsection.5.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-C}}Per-Category Breakdown}{4}{}\protected@file@percent }
+\newlabel{sec:per_category}{{\mbox  {V-C}}{4}{}{subsection.5.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {VI}Discussion}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-A}}Why Eikonal Enables Label Reduction}{4}{}\protected@file@percent }
+\newlabel{sec:why_eikonal}{{\mbox  {VI-A}}{4}{}{subsection.6.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-B}}Why Fourier PE Costs Normal Consistency}{4}{}\protected@file@percent }
+\newlabel{sec:why_pe}{{\mbox  {VI-B}}{4}{}{subsection.6.2}{}}
+\citation{instantngp}
+\bibcite{deepsdf}{1}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Representative reconstructions by experiment. The no-PE Eikonal runs remain visually competitive with the baseline, but the figure should not be read as proving a uniform qualitative ordering across all shapes. The PE columns show the clearest qualitative degradation: thin structure disappears, surfaces become unstable, and reducing the PE frequency does not repair the failure mode.}}{5}{}\protected@file@percent }
+\newlabel{fig:mesh_comparison}{{1}{5}{}{figure.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-C}}Limitations}{5}{}\protected@file@percent }
+\newlabel{sec:limitations}{{\mbox  {VI-C}}{5}{}{subsection.6.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {VII}Conclusion}{5}{}\protected@file@percent }
+\bibcite{igr}{2}
+\bibcite{nerf}{3}
+\bibcite{fourierfeatures}{4}
+\bibcite{siren}{5}
+\bibcite{shapenet}{6}
+\bibcite{marchingcubes}{7}
+\bibcite{occnet}{8}
+\bibcite{volsdf}{9}
+\bibcite{neus}{10}
+\bibcite{spectralbias}{11}
+\bibcite{instantngp}{12}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Per-category subset visualization retained for qualitative support. The final report narrative uses Table~\ref {tab:results} as the authoritative source for the full experiment matrix.}}{6}{}\protected@file@percent }
+\newlabel{fig:per_category}{{2}{6}{}{figure.2}{}}
+\@writefile{toc}{\contentsline {section}{References}{6}{}\protected@file@percent }
+\gdef \@abspage@last{6}
