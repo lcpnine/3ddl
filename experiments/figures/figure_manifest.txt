@@ -3,5 +3,5 @@ Generated from experiments/experiment_log.md
 Key values:
 - Baseline (no Eik, no PE, 100%): CD 0.0361  NC 0.7288
 - 10% + Eikonal (3-seed): CD 0.0315  NC 0.7288
-- PE L=6 at 10% (3-seed): CD 0.0308  NC 0.5171
-- PE L=4 at 10%: CD 0.0432  NC 0.6090
+- PE L=6 at 10% (3-seed): CD 0.1399  NC 0.5080
+- PE L=4 at 10%: CD 0.1427  NC 0.5071
