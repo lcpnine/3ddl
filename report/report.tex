@@ -28,7 +28,7 @@ yutaek001@e.ntu.edu.sg}
 \maketitle
 
 \begin{abstract}
-Neural implicit representations such as DeepSDF learn continuous signed distance functions for 3D shape reconstruction, but require dense signed distance supervision for every training point. We investigate whether Eikonal regularization can compensate for reduced supervision, and whether Fourier positional encoding (PE) helps or hurts in this regime. Using the corrected post-fix pipeline, we train on 299 ShapeNet shapes (airplane, chair, table) at supervision ratios from 5\% to 100\% and evaluate with Chamfer Distance (CD) and Normal Consistency (NC) on the training-set reconstructions. The main result is that Eikonal regularization improves label efficiency, but the strongest visually reliable operating point is 50\% supervision: EXP-03 reaches CD = 0.0288 and NC = 0.748, while preserving clearly recognizable structure. At 10\% supervision, the 3-seed no-PE run remains numerically competitive (CD = 0.0315 $\pm$ 0.0015, NC = 0.7288 $\pm$ 0.0032), but qualitative inspection shows that recognizable shape structure is less reliable than at 50\%. In contrast, Fourier PE is harmful at the 10\% supervision slice that we were able to retrain on the corrected pipeline: PE primarily collapses normal consistency (EXP-06 with $L=6$: NC = 0.5171 $\pm$ 0.0066; EXP-11 with $L=4$: NC = 0.6090) while leaving CD comparable to or only modestly worse than the no-PE 10\% baseline. Lowering the encoding frequency from $L=6$ to $L=4$ partially recovers NC at a small CD cost. The originally-planned PE points at 5\% and 100\% supervision (and the second-order regularizer ablation) were not retrained under the post-fix QoS budget, so we restrict the PE conclusion to the 10\% supervision slice. We therefore conclude that Eikonal regularization is the useful ingredient for label reduction in this DeepSDF setup, whereas Fourier PE is not recommended at 10\% supervision.
+Neural implicit representations such as DeepSDF learn continuous signed distance functions for 3D shape reconstruction, but require dense signed distance supervision for every training point. We investigate whether Eikonal regularization can compensate for reduced supervision, and whether Fourier positional encoding (PE) helps or hurts in this regime. Using the corrected post-fix pipeline, we train on 299 ShapeNet shapes (airplane, chair, table) at supervision ratios from 5\% to 100\% and evaluate with Chamfer Distance (CD) and Normal Consistency (NC) on the training-set reconstructions. The main result is that Eikonal regularization improves label efficiency, but the strongest visually reliable operating point is 50\% supervision: EXP-03 reaches CD = 0.0288 and NC = 0.748, while preserving clearly recognizable structure. At 10\% supervision, the 3-seed no-PE run remains numerically competitive (CD = 0.0315 $\pm$ 0.0015, NC = 0.7288 $\pm$ 0.0032), but qualitative inspection shows that recognizable shape structure is less reliable than at 50\%. In contrast, Fourier PE is harmful at the 10\% supervision slice that we were able to retrain on the corrected pipeline: PE primarily collapses normal consistency (EXP-06 with $L=6$: NC = 0.5171 $\pm$ 0.0066; EXP-11 with $L=4$: NC = 0.6090) while leaving CD comparable to or only modestly worse than the no-PE 10\% baseline. Lowering the encoding frequency from $L=6$ to $L=4$ partially recovers NC at a clear CD cost. The originally-planned PE points at 5\% and 100\% supervision (and the second-order regularizer ablation) were not retrained under the post-fix QoS budget, so we restrict the PE conclusion to the 10\% supervision slice. We therefore conclude that Eikonal regularization is the useful ingredient for label reduction in this DeepSDF setup, whereas Fourier PE is not recommended at 10\% supervision.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -57,7 +57,7 @@ We report only the corrected post-fix experiments on 299 ShapeNet shapes (airpla
 \begin{itemize}
     \item \textbf{Eikonal regularization improves label efficiency}: relative to the non-Eikonal baseline (EXP-01, CD = 0.0361, NC = 0.729), Eikonal improves the full-label run (EXP-02, CD = 0.0295), gives the strongest overall no-PE result at 50\% supervision (EXP-03, CD = 0.0288, NC = 0.748), and keeps 10\% and 5\% supervision numerically competitive.
     \item \textbf{The 10\% no-PE regime is mixed rather than definitive}: EXP-04 (10\% supervision, 3 seeds) achieves CD = 0.0315 $\pm$ 0.0015 and NC = 0.7288 $\pm$ 0.0032, but qualitative inspection is noticeably less convincing than the 50\% run, so we do not treat 10\% supervision as the strongest visual operating point.
-    \item \textbf{Fourier PE degrades NC at 10\% supervision}: post-fix EXP-06 ($L=6$, 3 seeds) achieves CD = 0.0308 $\pm$ 0.0012 and NC = 0.5171 $\pm$ 0.0066, and post-fix EXP-11 ($L=4$, single seed) achieves CD = 0.0432 and NC = 0.6090. CD remains close to the no-PE 10\% baseline; NC drops noticeably; lowering the PE frequency from $L=6$ to $L=4$ partially recovers NC at a small CD cost. PE at 5\% and 100\% supervision was not retrained under the post-fix QoS budget, so the PE conclusion in this paper is restricted to 10\% supervision.
+    \item \textbf{Fourier PE degrades NC at 10\% supervision}: post-fix EXP-06 ($L=6$, 3 seeds) achieves CD = 0.0308 $\pm$ 0.0012 and NC = 0.5171 $\pm$ 0.0066, and post-fix EXP-11 ($L=4$, single seed) achieves CD = 0.0432 and NC = 0.6090. CD remains close to the no-PE 10\% baseline; NC drops noticeably; lowering the PE frequency from $L=6$ to $L=4$ partially recovers NC at a clear CD cost. PE at 5\% and 100\% supervision was not retrained under the post-fix QoS budget, so the PE conclusion in this paper is restricted to 10\% supervision.
 \end{itemize}
 
 %% ============================================================
@@ -100,7 +100,9 @@ We use an 8-layer MLP with hidden dimension 512, following the DeepSDF architect
 
 When Fourier PE is enabled, input coordinates are transformed as:
 \begin{equation}
-    \gamma(x) = \left[\sin(2^0 \pi x), \cos(2^0 \pi x), \ldots, \sin(2^{L-1} \pi x), \cos(2^{L-1} \pi x)\right]
+    \gamma(x) =
+    [\sin(2^0 \pi x), \cos(2^0 \pi x), \ldots,
+    \sin(2^{L-1} \pi x), \cos(2^{L-1} \pi x)]
 \end{equation}
 where $L$ is the number of frequency levels. This maps each 3D coordinate from $\mathbb{R}^3$ to $\mathbb{R}^{6L}$. The network input becomes $[z_i; \gamma(x)]$ instead of $[z_i; x]$. We test $L=4$ (24-dimensional) and $L=6$ (36-dimensional).
 
@@ -242,7 +244,7 @@ ID & Config & CD ($\downarrow$) & NC ($\uparrow$) \\
 01 & 100\%, no Eik & 0.0361 & 0.729 \\
 02 & 100\% + Eik & 0.0295 & 0.721 \\
 03 & 50\% + Eik & 0.0288 & 0.748 \\
-04 & 10\% + Eik (3-seed) & \textbf{0.0315}{\scriptsize$\pm$0.0015} & 0.729{\scriptsize$\pm$0.003} \\
+04 & 10\% + Eik (3-seed) & 0.0315{\scriptsize$\pm$0.0015} & 0.729{\scriptsize$\pm$0.003} \\
 05 & 5\% + Eik & 0.0344 & 0.724 \\
 \midrule
 \multicolumn{4}{@{}l}{\textit{With Fourier Positional Encoding (10\% supervision only post-fix)}} \\
@@ -323,12 +325,14 @@ We validated the two 10\%-supervision workhorse configurations with 3 seeds each
 \caption{Multi-seed validation (seeds 42, 123, 456). CV = coefficient of variation on CD.}
 \label{tab:multiseed}
 \renewcommand{\arraystretch}{1.1}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
 \begin{tabular}{@{}lcccc@{}}
 \toprule
 Experiment & CD mean & CD std & CV(CD) & NC mean \\
 \midrule
-EXP-04 (10\% + Eik) & 0.0315 & 0.0015 & 0.047 & 0.7288 \\
-EXP-06 (10\% + Eik + PE $L=6$) & 0.0308 & 0.0012 & 0.040 & 0.5171 \\
+04: 10\% + Eik & 0.0315 & 0.0015 & 0.047 & 0.7288 \\
+06: 10\% + Eik + PE $L=6$ & 0.0308 & 0.0012 & 0.040 & 0.5171 \\
 \bottomrule
 \end{tabular}
 \end{table}
