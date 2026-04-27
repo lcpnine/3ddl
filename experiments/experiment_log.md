@@ -21,10 +21,13 @@ Single source of truth for all experiment results.
 
 ## Results
 
-All values below are **post-fix** — retrained on regenerated data (80% near-surface
-multi-scale offsets + 20% far-field signed-distance samples), evaluated with the
-fixed evaluator (sphere-clip, L1 Chamfer, independent mesh-export). The old
-broken-preprocessing numbers are archived in `results_legacy_*.json`.
+The summary table below reports the **post-fix production metrics** used in the
+report: retrained on regenerated data (80% near-surface multi-scale offsets +
+20% far-field signed-distance samples) and evaluated with the fixed evaluator
+(sphere-clip, L1 Chamfer, independent mesh-export). Historical exploratory runs
+and pre-fix notes are preserved later in this file for provenance, but they are
+not the source of truth when they disagree with the summary table or the
+corresponding seed's `results.json`.
 
 Experiments marked `priority` were retrained at `epochs=1500`; EXP-01 and EXP-02
 kept their original `epochs=3000` budget. 299 shapes trained (airplane_0077
@@ -47,7 +50,13 @@ dropped due to degenerate geometry that hung signed_distance).
 | EXP-11 | 42 | 0.0432 +/- 0.0158 | 0.6090 +/- 0.0791 | skipped | skipped | done (priority, 1500 epochs) |
 | EXP-07, 08, 09, 10, 12 | — | not run (QoS budget) | — | — | — | skipped to stay within Apr 23 QoS |
 
-## Detailed Results
+## Archived Historical Notes
+
+The sections below preserve contemporaneous experiment notes from earlier runs,
+including pre-fix evaluator outputs and some marching-cubes evaluations at
+`MC res=128`. They are kept for debugging provenance only. For any figure cited
+in the report or defense materials, use the summary table above and the matching
+post-fix `results.json` artifact for that seed.
 
 ### EXP-01 — Fully-supervised baseline (seed 42) [ShapeNet re-run]
 - **Date**: 2026-03-27

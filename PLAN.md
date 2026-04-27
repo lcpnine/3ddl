@@ -306,7 +306,7 @@ Third review pass identified that the shuffle fix in Step 5.1 introduced a new i
 Reviewer confirmed legacy checkpoint concern is withdrawn (sorted fallback matches sorted training order).
 Recommendation: do not implement test-time latent optimization. Keep current protocol with explicit disclosure.
 
-- [ ] **5.5** Update `report/conference_101719.tex` methodology section with three disclosure statements:
+- [ ] **5.5** Update `report/report.tex` methodology section with three disclosure statements:
   1. Metrics are training-shape reconstruction quality, not held-out generalization
   2. Protocol is not standard DeepSDF evaluation — no test-time latent optimization is performed
   3. EXP-01–EXP-09 best.pt was selected using validation loss computed on unoptimized val latents; results for those runs should be interpreted accordingly
@@ -365,4 +365,4 @@ selection. No retraining — existing checkpoints are used.
 - [ ] **10.13** Validate each JSON: `n_total==300`, `n_ok>0`, `checkpoint` matches manifest mode, `shape_order==train_shapes.json`
 - [ ] **10.14** Promote: back up existing `results.json` → `results_legacy.json`; copy rerun output to `results.json`
 - [ ] **10.15** Update `experiments/experiment_log.md` with corrected CD/NC values and evaluation provenance
-- [ ] **10.16** Update `report/conference_101719.tex` methodology section (checkpoint provenance, shape_order, n_ok/n_total)
+- [ ] **10.16** Update `report/report.tex` methodology section (checkpoint provenance, shape_order, n_ok/n_total)
