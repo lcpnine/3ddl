@@ -49,7 +49,7 @@ EXPERIMENTS = [
 ]
 CATEGORIES = ["airplane", "chair", "table"]
 SEED = "seed42"
-RECON_SUBDIR = "all_reconstructions"
+RECON_SUBDIR = "all_reconstructions_decim"
 
 
 def gt_path_for(shape: str) -> Path | None:
@@ -112,14 +112,12 @@ def render_mesh(ax, mesh: trimesh.Trimesh | None, title: str, azim: float = 35.0
 
 
 def discover_shapes() -> list[str]:
-    """Shapes that exist in train_shapes.json AND have a GT mesh."""
-    train_shapes_json = EXP_DIR / "EXP-01" / SEED / "train_shapes.json"
-    import json
-    with train_shapes_json.open() as f:
-        shapes = json.load(f)
-    if isinstance(shapes, dict):
-        shapes = list(shapes.keys())
-    return sorted(set(shapes))
+    """Shapes present in EXP-01's reconstruction dir (and GT, if available)."""
+    recon_dir = EXP_DIR / "EXP-01" / SEED / RECON_SUBDIR
+    if not recon_dir.exists():
+        raise FileNotFoundError(f"No recon dir at {recon_dir}; "
+                                "run mesh extraction + decimation first.")
+    return sorted(p.stem for p in recon_dir.glob("*.obj"))
 
 
 def render_one_strip(shape: str, out_path: Path, azim: float = 35.0) -> bool:
